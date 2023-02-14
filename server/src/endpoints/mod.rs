@@ -1,4 +1,10 @@
 pub mod status;
+pub mod auth;
+pub mod common;
+pub mod clients;
+pub mod accounting;
+pub mod inventory;
+
 
 use log::{
     info,
