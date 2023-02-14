@@ -37,7 +37,9 @@ async fn register_get() -> impl Responder {
 }
 
 
-async fn register_post() -> impl Responder {
+async fn register_post(
+    
+) -> impl Responder {
     info!("register_post()");
     return HttpResponse::Ok()
         .json(ApiResponse {
