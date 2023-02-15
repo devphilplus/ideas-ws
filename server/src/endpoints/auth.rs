@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use configuration::ApplicationConfiguration;
 use log::{
     info,
@@ -10,12 +12,20 @@ use actix_web::{
     Responder,
     web
 };
+use serde::{Serialize, Deserialize};
 
 use crate::endpoints::{
     ApiResponse
 };
 
 use auth::auth::Auth;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct AuthRegistrationRequest {
+    pub id: uuid::Uuid,
+    pub email: String
+}
+
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -33,23 +43,30 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     ;
 }
 
-async fn register_get(
-    auth: web::Data<Auth>
-) -> impl Responder {
+async fn register_get() -> impl Responder {
     info!("register_get()");
-
-    if let Err(e) = auth.register("testing", "test@test.com") {
-        error!("error: {:?}", e);
-    }
-
     return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }
 
 
 async fn register_post(
-    
+    auth: web::Data<Auth>,
+    params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
     info!("register_post()");
+
+    if let Err(e) = auth.register(
+        &params.id, 
+        &params.email
+    ) {
+        return HttpResponse::InternalServerError()
+            .json(ApiResponse::new(
+                false,
+                format!("{}", e),
+                None
+            ));
+    }
+
     return HttpResponse::Ok()
         .json(ApiResponse {
             success: false,
