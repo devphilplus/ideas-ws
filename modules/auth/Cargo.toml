@@ -1,5 +1,5 @@
 [package]
-name = "server"
+name = "auth"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,19 +7,10 @@ edition = "2021"
 
 [dependencies]
 log = "*"
-env_logger = "*"
-
-serde = { version = "*", features = ["derive"] }
-serde_json = "*"
-
-http = "*"
-actix-web = { version = "4", features = ["rustls"] }
-actix-http = "*"
 
 deadpool = "0.9.3"
 deadpool-postgres = "0.10.1"
 tokio-postgres = { version = "0.7", features = ["with-uuid-0_8"] }
 postgres-types = { version = "*", features = ["derive"] }
 
-configuration = { path = "../configuration" }
-auth = { path = "../modules/auth" }
+configuration = { path = "../../configuration" }

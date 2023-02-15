@@ -18,6 +18,7 @@ use actix_web::{
 use configuration::ApplicationConfiguration;
 
 
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init();
@@ -32,6 +33,8 @@ async fn main() -> std::io::Result<()> {
         let server = HttpServer::new(move || {
             App::new()
                 .app_data(web::Data::new(cfg.clone()))
+                .app_data(web::Data::new(auth::auth::Auth::new(cfg.clone())))
+                
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
                 .service(web::scope("/common").configure(crate::endpoints::status::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))

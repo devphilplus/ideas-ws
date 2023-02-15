@@ -1,3 +1,4 @@
+use configuration::ApplicationConfiguration;
 use log::{
     info,
     debug,
@@ -13,6 +14,8 @@ use actix_web::{
 use crate::endpoints::{
     ApiResponse
 };
+
+use auth::auth::Auth;
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -30,8 +33,14 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     ;
 }
 
-async fn register_get() -> impl Responder {
+async fn register_get(
+    auth: web::Data<Auth>
+) -> impl Responder {
     info!("register_get()");
+
+    if let Err(e) = auth.register("testing", "test@test.com") {
+        error!("error: {:?}", e);
+    }
 
     return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }

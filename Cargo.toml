@@ -1,5 +1,7 @@
 [workspace]
 members = [
     "configuration",
+    "common",
+    "modules/auth",
     "server"
 ]
