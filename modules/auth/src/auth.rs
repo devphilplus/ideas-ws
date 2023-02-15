@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use log::{
     info,
     debug,
@@ -13,6 +15,12 @@ use crate::data::DataError;
 #[derive(Debug)]
 pub enum AuthError {
     ToBeImplemented(String)
+}
+
+impl Display for AuthError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
 }
 
 
@@ -32,7 +40,7 @@ impl Auth {
         };
     }
 
-    pub fn register(&self, token: &str, email: &str) -> Result<(), AuthError> {
+    pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
         match self.data.register(token, email) {
             Err(e) => {
                 match e {

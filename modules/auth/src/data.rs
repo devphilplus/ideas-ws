@@ -26,7 +26,7 @@ impl Data {
         };
     }
 
-    pub fn register(&self, token: &str, email: &str) -> Result<(), DataError> {
+    pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), DataError> {
         return Err(DataError::ToBeImplemented(String::from("register")));
     }
 }
