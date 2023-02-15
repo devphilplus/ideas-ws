@@ -14,6 +14,23 @@ use serde::{
     Deserialize
 };
 
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum ProviderType {
+    #[serde(rename = "postgres")]
+    Postgres
+}
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Provider {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub provider_type: ProviderType,
+    pub url: Vec<String>
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApplicationConfiguration {
 
@@ -21,7 +38,9 @@ pub struct ApplicationConfiguration {
     pub bind_host: String,
 
     #[serde(rename = "bindPort")]
-    pub bind_port: i32
+    pub bind_port: i32,
+
+    pub providers: Vec<Provider>
 }
 
 

@@ -1,4 +1,11 @@
 {
     "bindHost": "0.0.0.0",
-    "bindPort": 8081
+    "bindPort": 8081,
+    "providers": [
+        {
+            "type": "postgres",
+            "name": "default",
+            "url": ["postgres://app_user:replace_me@db:5432/app"]
+        }
+    ]
 }
