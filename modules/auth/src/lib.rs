@@ -10,8 +10,8 @@ mod tests {
 
     use configuration::ApplicationConfiguration;
 
-    #[test]
-    fn auth_register() {
+    #[actix_rt::test] 
+    async fn auth_register() {
         if let Some(cfg) = ApplicationConfiguration::get() {
             let mut rng = rand::thread_rng();
             let i: i32 = rng.gen::<i32>();
@@ -20,7 +20,7 @@ mod tests {
             let email = format!("test_{}@test.com", i);
 
             if let Ok(auth) = auth::Auth::new(cfg) {
-                if let Err(e) = auth.register(&token, &email) {
+                if let Err(e) = auth.register(&token, &email).await {
                     assert!(false, "error occured while registering");
                 } else {
                     assert!(true);

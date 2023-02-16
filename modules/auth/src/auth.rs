@@ -44,8 +44,8 @@ impl Auth {
         return Err(AuthError::ConfigurationError);
     }
 
-    pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
-        match self.data.register(token, email) {
+    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
+        match self.data.register(token, email).await {
             Err(e) => {
                 match e {
                     DataError::ToBeImplemented(method) => {
@@ -54,6 +54,9 @@ impl Auth {
                     }
                     DataError::ConfigurationError => {
                         return Err(AuthError::ConfigurationError);
+                    }
+                    DataError::DatabaseError => {
+                        return Err(AuthError::ConfigurationError)
                     }
                 }
             }

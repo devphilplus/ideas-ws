@@ -60,7 +60,7 @@ async fn register_post(
     if let Err(e) = auth.register(
         &params.id, 
         &params.email
-    ) {
+    ).await {
         return HttpResponse::InternalServerError()
             .json(ApiResponse::new(
                 false,
