@@ -1,6 +1,7 @@
+use std::sync::Arc;
 use std::str::FromStr;
 
-use configuration::ApplicationConfiguration;
+
 use log::{
     info,
     debug,
@@ -14,6 +15,7 @@ use actix_web::{
 };
 use serde::{Serialize, Deserialize};
 
+use configuration::ApplicationConfiguration;
 use crate::endpoints::{
     ApiResponse
 };

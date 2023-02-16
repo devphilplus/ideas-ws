@@ -3,6 +3,12 @@ extern crate log;
 mod classes;
 mod endpoints;
 
+use std::sync::Arc;
+use std::io::{
+    Error,
+    ErrorKind
+};
+
 use log::{
     info,
     error,
@@ -30,10 +36,17 @@ async fn main() -> std::io::Result<()> {
         let bind_host = cfg.bind_host.clone();
         let bind_port = cfg.bind_port.clone();
 
+        let result_auth = auth::auth::Auth::new(cfg.clone());
+        if let Err(e) = result_auth {
+            error!("unable to create auth object");
+            return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
+        }
+        let auth = result_auth.unwrap();
+
         let server = HttpServer::new(move || {
             App::new()
                 .app_data(web::Data::new(cfg.clone()))
-                .app_data(web::Data::new(auth::auth::Auth::new(cfg.clone())))
+                .app_data(web::Data::new(auth.clone()))
                 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
                 .service(web::scope("/common").configure(crate::endpoints::status::config))
@@ -43,7 +56,7 @@ async fn main() -> std::io::Result<()> {
         .bind(format!("{}:{}", bind_host, bind_port))?
         .run();
     
-        info!("Service is listening at http://{}:{}", bind_host, bind_port);
+        info!("listening on http://{}:{}", bind_host, bind_port);
         return server.await;
     } else {
         error!("no configuration loaded");

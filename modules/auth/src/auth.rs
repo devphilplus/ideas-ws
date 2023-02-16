@@ -9,12 +9,13 @@ use log::{
 
 use configuration::ApplicationConfiguration;
 
-use crate::data::DataError;
+use crate::data::{DataError, Data};
 
 
 #[derive(Debug)]
 pub enum AuthError {
-    ToBeImplemented(String)
+    ToBeImplemented(String),
+    ConfigurationError
 }
 
 impl Display for AuthError {
@@ -24,6 +25,7 @@ impl Display for AuthError {
 }
 
 
+#[derive(Debug, Clone)]
 pub struct Auth {
     cfg: ApplicationConfiguration,
     data: crate::data::Data
@@ -31,13 +33,15 @@ pub struct Auth {
 
 impl Auth {
 
-    pub fn new(cfg: ApplicationConfiguration) -> Self {
-        let data = crate::data::Data::new();
+    pub fn new(cfg: ApplicationConfiguration) -> Result<Self, AuthError> {
+        if let Ok(data) = crate::data::Data::new(&cfg) {
+            return Ok(Self {
+                cfg: cfg,
+                data: data
+            });
+        }
 
-        return Self {
-            cfg: cfg,
-            data: data
-        };
+        return Err(AuthError::ConfigurationError);
     }
 
     pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
@@ -47,6 +51,9 @@ impl Auth {
                     DataError::ToBeImplemented(method) => {
                         debug!("method not implemented: Data::{}", method);
                         return Err(AuthError::ToBeImplemented(String::from("register")))
+                    }
+                    DataError::ConfigurationError => {
+                        return Err(AuthError::ConfigurationError);
                     }
                 }
             }

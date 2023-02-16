@@ -5,7 +5,7 @@
         {
             "type": "postgres",
             "name": "default",
-            "url": ["postgres://app_user:replace_me@db:5432/app"]
+            "url": ["postgres://app_user:replace_me@localhost:5432/app"]
         }
     ]
 }

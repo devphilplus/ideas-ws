@@ -31,10 +31,12 @@ use configuration::{
 
 #[derive(Debug)]
 pub enum DataError {
-    ToBeImplemented(String)
+    ToBeImplemented(String),
+    ConfigurationError
 }
 
 
+#[derive(Debug, Clone)]
 pub struct Data {
     pool: Pool
 }
@@ -42,12 +44,12 @@ pub struct Data {
 impl Data {
 
     pub fn new(cfg: &ApplicationConfiguration) -> Result<Self, DataError> {
-        for p in cfg.providers {
+        for p in &cfg.providers {
             if matches!(p.provider_type, ProviderType::Postgres) {
-                for url in p.url {
+                for url in &p.url {
                     match Config::from_str(&url) {
                         Err(e) => {
-                            return Err(DataError::ToBeImplemented(String::from("unable to create database configuration from url")));
+                            return Err(DataError::ConfigurationError);
                         }
                         Ok(c) => {
                             let mgr = Manager::from_config(
@@ -55,13 +57,25 @@ impl Data {
                                 NoTls, 
                                 ManagerConfig { recycling_method: RecyclingMethod::Fast }
                             );
+                            match Pool::builder(mgr)
+                                .max_size(4)
+                                .build() {
+                                    Err(e) => {
+                                        return Err(DataError::ToBeImplemented(String::from("new")));
+                                    }
+                                    Ok(pool) => {
+                                        return Ok(Self {
+                                            pool: pool
+                                        });
+                                    }
+                                }
                         }
                     }
                 }
             }
         }
 
-        return Err(DataError::ToBeImplemented(String::from("new")));
+        return Err(DataError::ConfigurationError);
     }
 
     pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), DataError> {
