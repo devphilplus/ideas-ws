@@ -32,7 +32,8 @@ use configuration::{
 #[derive(Debug)]
 pub enum DataError {
     ToBeImplemented(String),
-    ConfigurationError
+    ConfigurationError,
+    DatabaseError
 }
 
 
@@ -78,7 +79,32 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
-    pub fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), DataError> {
-        return Err(DataError::ToBeImplemented(String::from("register")));
+    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), DataError> {
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached("call iam.user_register($1, $2)").await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.execute(
+            &stmt, 
+            &[
+                &token,
+                &email
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        
+        return Ok(());
     }
 }
