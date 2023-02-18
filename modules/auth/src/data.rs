@@ -87,7 +87,7 @@ impl Data {
         }
         let client = result.unwrap();
 
-        let result = client.prepare_cached("call iam.user_register($1, $2)").await;
+        let result = client.prepare_cached("call iam.register($1, $2)").await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
             return Err(DataError::DatabaseError);
@@ -98,7 +98,7 @@ impl Data {
             &stmt, 
             &[
                 &token,
-                &email
+                &pg::Email::new(&email)
             ]
         ).await {
             error!("unable to execute statement: {:?}", e);

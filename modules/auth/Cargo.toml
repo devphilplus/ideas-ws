@@ -20,3 +20,4 @@ tokio-postgres = { version = "0.7", features = ["with-uuid-0_8"] }
 postgres-types = { version = "*", features = ["derive"] }
 
 configuration = { path = "../../configuration" }
+pg = { path = "../pg" }

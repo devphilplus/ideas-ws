@@ -56,6 +56,7 @@ async fn register_post(
     params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
     info!("register_post()");
+    debug!("parameters: {:?}", params);
 
     if let Err(e) = auth.register(
         &params.id, 
