@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "configuration",
-    "common",
+    "mailer",
     "modules/pg",
     "modules/auth",
     "server"
