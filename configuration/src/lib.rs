@@ -1,6 +1,6 @@
 use log::{
-    info,
-    debug,
+    // info,
+    // debug,
     error
 };
 
@@ -88,6 +88,8 @@ impl ApplicationConfiguration {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use log::{ debug };
 
     #[test]
     fn test_configuration() {
