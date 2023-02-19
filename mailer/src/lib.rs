@@ -1,6 +1,5 @@
 use log::{
     info,
-    debug,
     error
 };
 
@@ -8,7 +7,7 @@ use lettre::{
     Message, 
     SmtpTransport, 
     Transport,
-    transport::{smtp::authentication::Credentials, self},
+    transport::{smtp::authentication::Credentials},
     message::{
         header,
         MultiPart,
@@ -24,6 +23,7 @@ pub enum MailerError {
 }
 
 
+#[derive(Clone)]
 pub struct Mailer {
     relay_host: String,
     credentials: Credentials,
@@ -39,7 +39,7 @@ impl Mailer {
     ) -> Self {
         let creds = Credentials::new(
             String::from(smtp_user),
-            String::from(smtp_user)
+            String::from(smtp_pw)
         );
         return Self {
             relay_host: String::from(smtp_host),
