@@ -30,6 +30,7 @@ pub struct Mailer {
     transport: Option<SmtpTransport>
 }
 
+
 impl Mailer {
 
     pub fn new(
@@ -127,7 +128,7 @@ mod tests {
             "beowulf1416@gmail.com",
             // if using smtp gmail, the password below should be generated
             // using App Passwords in Google Account Settings
-            "<google_app_password>"
+            "vfmvieprohfwwvvf"
         );
 
         if let Err(e) = mailer.connect() {
