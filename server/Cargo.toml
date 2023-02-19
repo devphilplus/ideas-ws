@@ -23,5 +23,7 @@ deadpool-postgres = "0.10.1"
 tokio-postgres = { version = "0.7", features = ["with-uuid-0_8"] }
 postgres-types = { version = "*", features = ["derive"] }
 
+
 configuration = { path = "../configuration" }
 auth = { path = "../modules/auth" }
+mailer = { path = "../mailer" }

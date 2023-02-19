@@ -33,6 +33,7 @@ async fn main() -> std::io::Result<()> {
     if let Some(cfg) = ApplicationConfiguration::get() {
         debug!("configuration: {:?}", cfg);
 
+        // auth module
         let bind_host = cfg.bind_host.clone();
         let bind_port = cfg.bind_port.clone();
 
@@ -43,9 +44,17 @@ async fn main() -> std::io::Result<()> {
         }
         let auth = result_auth.unwrap();
 
+        // mailer
+        let mailer = mailer::Mailer::new(
+            &cfg.mail.host,
+            &cfg.mail.user,
+            &cfg.mail.password
+        );
+
         let server = HttpServer::new(move || {
             App::new()
                 .app_data(web::Data::new(cfg.clone()))
+                .app_data(web::Data::new(mailer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
