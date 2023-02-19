@@ -31,6 +31,14 @@ pub struct Provider {
     pub url: Vec<String>
 }
 
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Mail {
+    pub host: String,
+    pub user: String,
+    pub password: String
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApplicationConfiguration {
 
@@ -40,7 +48,11 @@ pub struct ApplicationConfiguration {
     #[serde(rename = "bindPort")]
     pub bind_port: i32,
 
-    pub providers: Vec<Provider>
+    #[serde(rename = "baseURL")]
+    pub base_url: String,
+
+    pub providers: Vec<Provider>,
+    pub mail: Mail
 }
 
 
