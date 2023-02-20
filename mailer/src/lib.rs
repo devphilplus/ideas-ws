@@ -23,11 +23,10 @@ pub enum MailerError {
 }
 
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Mailer {
     relay_host: String,
-    credentials: Credentials,
-    transport: Option<SmtpTransport>
+    credentials: Credentials
 }
 
 
@@ -44,26 +43,25 @@ impl Mailer {
         );
         return Self {
             relay_host: String::from(smtp_host),
-            credentials: creds,
-            transport: None
+            credentials: creds
         }
     }
 
-    pub fn connect(&mut self) -> Result<(), MailerError> {
-        match SmtpTransport::relay(&self.relay_host) {
-            Err(e) => {
-                error!("unable to create relay: {:?}", e);
-                return Err(MailerError::ConfigurationError(String::from("unable to create relay")));
-            }
-            Ok(result) => {
-                let transport = result.credentials(self.credentials.clone())
-                    .build();
-                self.transport = Some(transport);
+    // pub fn connect(&mut self) -> Result<(), MailerError> {
+    //     match SmtpTransport::relay(&self.relay_host) {
+    //         Err(e) => {
+    //             error!("unable to create relay: {:?}", e);
+    //             return Err(MailerError::ConfigurationError(String::from("unable to create relay")));
+    //         }
+    //         Ok(result) => {
+    //             let transport = result.credentials(self.credentials.clone())
+    //                 .build();
+    //             self.transport = Some(transport);
 
-                return Ok(());
-            }
-        }           
-    }
+    //             return Ok(());
+    //         }
+    //     }           
+    // }
 
     pub fn send(
         &self,
@@ -72,46 +70,51 @@ impl Mailer {
         subject: &str,
         body: &str
     ) -> Result<(), MailerError> {
-        match Message::builder()
-            .from(from.parse().unwrap())
-            .to(to.parse().unwrap())
-            .reply_to(to.parse().unwrap())
-            .subject(subject)
-            .multipart(
-                MultiPart::alternative()
-                    .singlepart(
-                        SinglePart::builder()
-                            .header(header::ContentType::TEXT_PLAIN)
-                            .body(String::from(body))
-                    )
-                    .singlepart(
-                        SinglePart::builder()
-                            .header(header::ContentType::TEXT_HTML)
-                            .body(String::from(body))
-                    )
-            ) {
-                Err(e) => {
-                    error!("unable to send email: {:?}", e);
-                    return Err(MailerError::SendError(e.to_string()));
-                }
-                Ok(email) => {
-                    if let Some(transport) = &self.transport {
-                        match transport.send(&email) {
-                            Err(e) => {
-                                error!("unable to send email: {:?}", e);
-                                return Err(MailerError::SendError(e.to_string()));
-                            }
-                            Ok(_) => {
-                                info!("email sent");
-                                return Ok(());
+        match SmtpTransport::relay(&self.relay_host) {
+            Err(e) => {
+                error!("unable to create relay: {:?}", e);
+                return Err(MailerError::ConfigurationError(String::from("unable to create relay")));
+            }
+            Ok(tb) => {
+                let transport = tb.credentials(self.credentials.clone()).build();
+
+                match Message::builder()
+                    .from(from.parse().unwrap())
+                    .to(to.parse().unwrap())
+                    .reply_to(to.parse().unwrap())
+                    .subject(subject)
+                    .multipart(
+                        MultiPart::alternative()
+                            .singlepart(
+                                SinglePart::builder()
+                                    .header(header::ContentType::TEXT_PLAIN)
+                                    .body(String::from(body))
+                            )
+                            .singlepart(
+                                SinglePart::builder()
+                                    .header(header::ContentType::TEXT_HTML)
+                                    .body(String::from(body))
+                            )
+                    ) {
+                        Err(e) => {
+                            error!("unable to send email: {:?}", e);
+                            return Err(MailerError::SendError(e.to_string()));
+                        }
+                        Ok(email) => {
+                            match transport.send(&email) {
+                                Err(e) => {
+                                    error!("unable to send email: {:?}", e);
+                                    return Err(MailerError::SendError(e.to_string()));
+                                }
+                                Ok(_) => {
+                                    info!("email sent");
+                                    return Ok(());
+                                }
                             }
                         }
-                    } else {
-                        error!("call connect first before sending");
-                        return Err(MailerError::SendError(String::from("connect first before sending")));
                     }
-                }
             }
+        };
     }
 }
 
@@ -131,10 +134,10 @@ mod tests {
             "vfmvieprohfwwvvf"
         );
 
-        if let Err(e) = mailer.connect() {
-            error!("error: {:?}", e);
-            assert!(false);
-        } else {
+        // if let Err(e) = mailer.connect() {
+        //     error!("error: {:?}", e);
+        //     assert!(false);
+        // } else {
             if let Err(e) = mailer.send(
                 "beowulf1416@gmail.com",
                 "ferdinand@marginfuel.com",
@@ -142,10 +145,10 @@ mod tests {
                 "this is a test"
             ) {
                 error!("error: {:?}", e);
-                assert!(false);
+                assert!(false, "unable to send");
             } else {
                 assert!(true);
             }
-        }
+        // }
     }
 }
