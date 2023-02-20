@@ -12,6 +12,8 @@ mod tests {
 
     #[actix_rt::test] 
     async fn auth_register() {
+        env_logger::init();
+        
         if let Some(cfg) = ApplicationConfiguration::get() {
             // mailer
             let mailer = mailer::Mailer::new(
@@ -24,7 +26,7 @@ mod tests {
             let i: i32 = rng.gen::<i32>();
 
             let token = Uuid::new_v4();
-            let email = format!("test_{}@test.com", i);
+            let email = format!("test_{}@mailinator.com", i);
 
             if let Ok(auth) = auth::Auth::new(cfg, mailer) {
                 if let Err(e) = auth.register(&token, &email).await {

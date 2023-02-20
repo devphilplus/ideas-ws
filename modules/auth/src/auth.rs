@@ -16,7 +16,8 @@ use crate::data::{DataError, Data};
 #[derive(Debug)]
 pub enum AuthError {
     ToBeImplemented(String),
-    ConfigurationError
+    ConfigurationError,
+    MailerError
 }
 
 impl Display for AuthError {
@@ -50,8 +51,10 @@ impl Auth {
         return Err(AuthError::ConfigurationError);
     }
 
-    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<String, AuthError> {
-        match self.data.register(token, email).await {
+    /// register user and then sends an email containing the link to complete
+    /// the registration process
+    pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
+        match self.data.register(id, email).await {
             Err(e) => {
                 match e {
                     DataError::ToBeImplemented(method) => {
@@ -67,7 +70,19 @@ impl Auth {
                 }
             }
             Ok(token) => {
-                return Ok(token);
+                let body = format!("<p>Please click on the link to \
+                    complete the registration: {}/register/{}</p>",
+                    self.cfg.base_url,
+                    token
+                );
+                if let Err(e) = self.mailer.send(
+                    &self.cfg.mailer.defaults.from,
+                    &email,
+                    "Registration", &body) {
+                        error!("failed to send email: {:?}", e);
+                        return Err(AuthError::MailerError)
+                }
+                return Ok(());
             }
         }
     }
