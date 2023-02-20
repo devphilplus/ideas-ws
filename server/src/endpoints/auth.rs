@@ -55,7 +55,6 @@ async fn register_get() -> impl Responder {
 async fn register_post(
     cfg: web::Data<ApplicationConfiguration>,
     auth: web::Data<Auth>,
-    mailer: web::Data<Mailer>,
     params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
     info!("register_post()");
