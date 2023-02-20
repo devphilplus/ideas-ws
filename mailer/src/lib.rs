@@ -121,23 +121,25 @@ impl Mailer {
 
 #[cfg(test)]
 mod tests {
+    use configuration::ApplicationConfiguration;
+
     use super::*;
+
+    
 
     #[test]
     fn send() {
+        env_logger::init();
 
-        let mut mailer = Mailer::new(
-            "smtp.gmail.com",
-            "beowulf1416@gmail.com",
-            // if using smtp gmail, the password below should be generated
-            // using App Passwords in Google Account Settings
-            "vfmvieprohfwwvvf"
-        );
+        if let Some(cfg) = ApplicationConfiguration::get() {
+            let mailer = Mailer::new(
+                &cfg.mailer.host,
+                &cfg.mailer.user,
+                // if using smtp gmail, the password below should be generated
+                // using App Passwords in Google Account Settings
+                &cfg.mailer.password
+            );
 
-        // if let Err(e) = mailer.connect() {
-        //     error!("error: {:?}", e);
-        //     assert!(false);
-        // } else {
             if let Err(e) = mailer.send(
                 "beowulf1416@gmail.com",
                 "ferdinand@marginfuel.com",
@@ -149,6 +151,8 @@ mod tests {
             } else {
                 assert!(true);
             }
-        // }
+        } else {
+            assert!(false, "unable to load configuration");
+        }
     }
 }
