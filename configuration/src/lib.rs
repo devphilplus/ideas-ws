@@ -33,11 +33,21 @@ pub struct Provider {
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct MailDefaults {
+    pub from: String
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Mail {
     pub host: String,
     pub user: String,
-    pub password: String
+    pub password: String,
+
+    //#[serde(rename = "defaults")]
+    pub defaults: MailDefaults
 }
+
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApplicationConfiguration {
@@ -52,7 +62,7 @@ pub struct ApplicationConfiguration {
     pub base_url: String,
 
     pub providers: Vec<Provider>,
-    pub mail: Mail
+    pub mailer: Mail,
 }
 
 
@@ -98,7 +108,7 @@ mod tests {
         match ApplicationConfiguration::get() {
             None => {
                 error!("configuration file not found");
-                assert!(false);
+                assert!(false, "configuration file not found");
             }
             Some(config) => {
                 debug!("configuration loaded: {:?}", config);

@@ -1,7 +1,7 @@
 {
     "bindHost": "0.0.0.0",
     "bindPort": 8081,
-    "baseUrl": "http://localhost:4200",
+    "baseURL": "http://localhost:4200",
     "providers": [
         {
             "type": "postgres",
@@ -12,6 +12,9 @@
     "mailer": {
         "host": "smtp.gmail.com",
         "user": "replace_me@mail.com",
-        "password": "<replace_me>"
+        "password": "<app_password>",
+        "defaults": {
+            "from": "<default_from_email@mail.com>"
+        }
     }
 }
