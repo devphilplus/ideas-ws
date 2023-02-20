@@ -8,6 +8,7 @@ use log::{
 
 
 use configuration::ApplicationConfiguration;
+use mailer::Mailer;
 
 use crate::data::{DataError, Data};
 
@@ -28,23 +29,28 @@ impl Display for AuthError {
 #[derive(Debug, Clone)]
 pub struct Auth {
     cfg: ApplicationConfiguration,
-    data: crate::data::Data
+    data: crate::data::Data,
+    mailer: Mailer
 }
 
 impl Auth {
 
-    pub fn new(cfg: ApplicationConfiguration) -> Result<Self, AuthError> {
+    pub fn new(
+        cfg: ApplicationConfiguration,
+        mailer: Mailer
+    ) -> Result<Self, AuthError> {
         if let Ok(data) = crate::data::Data::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
-                data: data
+                data: data,
+                mailer: mailer
             });
         }
 
         return Err(AuthError::ConfigurationError);
     }
 
-    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
+    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<String, AuthError> {
         match self.data.register(token, email).await {
             Err(e) => {
                 match e {
@@ -60,8 +66,8 @@ impl Auth {
                     }
                 }
             }
-            Ok(_) => {
-                return Ok(());
+            Ok(token) => {
+                return Ok(token);
             }
         }
     }

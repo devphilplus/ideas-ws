@@ -22,6 +22,13 @@ use tokio_postgres::{
 };
 use tokio_postgres::config::{ Config };
 
+use rand::{
+    thread_rng,
+    Rng,
+    distributions::{
+        Alphanumeric
+    }
+};
 
 use configuration::{
     ApplicationConfiguration,
@@ -79,7 +86,8 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
-    pub async fn register(&self, token: &uuid::Uuid, email: &str) -> Result<(), DataError> {
+    /// add record to registrations table in db and return token string
+    pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<String, DataError> {
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -87,24 +95,34 @@ impl Data {
         }
         let client = result.unwrap();
 
-        let result = client.prepare_cached("call iam.register($1, $2)").await;
+        let result = client.prepare_cached("call iam.register($1, $2, $2)").await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
             return Err(DataError::DatabaseError);
         }
         let stmt = result.unwrap();
 
+        // generate url friendly token
+        let token: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
+
         if let Err(e) = client.execute(
             &stmt, 
             &[
-                &token,
-                &pg::Email::new(&email)
+                &id,
+                &pg::Email::new(&email),
+                &token
             ]
         ).await {
             error!("unable to execute statement: {:?}", e);
             return Err(DataError::DatabaseError);
+        } else {
+            return Ok(token);
         }
         
-        return Ok(());
+        // return Ok(());
     }
 }

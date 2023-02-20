@@ -6,12 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dev-dependencies]
-rand = "*"
 actix-rt = "*"
 
 [dependencies]
 log = "*"
 
+rand = "*"
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
 
 deadpool = "0.9.3"

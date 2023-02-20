@@ -13,13 +13,20 @@ mod tests {
     #[actix_rt::test] 
     async fn auth_register() {
         if let Some(cfg) = ApplicationConfiguration::get() {
+            // mailer
+            let mailer = mailer::Mailer::new(
+                &cfg.mailer.host,
+                &cfg.mailer.user,
+                &cfg.mailer.password
+            );
+
             let mut rng = rand::thread_rng();
             let i: i32 = rng.gen::<i32>();
 
             let token = Uuid::new_v4();
             let email = format!("test_{}@test.com", i);
 
-            if let Ok(auth) = auth::Auth::new(cfg) {
+            if let Ok(auth) = auth::Auth::new(cfg, mailer) {
                 if let Err(e) = auth.register(&token, &email).await {
                     assert!(false, "error occured while registering");
                 } else {
