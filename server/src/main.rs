@@ -33,23 +33,27 @@ async fn main() -> std::io::Result<()> {
     if let Some(cfg) = ApplicationConfiguration::get() {
         debug!("configuration: {:?}", cfg);
 
+        // mailer
+        let mailer = mailer::Mailer::new(
+            &cfg.mailer.host,
+            &cfg.mailer.user,
+            &cfg.mailer.password
+        );
+
         // auth module
         let bind_host = cfg.bind_host.clone();
         let bind_port = cfg.bind_port.clone();
 
-        let result_auth = auth::auth::Auth::new(cfg.clone());
+        let result_auth = auth::auth::Auth::new(
+            cfg.clone(), 
+            mailer.clone()
+        );
+
         if let Err(e) = result_auth {
             error!("unable to create auth object");
             return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
         }
         let auth = result_auth.unwrap();
-
-        // mailer
-        let mailer = mailer::Mailer::new(
-            &cfg.mail.host,
-            &cfg.mail.user,
-            &cfg.mail.password
-        );
 
         let server = HttpServer::new(move || {
             App::new()

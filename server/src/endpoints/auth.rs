@@ -13,6 +13,7 @@ use actix_web::{
     Responder,
     web
 };
+use mailer::Mailer;
 use serde::{Serialize, Deserialize};
 
 use configuration::ApplicationConfiguration;
@@ -52,7 +53,9 @@ async fn register_get() -> impl Responder {
 
 
 async fn register_post(
+    cfg: web::Data<ApplicationConfiguration>,
     auth: web::Data<Auth>,
+    mailer: web::Data<Mailer>,
     params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
     info!("register_post()");
@@ -68,6 +71,23 @@ async fn register_post(
                 format!("{}", e),
                 None
             ));
+    }
+
+    match auth.register(
+        &params.id, 
+        &params.email
+    ).await {
+        Err(e) => {
+            return HttpResponse::InternalServerError()
+            .json(ApiResponse::new(
+                false,
+                format!("{}", e),
+                None
+            ));
+        }
+        Ok(token) => {
+            
+        }
     }
 
     return HttpResponse::Ok()
