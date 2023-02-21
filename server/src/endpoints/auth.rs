@@ -30,6 +30,12 @@ struct AuthRegistrationRequest {
 }
 
 
+#[derive(Debug, Serialize, Deserialize)]
+struct AuthRegistrationInfoRequest {
+    pub token: String
+}
+
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -37,6 +43,10 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             web::resource("register")
                 .route(web::get().to(register_get))
                 .route(web::post().to(register_post))
+        ).service(
+            web::resource("register/info")
+                .route(web::get().to(register_info_get))
+                .route(web::post().to(register_info_post))
         )
         .service(
             web::resource("register/complete")
@@ -80,6 +90,27 @@ async fn register_post(
             ));
     }
 }
+
+async fn register_info_get() -> impl Responder {
+    info!("register_info_get()");
+
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+
+async fn register_info_post(
+    auth: web::Data<Auth>,
+    params: web::Json<AuthRegistrationInfoRequest>
+) -> impl Responder {
+    info!("register_info_post()");
+    return HttpResponse::Ok()
+        .json(ApiResponse {
+            success: false,
+            message: String::from("Service is up. version: 1.0.0.0.dev"),
+            data: None
+        });
+}
+
 
 async fn register_complete_get() -> impl Responder {
     info!("register_complete_get()");
