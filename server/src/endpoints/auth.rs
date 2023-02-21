@@ -21,7 +21,7 @@ use crate::endpoints::{
     ApiResponse
 };
 
-use auth::auth::Auth;
+use auth::auth::{Auth, AuthError};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct AuthRegistrationRequest {
@@ -53,7 +53,7 @@ async fn register_get() -> impl Responder {
 
 
 async fn register_post(
-    cfg: web::Data<ApplicationConfiguration>,
+    // cfg: web::Data<ApplicationConfiguration>,
     auth: web::Data<Auth>,
     params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
@@ -64,37 +64,21 @@ async fn register_post(
         &params.id, 
         &params.email
     ).await {
+        error!("unable to register: {:?}", e);
         return HttpResponse::InternalServerError()
             .json(ApiResponse::new(
                 false,
                 format!("{}", e),
                 None
             ));
-    }
-
-    match auth.register(
-        &params.id, 
-        &params.email
-    ).await {
-        Err(e) => {
-            return HttpResponse::InternalServerError()
+    } else {
+        return HttpResponse::Ok()
             .json(ApiResponse::new(
-                false,
-                format!("{}", e),
+                true,
+                String::from("success"),
                 None
             ));
-        }
-        Ok(token) => {
-            
-        }
     }
-
-    return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
 }
 
 async fn register_complete_get() -> impl Responder {
@@ -104,7 +88,9 @@ async fn register_complete_get() -> impl Responder {
 }
 
 
-async fn register_complete_post() -> impl Responder {
+async fn register_complete_post(
+    auth: web::Data<Auth>,
+) -> impl Responder {
     info!("register_complete_post()");
     return HttpResponse::Ok()
         .json(ApiResponse {

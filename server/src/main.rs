@@ -50,7 +50,7 @@ async fn main() -> std::io::Result<()> {
         );
 
         if let Err(e) = result_auth {
-            error!("unable to create auth object");
+            error!("unable to create auth object: {:?}", e);
             return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
         }
         let auth = result_auth.unwrap();

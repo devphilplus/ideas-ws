@@ -71,9 +71,9 @@ impl Auth {
             }
             Ok(token) => {
                 let body = format!("<p>Please click on the link to \
-                    complete the registration: {}/register/{}</p>",
-                    self.cfg.base_url,
-                    token
+                    complete the registration: <a href=\"{base_url}/sign-up/continue/{token}\">{base_url}/sign-up/continue/{token}</a></p>",
+                    base_url = self.cfg.base_url,
+                    token = token
                 );
                 if let Err(e) = self.mailer.send(
                     &self.cfg.mailer.defaults.from,

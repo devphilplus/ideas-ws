@@ -95,7 +95,7 @@ impl Data {
         }
         let client = result.unwrap();
 
-        let result = client.prepare_cached("call iam.register($1, $2, $2)").await;
+        let result = client.prepare_cached("call iam.register($1, $2, $3)").await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
             return Err(DataError::DatabaseError);
