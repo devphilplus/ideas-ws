@@ -56,6 +56,7 @@ impl Auth {
     pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
         match self.data.register(id, email).await {
             Err(e) => {
+                error!("unable to register: {:?}", e);
                 match e {
                     DataError::ToBeImplemented(method) => {
                         debug!("method not implemented: Data::{}", method);
@@ -83,6 +84,19 @@ impl Auth {
                         return Err(AuthError::MailerError)
                 }
                 return Ok(());
+            }
+        }
+    }
+
+    /// retrieve registration details
+    pub async fn get_registration_info(&self, token: &str) -> Result<String, AuthError> {
+        match self.data.get_registration_info(token).await {
+            Err(e) => {
+                return Err(AuthError::ToBeImplemented(String::from("get_registration_info")));
+            }
+            Ok(result) => {
+                debug!("result: {:?}", result);
+                return Ok(String::from("todo"));
             }
         }
     }

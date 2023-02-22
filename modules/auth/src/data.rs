@@ -30,6 +30,8 @@ use rand::{
     }
 };
 
+use chrono::prelude::*;
+
 use configuration::{
     ApplicationConfiguration,
     ProviderType
@@ -41,6 +43,14 @@ pub enum DataError {
     ToBeImplemented(String),
     ConfigurationError,
     DatabaseError
+}
+
+
+#[derive(Debug)]
+pub struct RegistrationInfo {
+    pub id: uuid::Uuid,
+    pub email: String,
+    pub created: DateTime<Utc>
 }
 
 
@@ -122,7 +132,47 @@ impl Data {
         } else {
             return Ok(token);
         }
-        
-        // return Ok(());
+    }
+
+    /// retrieve registration details
+    pub async fn get_registration_info(&self, token: &str) -> Result<RegistrationInfo, DataError> {
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::ConfigurationError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached("select * from iam.register_get_info($1)").await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &token
+            ]).await {
+                Err(e) => {
+                    error!("unable to execute statement: {:?}", e);
+                    return Err(DataError::DatabaseError);
+                }
+                Ok(row) => {
+                    debug!("row: {:?}", row);
+
+                    let id: uuid::Uuid = row.get(0);
+                    let email: String = row.get(1);
+                    let created: DateTime<Utc> = row.get(2);
+
+                    return Ok(RegistrationInfo {
+                        id: id,
+                        email: email,
+                        created: created
+                    });
+                }
+            }
+
     }
 }

@@ -14,10 +14,11 @@ log = "*"
 
 rand = "*"
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
+chrono = { version = "*", features = ["serde"]}
 
 deadpool = "0.9.3"
 deadpool-postgres = "0.10.1"
-tokio-postgres = { version = "0.7", features = ["with-uuid-0_8"] }
+tokio-postgres = { version = "0.7", features = ["with-uuid-0_8", "with-chrono-0_4"] }
 postgres-types = { version = "*", features = ["derive"] }
 
 configuration = { path = "../../configuration" }
