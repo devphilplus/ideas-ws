@@ -103,12 +103,27 @@ async fn register_info_post(
     params: web::Json<AuthRegistrationInfoRequest>
 ) -> impl Responder {
     info!("register_info_post()");
-    return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
+
+    match auth.get_registration_info(&params.token).await {
+        Err(e) => {
+            error!("unable to get registration info: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    String::from("unable to retrieve registration info"),
+                    None
+                ));
+        }
+        Ok(info) => {
+            debug!("info: {:?}", info);
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    String::from("registration info successfully retrieved"),
+                    None
+                ));
+        }
+    }
 }
 
 
