@@ -1,6 +1,7 @@
 extern crate log;
 
 mod classes;
+mod middleware;
 mod endpoints;
 
 use std::sync::Arc;
