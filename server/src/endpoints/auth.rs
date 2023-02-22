@@ -13,8 +13,11 @@ use actix_web::{
     Responder,
     web
 };
-use mailer::Mailer;
-use serde::{Serialize, Deserialize};
+use serde::{
+    Serialize,
+    Deserialize
+};
+use serde_json::json;
 
 use configuration::ApplicationConfiguration;
 use crate::endpoints::{
@@ -120,7 +123,9 @@ async fn register_info_post(
                 .json(ApiResponse::new(
                     true,
                     String::from("registration info successfully retrieved"),
-                    None
+                    Some(json!({
+                        "info": info
+                    }))
                 ));
         }
     }

@@ -6,11 +6,29 @@ use log::{
     error
 };
 
+use chrono::prelude::*;
+use serde::{
+    Serialize,
+    Deserialize
+};
+
 
 use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 
-use crate::data::{DataError, Data};
+use crate::data::{
+    DataError,
+    Data
+};
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RegistrationInfo {
+    pub id: uuid::Uuid,
+    pub email: String,
+    pub created: DateTime<Utc>
+}
+
 
 
 #[derive(Debug)]
@@ -40,7 +58,7 @@ impl Auth {
         cfg: ApplicationConfiguration,
         mailer: Mailer
     ) -> Result<Self, AuthError> {
-        if let Ok(data) = crate::data::Data::new(&cfg) {
+        if let Ok(data) = Data::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
                 data: data,
@@ -89,14 +107,18 @@ impl Auth {
     }
 
     /// retrieve registration details
-    pub async fn get_registration_info(&self, token: &str) -> Result<String, AuthError> {
+    pub async fn get_registration_info(&self, token: &str) -> Result<RegistrationInfo, AuthError> {
         match self.data.get_registration_info(token).await {
             Err(e) => {
                 return Err(AuthError::ToBeImplemented(String::from("get_registration_info")));
             }
             Ok(result) => {
                 debug!("result: {:?}", result);
-                return Ok(String::from("todo"));
+                return Ok(RegistrationInfo { 
+                    id: result.id,
+                    email: result.email,
+                    created: result.created
+                });
             }
         }
     }

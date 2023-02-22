@@ -164,12 +164,12 @@ impl Data {
 
                     let id: uuid::Uuid = row.get(0);
                     let email: String = row.get(1);
-                    let created: DateTime<Utc> = row.get(2);
+                    let created: NaiveDateTime = row.get(2);
 
                     return Ok(RegistrationInfo {
                         id: id,
                         email: email,
-                        created: created
+                        created: created.and_local_timezone(Utc).unwrap()
                     });
                 }
             }

@@ -15,6 +15,7 @@ log = "*"
 rand = "*"
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
 chrono = { version = "*", features = ["serde"]}
+serde = { version = "*", features = ["derive"] }
 
 deadpool = "0.9.3"
 deadpool-postgres = "0.10.1"
