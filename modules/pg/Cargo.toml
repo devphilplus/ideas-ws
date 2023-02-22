@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 log = "*"
 
-tokio-postgres = { version = "0.7", features = ["with-uuid-0_8"] }
+chrono = "*"
+tokio-postgres = { version = "0.7", features = ["with-uuid-0_8", "with-chrono-0_4"] }
 postgres-types = { version = "*", features = ["derive"] }
