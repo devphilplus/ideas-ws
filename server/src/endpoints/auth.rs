@@ -21,7 +21,8 @@ use serde_json::json;
 
 use configuration::ApplicationConfiguration;
 use crate::endpoints::{
-    ApiResponse
+    ApiResponse,
+    default_options
 };
 
 use auth::auth::{Auth, AuthError};
@@ -49,15 +50,18 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
         .service(
             web::resource("register")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_get))
                 .route(web::post().to(register_post))
         ).service(
             web::resource("register/info")
+            .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_info_get))
                 .route(web::post().to(register_info_post))
         )
         .service(
             web::resource("register/complete")
+            .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_complete_get))
                 .route(web::post().to(register_complete_post))
         )
@@ -152,7 +156,7 @@ async fn register_complete_post(
 
     match auth.complete_registration(&params.token, &params.password).await {
         Err(e) => {
-            error!("an error occured while trying to complete the registration");
+            error!("an error occured while trying to complete the registration: {:?}", e);
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,

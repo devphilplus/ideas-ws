@@ -50,7 +50,7 @@ impl ApiResponse {
 
 
 pub async fn default_options() -> impl Responder {
-    info!("endpoints::common::default_options()");
+    info!("endpoints::default_options()");
     return HttpResponse::Ok()
         .finish();
 }

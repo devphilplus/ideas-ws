@@ -4,7 +4,7 @@ mod classes;
 mod middleware;
 mod endpoints;
 
-use std::sync::Arc;
+// use std::sync::Arc;
 use std::io::{
     Error,
     ErrorKind
@@ -62,6 +62,8 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(mailer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 
+                .wrap(crate::middleware::cors::CORS::new())
+
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
                 .service(web::scope("/common").configure(crate::endpoints::status::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
