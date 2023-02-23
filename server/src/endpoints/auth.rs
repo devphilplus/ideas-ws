@@ -49,18 +49,18 @@ struct AuthRegistrationCompleteRequest {
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
         .service(
-            web::resource("register")
+            web::resource("/register")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_get))
                 .route(web::post().to(register_post))
         ).service(
-            web::resource("register/info")
+            web::resource("/register/info")
             .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_info_get))
                 .route(web::post().to(register_info_post))
         )
         .service(
-            web::resource("register/complete")
+            web::resource("/register/complete")
             .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_complete_get))
                 .route(web::post().to(register_complete_post))
