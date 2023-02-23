@@ -14,7 +14,8 @@ use deadpool_postgres::{
     Manager, 
     ManagerConfig, 
     Pool, 
-    RecyclingMethod 
+    RecyclingMethod,
+    Client 
 };
 use tokio_postgres::{
     NoTls,
@@ -48,7 +49,7 @@ pub enum DataError {
 
 #[derive(Debug)]
 pub struct RegistrationInfo {
-    pub id: uuid::Uuid,
+    pub token: String,
     pub email: String,
     pub created: DateTime<Utc>
 }
@@ -96,8 +97,27 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
+    // async fn get_client(&self) -> Result<Client, DataError> {
+    //     match self.pool.get().await {
+    //         Err(e) => {
+    //             error!("unable to retrieve database client: {:?}", e);
+    //             return Err(DataError::DatabaseError);
+    //         }
+    //         Ok(client) => {
+    //             return Ok(client);
+    //         }
+    //     }
+    // }
+
     /// add record to registrations table in db and return token string
     pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<String, DataError> {
+        // generate url friendly token
+        let token: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
+
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -105,19 +125,14 @@ impl Data {
         }
         let client = result.unwrap();
 
-        let result = client.prepare_cached("call iam.register($1, $2, $3)").await;
+        let result = client.prepare_cached(
+            "call iam.register($1, $2, $3)"
+        ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
             return Err(DataError::DatabaseError);
         }
         let stmt = result.unwrap();
-
-        // generate url friendly token
-        let token: String = thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(30)
-            .map(char::from)
-            .collect();
 
         if let Err(e) = client.execute(
             &stmt, 
@@ -143,7 +158,9 @@ impl Data {
         }
         let client = result.unwrap();
 
-        let result = client.prepare_cached("select * from iam.register_get_info($1)").await;
+        let result = client.prepare_cached(
+            "select * from iam.register_get_info($1)"
+        ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
             return Err(DataError::DatabaseError);
@@ -162,17 +179,54 @@ impl Data {
                 Ok(row) => {
                     debug!("row: {:?}", row);
 
-                    let id: uuid::Uuid = row.get(0);
+                    let token: String = row.get(0);
                     let email: String = row.get(1);
-                    let created: NaiveDateTime = row.get(2);
+                    let created: DateTime<Utc> = row.get(2);
 
                     return Ok(RegistrationInfo {
-                        id: id,
+                        token: token,
                         email: email,
-                        created: created.and_local_timezone(Utc).unwrap()
+                        created: created
                     });
                 }
             }
+    }
 
+    pub async fn complete_registration(
+        &self, 
+        token: &str,
+        pw: &str
+    ) -> Result<(), DataError> {
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.register_complete($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.execute(
+            &stmt,
+            &[
+                &token,
+                &pw
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
     }
 }

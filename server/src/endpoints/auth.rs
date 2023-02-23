@@ -38,6 +38,11 @@ struct AuthRegistrationInfoRequest {
     pub token: String
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct AuthRegistrationCompleteRequest {
+    pub token: String,
+    pub password: String
+}
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -141,12 +146,27 @@ async fn register_complete_get() -> impl Responder {
 
 async fn register_complete_post(
     auth: web::Data<Auth>,
+    params: web::Json<AuthRegistrationCompleteRequest>
 ) -> impl Responder {
     info!("register_complete_post()");
-    return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
+
+    match auth.complete_registration(&params.token, &params.password).await {
+        Err(e) => {
+            error!("an error occured while trying to complete the registration");
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    String::from("an error occured while trying to complete the registratoin"),
+                    None
+                ));
+        }
+        Ok(_) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    String::from("successfully completed registration"),
+                    None
+                ));
+        }
+    }
 }

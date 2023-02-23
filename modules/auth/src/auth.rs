@@ -24,7 +24,7 @@ use crate::data::{
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RegistrationInfo {
-    pub id: uuid::Uuid,
+    pub token: String,
     pub email: String,
     pub created: DateTime<Utc>
 }
@@ -115,10 +115,22 @@ impl Auth {
             Ok(result) => {
                 debug!("result: {:?}", result);
                 return Ok(RegistrationInfo { 
-                    id: result.id,
+                    token: result.token,
                     email: result.email,
                     created: result.created
                 });
+            }
+        }
+    }
+
+    pub async fn complete_registration(&self, token: &str, pw: &str) -> Result<(), AuthError> {
+        match self.data.complete_registration(&token, &pw).await {
+            Err(e) => {
+                error!("unable to complete registration");
+                return Err(AuthError::ToBeImplemented(String::from("complete_registration")));
+            }
+            Ok(_) => {
+                return Ok(());
             }
         }
     }
