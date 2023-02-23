@@ -25,7 +25,7 @@ use http::header::{
     ACCESS_CONTROL_ALLOW_ORIGIN,
     ACCESS_CONTROL_ALLOW_METHODS,
     ACCESS_CONTROL_ALLOW_HEADERS, 
-    // ACCESS_CONTROL_ALLOW_CREDENTIALS,
+    ACCESS_CONTROL_ALLOW_CREDENTIALS,
     ACCESS_CONTROL_EXPOSE_HEADERS
 };
 
@@ -103,7 +103,7 @@ where
             }
 
             // if !res.headers().contains_key(ACCESS_CONTROL_ALLOW_CREDENTIALS) {
-            //     res.headers_mut().insert(ACCESS_CONTROL_ALLOW_CREDENTIALS, HeaderValue::from_static("true"));
+            //     res.headers_mut().insert(ACCESS_CONTROL_ALLOW_CREDENTIALS, HeaderValue::from_static("false"));
             // }
 
             if !res.headers().contains_key(ACCESS_CONTROL_EXPOSE_HEADERS) {
