@@ -65,6 +65,12 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::get().to(register_complete_get))
                 .route(web::post().to(register_complete_post))
         )
+        .service(
+            web::resource("/sign-in")
+            .route(web::method(http::Method::OPTIONS).to(default_options))
+            .route(web::get().to(auth_signin_get))
+            .route(web::post().to(auth_signin_post))
+        )
     ;
 }
 
@@ -173,4 +179,16 @@ async fn register_complete_post(
                 ));
         }
     }
+}
+
+async fn auth_signin_get() -> impl Responder {
+    info!("auth_signin_get()");
+
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn auth_signin_post() -> impl Responder {
+    info!("auth_signin_post()");
+
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }
