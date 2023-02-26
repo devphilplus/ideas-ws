@@ -34,10 +34,11 @@ impl Claims {
 
 
 pub enum TokenError {
+    HashError,
     SigningError
 }
 
-
+#[derive(Debug, Clone)]
 pub struct Tokenizer {
     secret: String
 }
@@ -60,7 +61,7 @@ impl Tokenizer {
         match <Hmac<Sha256>>::new_from_slice(self.secret.as_bytes()) {
             Err(e) => {
                 error!("unable to generate key: {:?}", e);
-                return Err(String::from("unable to generate key"));
+                return Err(TokenError::HashError);
             }
             Ok(key) => {
                 match claims.sign_with_key(&key) {

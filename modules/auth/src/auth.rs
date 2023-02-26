@@ -35,7 +35,9 @@ pub struct RegistrationInfo {
 pub enum AuthError {
     ToBeImplemented(String),
     ConfigurationError,
-    MailerError
+    MailerError,
+    TokenGenerationError,
+    UserNotAuthenticated
 }
 
 impl Display for AuthError {
@@ -64,7 +66,7 @@ impl Auth {
                 cfg: cfg,
                 data: data,
                 mailer: mailer,
-                tokenizer: tokenizer::Tokenizer::new(cfg.jwt.secret)
+                tokenizer: tokenizer::Tokenizer::new(&cfg.jwt.secret)
             });
         }
 
@@ -148,10 +150,14 @@ impl Auth {
                 return Err(AuthError::ToBeImplemented(String::from("user_authenticate")));
             }
             Ok(authentic) => {
-                if let Ok(token) = self.tokenizer.generate(&email) {
-                    return Ok(token);
+                if authentic {
+                    if let Ok(token) = self.tokenizer.generate(&email) {
+                        return Ok(token);
+                    } else {
+                        return Err(AuthError::TokenGenerationError);
+                    }
                 } else {
-                    return Ok(false);
+                    return Err(AuthError::UserNotAuthenticated);
                 }
             }
         }
