@@ -33,6 +33,11 @@ impl Claims {
 }
 
 
+pub enum TokenError {
+    SigningError
+}
+
+
 pub struct Tokenizer {
     secret: String
 }
@@ -47,7 +52,7 @@ impl Tokenizer {
     pub fn generate(
         &self,
         email: &str
-    ) -> Result<String, String> {
+    ) -> Result<String, TokenError> {
         let mut claims = BTreeMap::new();
 
         claims.insert("email", email);
@@ -61,7 +66,7 @@ impl Tokenizer {
                 match claims.sign_with_key(&key) {
                     Err(e) => {
                         error!("unable to sign claims: {:?}", e);
-                        return Err(String::from("unable to sign claims"));
+                        return Err(TokenError::SigningError);
                     }
                     Ok(token) => {
                         return Ok(token);
