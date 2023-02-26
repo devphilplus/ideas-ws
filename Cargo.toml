@@ -2,6 +2,7 @@
 members = [
     "configuration",
     "mailer",
+    "tokenizer",
     "modules/pg",
     "modules/auth",
     "server"
