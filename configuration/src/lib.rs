@@ -50,6 +50,12 @@ pub struct Mail {
 
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct JWT {
+    pub secret: String
+}
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApplicationConfiguration {
 
     #[serde(rename = "bindHost")]
@@ -63,6 +69,8 @@ pub struct ApplicationConfiguration {
 
     pub providers: Vec<Provider>,
     pub mailer: Mail,
+
+    pub jwt: JWT
 }
 
 
