@@ -49,7 +49,8 @@ impl Display for AuthError {
 pub struct Auth {
     cfg: ApplicationConfiguration,
     data: crate::data::Data,
-    mailer: Mailer
+    mailer: Mailer,
+    tokenizer: tokenizer::Tokenizer
 }
 
 impl Auth {
@@ -62,7 +63,8 @@ impl Auth {
             return Ok(Self {
                 cfg: cfg,
                 data: data,
-                mailer: mailer
+                mailer: mailer,
+                tokenizer: tokenizer::Tokenizer::new(cfg.jwt.secret)
             });
         }
 
@@ -131,6 +133,26 @@ impl Auth {
             }
             Ok(_) => {
                 return Ok(());
+            }
+        }
+    }
+
+    pub async fn user_authenticate(
+        &self,
+        email: &str,
+        password: &str
+    ) -> Result<String, AuthError> {
+        match self.data.user_authenticate(&email, &password).await {
+            Err(e) => {
+                error!("unable to authenticate user: {:?}", e);
+                return Err(AuthError::ToBeImplemented(String::from("user_authenticate")));
+            }
+            Ok(authentic) => {
+                if let Ok(token) = self.tokenizer.generate(&email) {
+                    return Ok(token);
+                } else {
+                    return Ok(false);
+                }
             }
         }
     }

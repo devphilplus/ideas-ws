@@ -229,4 +229,44 @@ impl Data {
             }
         }
     }
+
+
+    pub async fn user_authenticate(
+        &self,
+        email: &str,
+        pw: &str
+    ) -> Result<bool, DataError> {
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_authenticate($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &pg::Email::new(&email),
+                &pw
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                let authentic: bool = row.get(0);
+                return Ok(authentic);
+            }
+        }
+    }
 }
