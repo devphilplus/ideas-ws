@@ -19,6 +19,9 @@ use serde::{
 };
 use serde_json::json;
 
+use http::header::AUTHORIZATION;
+
+
 use configuration::ApplicationConfiguration;
 use crate::endpoints::{
     ApiResponse,
@@ -45,6 +48,11 @@ struct AuthRegistrationCompleteRequest {
     pub password: String
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct SignInRequest {
+    pub email: String,
+    pub password: String
+}
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -96,14 +104,14 @@ async fn register_post(
         return HttpResponse::InternalServerError()
             .json(ApiResponse::new(
                 false,
-                format!("{}", e),
+                "an error occured while trying to register",
                 None
             ));
     } else {
         return HttpResponse::Ok()
             .json(ApiResponse::new(
                 true,
-                String::from("success"),
+                "success",
                 None
             ));
     }
@@ -128,7 +136,7 @@ async fn register_info_post(
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,
-                    String::from("unable to retrieve registration info"),
+                    "unable to retrieve registration info",
                     None
                 ));
         }
@@ -137,7 +145,7 @@ async fn register_info_post(
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     true,
-                    String::from("registration info successfully retrieved"),
+                    "registration info successfully retrieved",
                     Some(json!({
                         "info": info
                     }))
@@ -166,7 +174,7 @@ async fn register_complete_post(
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,
-                    String::from("an error occured while trying to complete the registratoin"),
+                    "an error occured while trying to complete the registratoin",
                     None
                 ));
         }
@@ -174,7 +182,7 @@ async fn register_complete_post(
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     true,
-                    String::from("successfully completed registration"),
+                    "successfully completed registration",
                     None
                 ));
         }
@@ -187,8 +195,41 @@ async fn auth_signin_get() -> impl Responder {
     return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }
 
-async fn auth_signin_post() -> impl Responder {
+async fn auth_signin_post(
+    auth: web::Data<Auth>,
+    params: web::Json<SignInRequest>
+) -> impl Responder {
     info!("auth_signin_post()");
 
-    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+    match auth.user_authenticate(
+        &params.email,
+        &params.password
+    ).await {
+        Err(e) => {
+            error!("unable to authenticate user: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to authenticate user",
+                    None
+                ));
+        }
+        Ok(authentic) => {
+            if authentic {
+                return HttpResponse::Ok()
+                    .append_header((AUTHORIZATION, format!("Bearer {}", token)))
+                    .json(ApiResponse::new(
+                        true,
+                        "user is authentic",
+                        None
+                    ))
+            }
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    if authentic { "user is authentic" } else { "user is not authentic" },
+                    None
+                ));
+        }
+    }
 }

@@ -37,12 +37,12 @@ impl ApiResponse {
 
     pub fn new(
         success: bool,
-        message: String,
+        message: &str,
         data: Option<Value>
     ) -> Self {
         return Self {
             success: success,
-            message: message,
+            message: message.to_string(),
             data: data
         };
     }
