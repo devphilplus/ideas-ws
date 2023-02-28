@@ -61,12 +61,13 @@ impl Auth {
         cfg: ApplicationConfiguration,
         mailer: Mailer
     ) -> Result<Self, AuthError> {
+        let jwt_secret = cfg.jwt.secret.clone();
         if let Ok(data) = Data::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
                 data: data,
                 mailer: mailer,
-                tokenizer: tokenizer::Tokenizer::new(&cfg.jwt.secret)
+                tokenizer: tokenizer::Tokenizer::new(&jwt_secret)
             });
         }
 

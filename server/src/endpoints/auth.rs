@@ -214,8 +214,8 @@ async fn auth_signin_post(
                     None
                 ));
         }
-        Ok(authentic) => {
-            if authentic {
+        Ok(token) => {
+            // if authentic {
                 return HttpResponse::Ok()
                     .append_header((AUTHORIZATION, format!("Bearer {}", token)))
                     .json(ApiResponse::new(
@@ -223,13 +223,13 @@ async fn auth_signin_post(
                         "user is authentic",
                         None
                     ))
-            }
-            return HttpResponse::Ok()
-                .json(ApiResponse::new(
-                    true,
-                    if authentic { "user is authentic" } else { "user is not authentic" },
-                    None
-                ));
+            // }
+            // return HttpResponse::Ok()
+            //     .json(ApiResponse::new(
+            //         true,
+            //         if authentic { "user is authentic" } else { "user is not authentic" },
+            //         None
+            //     ));
         }
     }
 }
