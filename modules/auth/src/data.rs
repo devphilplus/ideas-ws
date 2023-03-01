@@ -244,7 +244,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "call iam.user_authenticate($1, $2)"
+            "select * from iam.user_authenticate($1, $2)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -264,6 +264,7 @@ impl Data {
                 return Err(DataError::DatabaseError);
             }
             Ok(row) => {
+                debug!("row: {:?}", row);
                 let authentic: bool = row.get(0);
                 return Ok(authentic);
             }

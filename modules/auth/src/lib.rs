@@ -1,3 +1,4 @@
+pub mod validators;
 pub mod auth;
 mod data;
 

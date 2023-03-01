@@ -16,6 +16,8 @@ use serde::{
 use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 
+use crate::validators::password::Password;
+
 use crate::data::{
     DataError,
     Data
@@ -36,6 +38,7 @@ pub enum AuthError {
     ToBeImplemented(String),
     ConfigurationError,
     MailerError,
+    ValidationError,
     TokenGenerationError,
     UserNotAuthenticated
 }
@@ -129,14 +132,18 @@ impl Auth {
     }
 
     pub async fn complete_registration(&self, token: &str, pw: &str) -> Result<(), AuthError> {
-        match self.data.complete_registration(&token, &pw).await {
-            Err(e) => {
-                error!("unable to complete registration");
-                return Err(AuthError::ToBeImplemented(String::from("complete_registration")));
+        if Password::validate(&pw) {
+            match self.data.complete_registration(&token, &pw).await {
+                Err(e) => {
+                    error!("unable to complete registration");
+                    return Err(AuthError::ToBeImplemented(String::from("complete_registration")));
+                }
+                Ok(_) => {
+                    return Ok(());
+                }
             }
-            Ok(_) => {
-                return Ok(());
-            }
+        } else {
+            return Err(AuthError::ValidationError);
         }
     }
 
