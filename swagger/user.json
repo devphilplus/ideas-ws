@@ -1,0 +1,85 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "user tests",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "localhost api server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "apiResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "success",
+                    "message"
+                ]
+            },
+            "securitySchemes": {
+                "bearer": {
+                    "type": "http",
+                    "description": "Bearer authentication",
+                    "name": "Authorization",
+                    "in": "header",
+                    "scheme": "bearer"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/user/current": {
+            "summary": "current user",
+            "post": {
+                "summary": "POST method",
+                "tags": ["user"],
+                "operationId": "current_user",
+                "responses": {
+                    "200": {
+                        "description": "current user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "user not registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        }
+    }
+}
