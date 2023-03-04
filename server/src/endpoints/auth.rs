@@ -1,7 +1,3 @@
-use std::sync::Arc;
-use std::str::FromStr;
-
-
 use log::{
     info,
     debug,
@@ -63,13 +59,13 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::post().to(register_post))
         ).service(
             web::resource("/register/info")
-            .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_info_get))
                 .route(web::post().to(register_info_post))
         )
         .service(
             web::resource("/register/complete")
-            .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(register_complete_get))
                 .route(web::post().to(register_complete_post))
         )
@@ -94,7 +90,6 @@ async fn register_post(
     params: web::Json<AuthRegistrationRequest>
 ) -> impl Responder {
     info!("register_post()");
-    debug!("parameters: {:?}", params);
 
     if let Err(e) = auth.register(
         &params.id, 

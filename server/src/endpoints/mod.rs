@@ -1,5 +1,6 @@
 pub mod status;
 pub mod auth;
+pub mod user;
 pub mod common;
 pub mod clients;
 pub mod accounting;
@@ -23,6 +24,8 @@ use actix_web::{
     HttpResponse, 
     Responder
 };
+
+use crate::classes::extractors::user::User;
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -53,4 +56,27 @@ pub async fn default_options() -> impl Responder {
     info!("endpoints::default_options()");
     return HttpResponse::Ok()
         .finish();
+}
+
+pub async fn default_service(
+    user: User
+) -> impl Responder {
+    info!("endpoints::default_service()");
+    // debug!("user: {:?}", user);
+
+    if user.is_authenticated() {
+        return HttpResponse::Forbidden()
+            .json(ApiResponse::new(
+                false,
+                "user does not have permissions",
+                None
+            ));
+    } else {
+        return HttpResponse::Unauthorized()
+            .json(ApiResponse::new(
+                false,
+                "user is not authenticated",
+                None
+            ));
+    }
 }

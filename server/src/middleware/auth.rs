@@ -5,17 +5,42 @@ use log::{
 };
 
 use std::rc::Rc;
+use std::task::{ Context, Poll };
+use std::future::{ ready, Ready };
+use futures::future::LocalBoxFuture;
+
+use http::{
+    method::Method,
+    header
+};
+
+use actix_web::{
+    HttpMessage,
+    error::Error,
+    dev::{
+        Service, 
+        Transform, 
+        ServiceRequest, 
+        ServiceResponse
+    },
+    web
+};
+
+use configuration::ApplicationConfiguration;
+use crate::classes::user::User;
 
 
 pub struct AuthUser {
-    token: String
+    configuration: ApplicationConfiguration
 }
 
 impl AuthUser {
 
-    pub fn new(token: &str) -> Self {
+    pub fn new(
+        configuration: &ApplicationConfiguration
+    ) -> Self {
         return Self {
-            token: String::from(token)
+            configuration: configuration.clone()
         };
     }
 }
@@ -65,9 +90,26 @@ where
     fn call(&self, request: ServiceRequest) -> Self::Future {
         debug!("AuthMiddleware::call() [1]");
 
+        debug!("request: {:?}", request);
+
+        let path = request.match_info();
+        debug!("path: {:?}", path);
+
         let service = self.service.clone();
         return Box::pin(async move {
             debug!("AuthMiddleware::call() [2]");
+
+            // let mut user = User::new();
+
+            // if request.method() == Method::POST {
+            //     if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
+            //         let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
+
+
+            //     }
+            // }
+
+            // request.extensions_mut().insert(user);
 
             let f = service.call(request);
             match f.await {
@@ -75,9 +117,9 @@ where
                     error!("an error occured while handling the request: {:?}", e);
                     return Err(e);
                 }
-                Ok(result) => {
-                    debug!("AuthMiddleware::call() result: {:?}", result);
-                    return Ok(result);
+                Ok(service_result) => {
+                    // debug!("AuthMiddleware::call() result: {:?}", service_result);
+                    return Ok(service_result);
                 }
             }
         });

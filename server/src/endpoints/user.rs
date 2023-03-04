@@ -15,12 +15,14 @@ use serde::{
 };
 use serde_json::json;
 
-use configuration::ApplicationConfiguration;
+// use configuration::ApplicationConfiguration;
 use crate::endpoints::{
     ApiResponse,
-    default_options
+    default_options,
+    default_service
 };
 use crate::classes::user::User;
+use crate::classes::guards::permission::Permission;
 
 
 
@@ -30,7 +32,11 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             web::resource("/current")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(current_get))
-                .route(web::post().to(current_post))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(current_post)
+                )
+                .default_service(web::to(default_service))
         )
     ;
 }
