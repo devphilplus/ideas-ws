@@ -25,3 +25,4 @@ chrono = { version = "*", features = ["serde"]}
 configuration = { path = "../configuration" }
 auth = { path = "../modules/auth" }
 mailer = { path = "../mailer" }
+tokenizer = { path = "../tokenizer" }

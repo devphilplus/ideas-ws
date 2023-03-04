@@ -68,6 +68,7 @@ impl Data {
                 for url in &p.url {
                     match Config::from_str(&url) {
                         Err(e) => {
+                            debug!("error: {:?}", e);
                             return Err(DataError::ConfigurationError);
                         }
                         Ok(c) => {
@@ -80,6 +81,7 @@ impl Data {
                                 .max_size(4)
                                 .build() {
                                     Err(e) => {
+                                        debug!("error: {:?}", e);
                                         return Err(DataError::ToBeImplemented(String::from("new")));
                                     }
                                     Ok(pool) => {

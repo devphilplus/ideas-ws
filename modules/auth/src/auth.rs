@@ -15,6 +15,7 @@ use serde::{
 
 use configuration::ApplicationConfiguration;
 use mailer::Mailer;
+use tokenizer::Tokenizer;
 
 use crate::validators::password::Password;
 
@@ -62,15 +63,17 @@ impl Auth {
 
     pub fn new(
         cfg: ApplicationConfiguration,
-        mailer: Mailer
+        mailer: Mailer,
+        tokenizer: Tokenizer
     ) -> Result<Self, AuthError> {
-        let jwt_secret = cfg.jwt.secret.clone();
+        // let jwt_secret = cfg.jwt.secret.clone();
         if let Ok(data) = Data::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
                 data: data,
                 mailer: mailer,
-                tokenizer: tokenizer::Tokenizer::new(&jwt_secret)
+                // tokenizer: tokenizer::Tokenizer::new(&jwt_secret)
+                tokenizer: tokenizer
             });
         }
 
@@ -118,6 +121,7 @@ impl Auth {
     pub async fn get_registration_info(&self, token: &str) -> Result<RegistrationInfo, AuthError> {
         match self.data.get_registration_info(token).await {
             Err(e) => {
+                debug!("error: {:?}", e);
                 return Err(AuthError::ToBeImplemented(String::from("get_registration_info")));
             }
             Ok(result) => {
@@ -135,7 +139,7 @@ impl Auth {
         if Password::validate(&pw) {
             match self.data.complete_registration(&token, &pw).await {
                 Err(e) => {
-                    error!("unable to complete registration");
+                    error!("unable to complete registration: {:?}", e);
                     return Err(AuthError::ToBeImplemented(String::from("complete_registration")));
                 }
                 Ok(_) => {

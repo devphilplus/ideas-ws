@@ -23,6 +23,7 @@ use actix_web::{
 };
 
 use configuration::ApplicationConfiguration;
+use tokenizer::Tokenizer;
 
 
 
@@ -33,6 +34,8 @@ async fn main() -> std::io::Result<()> {
 
     if let Some(cfg) = ApplicationConfiguration::get() {
         debug!("configuration: {:?}", cfg);
+        // tokenizer
+        let tokenizer = Tokenizer::new(&cfg.jwt.secret);
 
         // mailer
         let mailer = mailer::Mailer::new(
@@ -47,7 +50,8 @@ async fn main() -> std::io::Result<()> {
 
         let result_auth = auth::auth::Auth::new(
             cfg.clone(), 
-            mailer.clone()
+            mailer.clone(),
+            tokenizer.clone()
         );
 
         if let Err(e) = result_auth {
@@ -60,13 +64,16 @@ async fn main() -> std::io::Result<()> {
             App::new()
                 .app_data(web::Data::new(cfg.clone()))
                 .app_data(web::Data::new(mailer.clone()))
+                .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
+                .wrap(crate::middleware::auth::AuthUser::new(&cfg))
 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
                 .service(web::scope("/common").configure(crate::endpoints::status::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
+                .service(web::scope("/user").configure(crate::endpoints::user::config))
         })
         .workers(2)
         .bind(format!("{}:{}", bind_host, bind_port))?
