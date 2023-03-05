@@ -52,10 +52,12 @@ async fn current_post(
 ) -> impl Responder {
     info!("current_post()");
 
-    return HttpResponse::InternalServerError()
+    return HttpResponse::Ok()
         .json(ApiResponse::new(
-            false,
-            "an error occured while trying to register",
-            None
+            true,
+            "current user",
+            Some(json!({
+                "user": user
+            }))
         ));
 }

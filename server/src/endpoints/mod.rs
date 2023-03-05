@@ -25,7 +25,8 @@ use actix_web::{
     Responder
 };
 
-use crate::classes::extractors::user::User;
+// use crate::classes::extractors::user::User;
+use crate::classes::user::User;
 
 
 #[derive(Debug, Serialize, Deserialize)]

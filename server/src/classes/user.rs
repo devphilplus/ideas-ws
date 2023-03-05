@@ -27,6 +27,10 @@ use actix_web::{
     ResponseError,
     web
 };
+use serde::{
+    Serialize,
+    Deserialize
+};
 use tokenizer::Tokenizer;
 
 
@@ -50,14 +54,29 @@ impl ResponseError for UserError {
 }
 
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct User {
-
+    email: String
 }
 
 impl User {
 
-    pub fn new() -> Self {
-        return Self {};
+    pub fn new(
+        email: &str
+    ) -> Self {
+        return Self {
+            email: String::from(email)
+        };
+    }
+
+    pub fn anonymous() -> Self {
+        return Self {
+            email: String::from("")
+        };
+    }
+
+    pub fn is_authenticated(&self) -> bool {
+        return self.email != "";
     }
 }
 
@@ -68,22 +87,22 @@ impl FromRequest for User {
 
     fn from_request(request: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         debug!("User::from_request");
-        let user = User::new();
+        
+        let user = User::anonymous();
         if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
             let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
 
             if token_value == "" {
                 if let Some(tokenizer) = request.app_data::<web::Data<Tokenizer>>() {
                     if tokenizer.validate(&token_value) {
-                        
+                        if let Ok(claims) = tokenizer.get_claims(&token_value) {
+                            debug!("claims: {:?}", claims);
+                        }
                     } else {
                         debug!("token is invalid: {:?}", token_value);
                     }
                 }
             }
-
-
-            return ok(User::new());
         }
 
         return ok(user);

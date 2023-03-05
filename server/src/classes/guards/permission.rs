@@ -9,9 +9,10 @@ use actix_web::guard::{
     GuardContext
 };
 
-use crate::classes::extractors::user::User;
+use crate::classes::user::User;
 
 
+#[derive(Debug)]
 pub struct Permission {
     permission: String
 }
@@ -21,6 +22,10 @@ impl Permission {
         return Self {
             permission: String::from(permission)
         };
+    }
+
+    pub fn permission(&self) -> String {
+        return self.permission.clone();
     }
 }
 

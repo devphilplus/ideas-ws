@@ -24,5 +24,6 @@ chrono = { version = "*", features = ["serde"]}
 
 configuration = { path = "../configuration" }
 auth = { path = "../modules/auth" }
+common = { path = "../modules/common" }
 mailer = { path = "../mailer" }
 tokenizer = { path = "../tokenizer" }

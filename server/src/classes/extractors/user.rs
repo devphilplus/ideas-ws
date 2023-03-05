@@ -19,6 +19,10 @@ use actix_web::{
     HttpRequest,
     FromRequest, ResponseError,
 };
+use serde::{
+    Serialize,
+    Deserialize
+};
 
 
 #[derive(Debug)]
@@ -35,7 +39,7 @@ impl std::fmt::Display for UserError {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     email: String
 }

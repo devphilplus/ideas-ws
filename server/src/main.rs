@@ -71,7 +71,7 @@ async fn main() -> std::io::Result<()> {
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))
 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
-                .service(web::scope("/common").configure(crate::endpoints::status::config))
+                .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
         })
