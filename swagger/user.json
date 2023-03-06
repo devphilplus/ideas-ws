@@ -33,15 +33,15 @@
                     "success",
                     "message"
                 ]
-            },
-            "securitySchemes": {
-                "bearer": {
-                    "type": "http",
-                    "description": "Bearer authentication",
-                    "name": "Authorization",
-                    "in": "header",
-                    "scheme": "bearer"
-                }
+            }
+        },
+        "securitySchemes": {
+            "bearer": {
+                "type": "http",
+                "description": "Bearer authentication",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
             }
         }
     },
