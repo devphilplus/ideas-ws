@@ -87,7 +87,7 @@ impl Tokenizer {
         }
     }
 
-    pub fn validate(
+    pub fn is_valid(
         &self,
         token: &str
     ) -> bool {
@@ -99,6 +99,7 @@ impl Tokenizer {
                 return false;
             }
             Ok(key) => {
+                // error here
                 let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
                 match result {
                     Err(e) => {
@@ -120,6 +121,8 @@ impl Tokenizer {
             let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
             if let Ok(claims) = result {
                 debug!("claims: {:?}", claims);
+            } else {
+                debug!("unable to get claims");
             }
         }
 

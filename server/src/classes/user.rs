@@ -92,11 +92,13 @@ impl FromRequest for User {
         if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
             let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
 
-            if token_value == "" {
+            if token_value != "" {
                 if let Some(tokenizer) = request.app_data::<web::Data<Tokenizer>>() {
-                    if tokenizer.validate(&token_value) {
+                    if tokenizer.is_valid(&token_value) {
                         if let Ok(claims) = tokenizer.get_claims(&token_value) {
                             debug!("claims: {:?}", claims);
+                        } else {
+                            debug!("unable to retrieve claims");
                         }
                     } else {
                         debug!("token is invalid: {:?}", token_value);
