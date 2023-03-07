@@ -35,7 +35,7 @@ impl Guard for Permission {
     fn check(&self, context: &GuardContext<'_>) -> bool {
         debug!("Permission::check(): {:?}", context);
         if let Some(user) = context.req_data().get::<User>() {
-
+            debug!("Permission::check() {:?}", user);
         }
         return false;
     }
