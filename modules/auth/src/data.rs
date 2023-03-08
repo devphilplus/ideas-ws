@@ -268,6 +268,7 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
                 let authentic: bool = row.get(0);
+                debug!("authentic: {:?}", authentic);
                 return Ok(authentic);
             }
         }

@@ -201,30 +201,31 @@ async fn auth_signin_post(
         &params.password
     ).await {
         Err(e) => {
-            error!("unable to authenticate user: {:?}", e);
-            return HttpResponse::InternalServerError()
-                .json(ApiResponse::new(
-                    false,
-                    "unable to authenticate user",
-                    None
-                ));
+            if matches!(e, AuthError::IncorrectUsernameAndPassword) {
+                return HttpResponse::Ok()
+                    .json(ApiResponse::new(
+                        false,
+                        "incorrect username and password combination",
+                        None
+                    ));
+            } else {
+                error!("unable to authenticate user: {:?}", e);
+                return HttpResponse::InternalServerError()
+                    .json(ApiResponse::new(
+                        false,
+                        "unable to authenticate user",
+                        None
+                    ));
+            }
         }
         Ok(token) => {
-            // if authentic {
-                return HttpResponse::Ok()
-                    .append_header((AUTHORIZATION, format!("Bearer {}", token)))
-                    .json(ApiResponse::new(
-                        true,
-                        "user is authentic",
-                        None
-                    ))
-            // }
-            // return HttpResponse::Ok()
-            //     .json(ApiResponse::new(
-            //         true,
-            //         if authentic { "user is authentic" } else { "user is not authentic" },
-            //         None
-            //     ));
+            return HttpResponse::Ok()
+                .append_header((AUTHORIZATION, format!("Bearer {}", token)))
+                .json(ApiResponse::new(
+                    true,
+                    "user is authentic",
+                    None
+                ))
         }
     }
 }

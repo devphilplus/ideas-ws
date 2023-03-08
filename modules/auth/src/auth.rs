@@ -41,7 +41,7 @@ pub enum AuthError {
     MailerError,
     ValidationError,
     TokenGenerationError,
-    UserNotAuthenticated
+    IncorrectUsernameAndPassword
 }
 
 impl Display for AuthError {
@@ -169,7 +169,7 @@ impl Auth {
                         return Err(AuthError::TokenGenerationError);
                     }
                 } else {
-                    return Err(AuthError::UserNotAuthenticated);
+                    return Err(AuthError::IncorrectUsernameAndPassword);
                 }
             }
         }
