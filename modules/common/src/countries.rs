@@ -93,7 +93,7 @@ impl Countries {
         return Err(DataError::ConfigurationError);
     }
 
-    pub fn get_countries(&self) -> Result<_, DataError> {
+    pub async fn get_countries(&self) -> Result<(), DataError> {
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -110,7 +110,11 @@ impl Countries {
             return Err(DataError::DatabaseError);
         }
         let stmt = result.unwrap();
-        match client.query {
+
+        match client.query(
+            &stmt,
+            &[]
+        ).await {
             Err(e) => {
                 error!("unable to execute query: {:?}", e);
                 return Err(DataError::DatabaseError);
