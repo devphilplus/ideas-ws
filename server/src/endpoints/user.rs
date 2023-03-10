@@ -24,6 +24,13 @@ use crate::endpoints::{
 use crate::classes::user::User;
 use crate::classes::guards::permission::Permission;
 
+use auth::{
+    // user::User,
+    auth::{
+    Auth,
+    AuthError
+}};
+
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -48,16 +55,39 @@ async fn current_get() -> impl Responder {
 }
 
 async fn current_post(
-    user: User
+    auth: web::Data<Auth>,
+    user: crate::classes::user::User
 ) -> impl Responder {
     info!("current_post()");
 
-    return HttpResponse::Ok()
-        .json(ApiResponse::new(
-            true,
-            "current user",
-            Some(json!({
-                "user": user
-            }))
-        ));
+    debug!("params: {:?}", user);
+    let email = user.email().clone();
+
+    match auth.get_user(&email).await {
+        Err(e) => {
+            error!("unable to get user: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to retrieve user",
+                    None
+                ));
+        }
+        Ok(result) => {
+            debug!("result: {:?}", result);
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    "successfully retrieved user",
+                    Some(json!({
+                        "user": {
+                            "email": user.email(),
+                            "given_name": result.given_name(),
+                            "middle_name": result.middle_name(),
+                            "family_name": result.family_name()
+                        }
+                    }))
+                ))
+        }
+    }
 }

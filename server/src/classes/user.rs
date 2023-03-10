@@ -78,6 +78,10 @@ impl User {
     pub fn is_authenticated(&self) -> bool {
         return self.email != "";
     }
+
+    pub fn email(&self) -> String {
+        return self.email.to_owned();
+    }
 }
 
 
@@ -97,6 +101,9 @@ impl FromRequest for User {
                     if tokenizer.is_valid(&token_value) {
                         if let Ok(claims) = tokenizer.get_claims(&token_value) {
                             debug!("claims: {:?}", claims);
+                            let email = claims.email().clone();
+                            let email_str = email.as_str();
+                            return ok(User::new(&email_str));
                         } else {
                             debug!("unable to retrieve claims");
                         }
