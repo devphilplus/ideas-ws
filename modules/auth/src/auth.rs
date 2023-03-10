@@ -17,6 +17,7 @@ use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 use tokenizer::Tokenizer;
 
+use crate::user::User;
 use crate::validators::password::Password;
 
 use crate::data::{
@@ -171,6 +172,21 @@ impl Auth {
                 } else {
                     return Err(AuthError::IncorrectUsernameAndPassword);
                 }
+            }
+        }
+    }
+
+    pub async fn get_user(
+        &self,
+        email: &str
+    ) -> Result<User, AuthError> {
+        match self.data.get_user(&email).await {
+            Err(e) => {
+                error!("unable to authenticate user: {:?}", e);
+                return Err(AuthError::ToBeImplemented(String::from("get_user")));
+            }
+            Ok(user) => {
+                return Ok(user);
             }
         }
     }

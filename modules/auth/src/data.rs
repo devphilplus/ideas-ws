@@ -38,6 +38,8 @@ use configuration::{
     ProviderType
 };
 
+use crate::user::User;
+
 
 #[derive(Debug)]
 pub enum DataError {
@@ -272,5 +274,49 @@ impl Data {
                 return Ok(authentic);
             }
         }
+    }
+
+    pub async fn get_user(
+        &self,
+        email: &str
+    ) -> Result<User, DataError> {
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from iam.user_by_email($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &pg::Email::new(&email)
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+                return Ok(User::new(
+                    row.get(0),
+                    row.get(1),
+                    row.get(2),
+                    row.get(3)
+                ));
+                // return Ok(User::anonymous());
+            }
+        }
+
     }
 }
