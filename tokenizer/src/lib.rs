@@ -121,6 +121,10 @@ impl Tokenizer {
             let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
             if let Ok(claims) = result {
                 debug!("claims: {:?}", claims);
+
+                return Ok(Claims::new(
+                    claims.get("email").unwrap()
+                ));
             } else {
                 debug!("unable to get claims");
             }
