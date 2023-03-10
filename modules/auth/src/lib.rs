@@ -1,3 +1,4 @@
+pub mod user;
 pub mod validators;
 pub mod auth;
 mod data;
@@ -10,6 +11,7 @@ mod tests {
     use uuid::Uuid;
 
     use configuration::ApplicationConfiguration;
+    use tokenizer::Tokenizer;
 
     #[actix_rt::test] 
     async fn auth_register() {
@@ -29,7 +31,9 @@ mod tests {
             let token = Uuid::new_v4();
             let email = format!("test_{}@mailinator.com", i);
 
-            if let Ok(auth) = auth::Auth::new(cfg, mailer) {
+            let tokenizer = Tokenizer::new(&cfg.jwt.secret);
+
+            if let Ok(auth) = auth::Auth::new(cfg, mailer, tokenizer) {
                 if let Err(e) = auth.register(&token, &email).await {
                     assert!(false, "error occured while registering");
                 } else {
