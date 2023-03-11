@@ -4,7 +4,8 @@ members = [
     "mailer",
     "tokenizer",
     "modules/pg",
-    "modules/auth",
     "modules/common",
+    "modules/auth",
+    "modules/users",
     "server"
 ]
