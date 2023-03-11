@@ -117,4 +117,41 @@ impl Data {
             return Ok(());
         }
     }
+
+    pub async fn user_set_password(
+        &self,
+        user_id: &uuid::Uuid,
+        password: &str
+    ) -> Result<(), DataError> {
+        info!("Data::user_set_password()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_set_pw($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.execute(
+            &stmt, 
+            &[
+                &user_id,
+                &password
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }        
+    }
 }

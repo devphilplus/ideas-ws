@@ -69,4 +69,25 @@ impl Users {
             }
         }
     }
+
+    pub async fn user_set_password(
+        &self,
+        user_id: &uuid::Uuid,
+        password: &str
+    ) -> Result<(), UsersError> {
+        info!("Users::user_set_password()");
+
+        match self.data.user_set_password(
+            &user_id,
+            &password
+        ).await {
+            Err(e) => {
+                error!("unable to set user password: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_set_active")));
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
 }
