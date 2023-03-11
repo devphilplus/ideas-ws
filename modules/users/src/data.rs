@@ -79,4 +79,42 @@ impl Data {
 
         return Err(DataError::ConfigurationError);
     }
+
+
+    pub async fn user_set_active(
+        &self,
+        user_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), DataError> {
+        info!("Data::user_set_active()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_active($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.execute(
+            &stmt, 
+            &[
+                &user_id,
+                &active
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }
+    }
 }
