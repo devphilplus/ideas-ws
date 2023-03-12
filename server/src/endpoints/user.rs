@@ -71,7 +71,8 @@ async fn current_get() -> impl Responder {
 }
 
 async fn current_post(
-    auth: web::Data<Auth>,
+    // auth: web::Data<Auth>,
+    users: web::Data<Users>,
     user: crate::classes::user::CurrentUser
 ) -> impl Responder {
     info!("current_post()");
@@ -79,7 +80,7 @@ async fn current_post(
     debug!("params: {:?}", user);
     let email = user.email().clone();
 
-    match auth.get_user(&email).await {
+    match users.user_by_email(&email).await {
         Err(e) => {
             error!("unable to get user: {:?}", e);
             return HttpResponse::InternalServerError()
@@ -98,9 +99,9 @@ async fn current_post(
                     Some(json!({
                         "user": {
                             "email": user.email(),
-                            "given_name": result.given_name(),
-                            "middle_name": result.middle_name(),
-                            "family_name": result.family_name()
+                            "given_name": "result.given_name()",
+                            "middle_name": "result.middle_name()",
+                            "family_name": "result.family_name()"
                         }
                     }))
                 ))

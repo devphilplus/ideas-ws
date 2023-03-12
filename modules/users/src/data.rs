@@ -106,7 +106,7 @@ impl Data {
         match client.query_one(
             &stmt,
             &[
-                &email
+                &pg::Email::new(&email)
             ]
         ).await {
             Err(e) => {
