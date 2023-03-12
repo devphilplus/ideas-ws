@@ -33,6 +33,21 @@
                     "success",
                     "message"
                 ]
+            },
+            "UserPasswordChangeRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "password"
+                ],
+                "example": {
+                    "password": "testTest"
+                }
             }
         },
         "securitySchemes": {
@@ -65,6 +80,51 @@
                     },
                     "400": {
                         "description": "user not registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/user/password/set": {
+            "summary": "set user password",
+            "post": {
+                "summary": "POST method",
+                "tags": ["user"],
+                "operationId": "user_set_password",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserPasswordChangeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "set user password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "password changed",
                         "content": {
                             "application/json": {
                                 "schema": {
