@@ -73,7 +73,7 @@ async fn current_get() -> impl Responder {
 async fn current_post(
     // auth: web::Data<Auth>,
     users: web::Data<Users>,
-    user: crate::classes::user::CurrentUser
+    user: CurrentUser
 ) -> impl Responder {
     info!("current_post()");
 
