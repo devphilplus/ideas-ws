@@ -14,6 +14,7 @@ use serde::{
     Deserialize
 };
 use serde_json::json;
+use users::users::Users;
 
 // use configuration::ApplicationConfiguration;
 use crate::endpoints::{
@@ -21,7 +22,7 @@ use crate::endpoints::{
     default_options,
     default_service
 };
-use crate::classes::user::User;
+use crate::classes::user::CurrentUser;
 use crate::classes::guards::permission::Permission;
 
 use auth::{
@@ -31,6 +32,11 @@ use auth::{
     AuthError
 }};
 
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UserPasswordRequest {
+    pub password: String
+}
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -45,6 +51,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 )
                 .default_service(web::to(default_service))
         )
+        .service(
+            web::resource("/password/set")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(user_set_password_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(user_set_password_post)
+                )
+                .default_service(web::to(default_service))
+        )
     ;
 }
 
@@ -56,7 +72,7 @@ async fn current_get() -> impl Responder {
 
 async fn current_post(
     auth: web::Data<Auth>,
-    user: crate::classes::user::User
+    user: crate::classes::user::CurrentUser
 ) -> impl Responder {
     info!("current_post()");
 
@@ -90,4 +106,29 @@ async fn current_post(
                 ))
         }
     }
+}
+
+async fn user_set_password_get() -> impl Responder {
+    info!("user_set_password_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn user_set_password_post(
+    users: web::Data<Users>,
+    user: crate::classes::user::CurrentUser,
+    params: web::Json<UserPasswordRequest>
+) -> impl Responder {
+    info!("user_set_password_post()");
+
+    debug!("user: {:?}", user);
+    debug!("params: {:?}", params);
+
+
+
+    return HttpResponse::Ok()
+        .json(ApiResponse::new(
+            false,
+            "unable to set user password",
+            None
+        ));
 }

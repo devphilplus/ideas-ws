@@ -27,7 +27,7 @@ use actix_web::{
 };
 
 use configuration::ApplicationConfiguration;
-use crate::classes::user::User;
+use crate::classes::user::CurrentUser;
 
 
 pub struct AuthUser {

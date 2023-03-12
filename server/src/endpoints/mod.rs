@@ -26,7 +26,7 @@ use actix_web::{
 };
 
 // use crate::classes::extractors::user::User;
-use crate::classes::user::User;
+use crate::classes::user::CurrentUser;
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -60,7 +60,7 @@ pub async fn default_options() -> impl Responder {
 }
 
 pub async fn default_service(
-    user: User
+    user: CurrentUser
 ) -> impl Responder {
     info!("endpoints::default_service()");
     // debug!("user: {:?}", user);

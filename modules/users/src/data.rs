@@ -26,6 +26,7 @@ use configuration::{
     ProviderType
 };
 
+use common::user::User;
 
 
 #[derive(Debug)]
@@ -78,6 +79,45 @@ impl Data {
         }
 
         return Err(DataError::ConfigurationError);
+    }
+
+    pub async fn by_email(
+        &self,
+        email: &str
+    ) -> Result<User ,DataError> {
+        info!("Data::by_email()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from iam.user_by_email($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &email
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+                return Ok(User::anonymous());
+            }
+        }
     }
 
 

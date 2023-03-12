@@ -53,12 +53,24 @@ async fn main() -> std::io::Result<()> {
             mailer.clone(),
             tokenizer.clone()
         );
-
         if let Err(e) = result_auth {
             error!("unable to create auth object: {:?}", e);
             return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
         }
         let auth = result_auth.unwrap();
+
+        // user module
+        let result_users = users::users::Users::new(
+            cfg.clone(),
+            mailer.clone()
+        );
+        if let Err(e) = result_users {
+            error!("unable to create users object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable tocreate users object"));
+        }
+        let users = result_users.unwrap();
+
+
 
         let server = HttpServer::new(move || {
             App::new()
@@ -66,12 +78,13 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(mailer.clone()))
                 .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
+                .app_data(web::Data::new(users.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))
 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
-                .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
+                // .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
         })

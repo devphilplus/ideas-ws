@@ -12,6 +12,7 @@ use serde::{
 
 use configuration::ApplicationConfiguration;
 use mailer::Mailer;
+use common::user::User;
 
 use crate::data::Data;
 
@@ -47,6 +48,26 @@ impl Users {
         }
 
         return Err(UsersError::ConfigurationError);
+    }
+
+    pub async fn user_by_email(
+        &self,
+        email: &str
+    ) -> Result<User, UsersError> {
+        info!("Users::user_by_email()");
+
+        match self.data.by_email(
+            &email
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve user: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_by_email")));
+            }
+            Ok(user) => {
+                debug!("Users::user_by_email(): {:?}", user);
+                return Ok(user);
+            }
+        }
     }
 
     pub async fn user_set_active(

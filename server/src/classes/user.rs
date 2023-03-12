@@ -33,6 +33,8 @@ use serde::{
 };
 use tokenizer::Tokenizer;
 
+use common::user::User;
+
 
 #[derive(Debug)]
 pub enum UserError {
@@ -55,11 +57,11 @@ impl ResponseError for UserError {
 
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct User {
+pub struct CurrentUser {
     email: String
 }
 
-impl User {
+impl CurrentUser {
 
     pub fn new(
         email: &str
@@ -85,14 +87,14 @@ impl User {
 }
 
 
-impl FromRequest for User {
+impl FromRequest for CurrentUser {
     type Error = UserError;
     type Future = Ready<Result<Self, Self::Error>>;
 
     fn from_request(request: &HttpRequest, _payload: &mut Payload) -> Self::Future {
-        debug!("User::from_request");
+        debug!("CurrentUser::from_request");
         
-        let user = User::anonymous();
+        let user = CurrentUser::anonymous();
         if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
             let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
 
@@ -103,7 +105,7 @@ impl FromRequest for User {
                             debug!("claims: {:?}", claims);
                             let email = claims.email().clone();
                             let email_str = email.as_str();
-                            return ok(User::new(&email_str));
+                            return ok(CurrentUser::new(&email_str));
                         } else {
                             debug!("unable to retrieve claims");
                         }
