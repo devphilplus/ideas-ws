@@ -87,6 +87,7 @@ async fn main() -> std::io::Result<()> {
                 // .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
+                .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
         })
         .workers(2)
         .bind(format!("{}:{}", bind_host, bind_port))?
