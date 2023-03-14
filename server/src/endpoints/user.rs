@@ -91,7 +91,7 @@ async fn current_post(
                 ));
         }
         Ok(result) => {
-            debug!("result: {:?}", result);
+            // debug!("result: {:?}", result);
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     true,
@@ -99,9 +99,9 @@ async fn current_post(
                     Some(json!({
                         "user": {
                             "email": user.email(),
-                            "given_name": "result.given_name()",
-                            "middle_name": "result.middle_name()",
-                            "family_name": "result.family_name()"
+                            "given_name": result.given_name(),
+                            "middle_name": result.middle_name(),
+                            "family_name": result.family_name()
                         }
                     }))
                 ))

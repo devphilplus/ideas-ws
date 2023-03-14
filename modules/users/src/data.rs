@@ -114,8 +114,19 @@ impl Data {
                 return Err(DataError::DatabaseError);
             }
             Ok(row) => {
-                debug!("row: {:?}", row);
-                return Ok(User::anonymous());
+                // debug!("row: {:?}", row);
+
+                let given_name: String = row.get(1);
+                let middle_name: String = row.get(2);
+                let family_name: String = row.get(3);
+                // debug!("{:?} {:?} {:?}", given_name, middle_name, family_name);
+
+                return Ok(User::new(
+                    &email,
+                    &given_name,
+                    &middle_name,
+                    &family_name
+                ));
             }
         }
     }
