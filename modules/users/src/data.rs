@@ -114,7 +114,7 @@ impl Data {
                 return Err(DataError::DatabaseError);
             }
             Ok(row) => {
-                // debug!("row: {:?}", row);
+                debug!("row: {:?}", row);
 
                 let id: uuid::Uuid = row.get(0);
                 let given_name: String = row.get(1);

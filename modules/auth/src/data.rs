@@ -115,6 +115,8 @@ impl Data {
 
     /// add record to registrations table in db and return token string
     pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<String, DataError> {
+        info!("Data::register()");
+        
         // generate url friendly token
         let token: String = thread_rng()
             .sample_iter(&Alphanumeric)
@@ -155,6 +157,8 @@ impl Data {
 
     /// retrieve registration details
     pub async fn get_registration_info(&self, token: &str) -> Result<RegistrationInfo, DataError> {
+        info!("Data::get_registration_info()");
+
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -201,6 +205,8 @@ impl Data {
         token: &str,
         pw: &str
     ) -> Result<(), DataError> {
+        info!("Data::complete_registration()");
+
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -240,6 +246,8 @@ impl Data {
         email: &str,
         pw: &str
     ) -> Result<bool, DataError> {
+        info!("Data::user_authenticate()");
+
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);

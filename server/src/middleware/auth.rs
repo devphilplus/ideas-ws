@@ -90,7 +90,7 @@ where
     fn call(&self, request: ServiceRequest) -> Self::Future {
         debug!("AuthMiddleware::call() [1]");
 
-        debug!("request: {:?}", request);
+        // debug!("request: {:?}", request);
 
         let path = request.match_info();
         debug!("path: {:?}", path);

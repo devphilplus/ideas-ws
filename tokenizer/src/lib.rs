@@ -91,23 +91,30 @@ impl Tokenizer {
         &self,
         token: &str
     ) -> bool {
-        match <Hmac<Sha256>>::new_from_slice(
-            self.secret.as_bytes()
-        ) {
-            Err(e) => {
-                error!("unable to generate key: {:?}", e);
-                return false;
-            }
-            Ok(key) => {
-                // error here
-                let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
-                match result {
-                    Err(e) => {
-                        error!("unable to verify token: {:?}", e);
-                        return false;
-                    }
-                    Ok(_) => {
-                        return true;
+        info!("Tokenizer::is_valid()");
+
+        if token.is_empty() {
+            error!("cannot verify an empty token");
+            return false;
+        } else {
+            match <Hmac<Sha256>>::new_from_slice(
+                self.secret.as_bytes()
+            ) {
+                Err(e) => {
+                    error!("unable to generate key: {:?}", e);
+                    return false;
+                }
+                Ok(key) => {
+                    debug!("key: {:?}", key);
+                    let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
+                    match result {
+                        Err(e) => {
+                            error!("unable to verify token: {:?}", e);
+                            return false;
+                        }
+                        Ok(_) => {
+                            return true;
+                        }
                     }
                 }
             }
