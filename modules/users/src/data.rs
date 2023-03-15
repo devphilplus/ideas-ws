@@ -116,12 +116,14 @@ impl Data {
             Ok(row) => {
                 // debug!("row: {:?}", row);
 
+                let id: uuid::Uuid = row.get(0);
                 let given_name: String = row.get(1);
                 let middle_name: String = row.get(2);
                 let family_name: String = row.get(3);
                 // debug!("{:?} {:?} {:?}", given_name, middle_name, family_name);
 
                 return Ok(User::new(
+                    &id,
                     &email,
                     &given_name,
                     &middle_name,

@@ -1,3 +1,5 @@
+use std::pin::Pin;
+
 use configuration::ApplicationConfiguration;
 use log::{
     info,
@@ -10,7 +12,7 @@ use futures::{
         ok,
         err,
         Ready
-    }
+    }, Future
 };
 
 use http::{
@@ -34,6 +36,7 @@ use serde::{
 use tokenizer::Tokenizer;
 
 use common::user::User;
+use users::users::Users;
 
 
 #[derive(Debug)]
@@ -65,6 +68,7 @@ pub struct CurrentUser {
 impl CurrentUser {
 
     pub fn new(
+        id: &uuid::Uuid,
         email: &str
     ) -> Self {
         return Self {
@@ -96,33 +100,49 @@ impl CurrentUser {
 
 impl FromRequest for CurrentUser {
     type Error = UserError;
-    type Future = Ready<Result<Self, Self::Error>>;
+    // type Future = Ready<Result<Self, Self::Error>>;
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
 
     fn from_request(request: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         debug!("CurrentUser::from_request");
         
-        let user = CurrentUser::anonymous();
-        if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
-            let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
+        let sr = request.clone();
+        return Box::pin(async move {
+            let mut user = CurrentUser::anonymous();
+            let mut token_value = String::from("");
+            let mut email = String::from("");
 
-            if token_value != "" {
-                if let Some(tokenizer) = request.app_data::<web::Data<Tokenizer>>() {
+            if let Some(header_value) = sr.headers().get(header::AUTHORIZATION) {
+                token_value = header_value.to_str().unwrap().replace("Bearer", "").to_owned();
+            }
+
+            if !token_value.is_empty() {
+                if let Some(tokenizer) = sr.app_data::<web::Data<Tokenizer>>() {
                     if tokenizer.is_valid(&token_value) {
                         if let Ok(claims) = tokenizer.get_claims(&token_value) {
-                            debug!("claims: {:?}", claims);
-                            let email = claims.email().clone();
-                            let email_str = email.as_str();
-                            return ok(CurrentUser::new(&email_str));
-                        } else {
-                            debug!("unable to retrieve claims");
+                            email = claims.email().clone();
                         }
-                    } else {
-                        debug!("token is invalid: {:?}", token_value);
                     }
                 }
             }
-        }
 
-        return ok(user);
+            if !email.is_empty() {
+                if let Some(users) = sr.app_data::<web::Data<Users>>() {
+                    match users.user_by_email(&email.as_str()).await {
+                        Err(e) => {
+                            error!("unable to retrieve user data: {:?}", e);
+                        }
+                        Ok(user_data) => {
+                            user = CurrentUser::new(
+                                &user_data.id(),
+                                &user_data.email()
+                            );
+                        }
+                    }
+                }
+            }
+
+            return Ok(user);
+        });
     }
 }
