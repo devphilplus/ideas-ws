@@ -11,4 +11,6 @@ log = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
 
+uuid = { version = "0.8.2", features = ["v4", "serde"] }
+
 configuration = { path = "../configuration" }
