@@ -33,9 +33,9 @@ impl Permission {
 impl Guard for Permission {
 
     fn check(&self, context: &GuardContext<'_>) -> bool {
-        debug!("Permission::check() (context): {:?}", context);
+        // debug!("Permission::check() (context): {:?}", context);
         if let Some(user) = context.req_data().get::<CurrentUser>() {
-            debug!("Permission::check() (user): {:?}", user);
+            debug!("//TODO Permission::check() (user): {:?}", user);
         }
         debug!("//TODO Permission::check()");
         return true;

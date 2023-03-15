@@ -113,7 +113,8 @@ impl FromRequest for CurrentUser {
             let mut email = String::from("");
 
             if let Some(header_value) = sr.headers().get(header::AUTHORIZATION) {
-                token_value = header_value.to_str().unwrap().replace("Bearer", "").to_owned();
+                token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
+                debug!("token_value: {:?}", token_value);
             }
 
             if !token_value.is_empty() {
