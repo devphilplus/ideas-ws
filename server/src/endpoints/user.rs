@@ -23,7 +23,10 @@ use crate::endpoints::{
     default_service
 };
 use crate::classes::user::CurrentUser;
-use crate::classes::guards::permission::Permission;
+use crate::classes::guards::{
+    authenticated::Authenticated,
+    permission::Permission
+};
 
 use auth::{
     // user::User,
@@ -36,6 +39,11 @@ use auth::{
 #[derive(Debug, Serialize, Deserialize)]
 struct UserPasswordRequest {
     pub password: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UserClientJoinRequest {
+    pub client: String
 }
 
 
@@ -56,8 +64,20 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(user_set_password_get))
                 .route(web::post()
-                    .guard(Permission::new("permission.test"))
+                    // .guard(Permission::new("permission.test"))
+                    .guard(Authenticated::new())
                     .to(user_set_password_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
+            web::resource("/client/join")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(user_client_join_get))
+                .route(web::post()
+                    // .guard(Permission::new("permission.test"))
+                    .guard(Authenticated::new())
+                    .to(user_client_join_post)
                 )
                 .default_service(web::to(default_service))
         )
@@ -123,6 +143,42 @@ async fn user_set_password_post(
 
     debug!("user: {:?}", user);
     debug!("params: {:?}", params);
+
+    match users.user_set_password(
+        &user.id(),
+        &params.password
+    ).await {
+        Err(e) => {
+            debug!("user_set_password_post: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to change password",
+                    None
+                ));
+        }
+        Ok(_) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    "successfully changed password",
+                    None
+                ));
+        }
+    }
+}
+
+async fn user_client_join_get() -> impl Responder {
+    info!("user_client_join_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn user_client_join_post(
+    users: web::Data<Users>,
+    user: crate::classes::user::CurrentUser,
+    params: web::Json<UserPasswordRequest>
+) -> impl Responder {
+    info!("user_client_join_post()");
 
 
 

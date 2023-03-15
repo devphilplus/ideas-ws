@@ -58,6 +58,7 @@ impl ResponseError for UserError {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CurrentUser {
+    id: uuid::Uuid,
     email: String
 }
 
@@ -67,18 +68,24 @@ impl CurrentUser {
         email: &str
     ) -> Self {
         return Self {
+            id: uuid::Uuid::nil(),
             email: String::from(email)
         };
     }
 
     pub fn anonymous() -> Self {
         return Self {
+            id: uuid::Uuid::nil(),
             email: String::from("")
         };
     }
 
     pub fn is_authenticated(&self) -> bool {
-        return self.email != "";
+        return self.id.is_nil() && self.email != "";
+    }
+
+    pub fn id(&self) -> uuid::Uuid {
+        return self.id.clone();
     }
 
     pub fn email(&self) -> String {
