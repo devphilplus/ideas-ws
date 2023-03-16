@@ -66,10 +66,19 @@ async fn main() -> std::io::Result<()> {
         );
         if let Err(e) = result_users {
             error!("unable to create users object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable tocreate users object"));
+            return Err(Error::new(ErrorKind::Other, "unable to create users object"));
         }
         let users = result_users.unwrap();
 
+        // clients module
+        let result_clients = clients::clients::Clients::new(
+            cfg.clone()
+        );
+        if let Err(e) = result_clients {
+            error!("unable to create clients object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create clients object"));
+        }
+        let clients = result_clients.unwrap();
 
 
         let server = HttpServer::new(move || {
@@ -79,6 +88,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
+                .app_data(web::Data::new(clients.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))

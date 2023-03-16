@@ -15,6 +15,7 @@ use serde::{
 };
 use serde_json::json;
 use users::users::Users;
+use clients::clients::Clients;
 
 // use configuration::ApplicationConfiguration;
 use crate::endpoints::{
@@ -174,13 +175,25 @@ async fn user_client_join_get() -> impl Responder {
 }
 
 async fn user_client_join_post(
+    clients: web::Data<Clients>,
     users: web::Data<Users>,
     user: crate::classes::user::CurrentUser,
-    params: web::Json<UserPasswordRequest>
+    params: web::Json<UserClientJoinRequest>
 ) -> impl Responder {
     info!("user_client_join_post()");
 
+    debug!("params: {:?}", params);
 
+    let user_id = user.id();
+    
+    match clients.client_by_name(&params.client).await {
+        Err(e) => {
+            error!("unable to fetch client by name: {:?}", e);
+        }
+        Ok(client) => {
+            debug!("client found: {:?}", client);
+        }
+    }
 
     return HttpResponse::Ok()
         .json(ApiResponse::new(

@@ -28,3 +28,4 @@ users = { path = "../modules/users" }
 common = { path = "../common" }
 mailer = { path = "../mailer" }
 tokenizer = { path = "../tokenizer" }
+clients = { path = "../modules/clients" }
