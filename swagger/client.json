@@ -39,12 +39,29 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "format": "uuid",
                         "readOnly": true
                     }
                 },
                 "required": [
                     "name"
+                ]
+            },
+            "ClientSetActiveRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "id",
+                    "active"
                 ]
             }
         },
@@ -78,6 +95,46 @@
                 "responses": {
                     "200": {
                         "description": "successfully retrieved client information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "client information failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/clients/client/active": {
+            "summary": "set client active status",
+            "post": {
+                "summary": "POST method",
+                "tags": ["client"],
+                "operationId": "client_set_active",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientSetActiveRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully set client active status",
                         "content": {
                             "application/json": {
                                 "schema": {
