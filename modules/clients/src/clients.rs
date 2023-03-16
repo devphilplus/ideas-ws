@@ -21,7 +21,7 @@ pub enum ClientsError {
     ConfigurationError
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Clients {
     cfg: ApplicationConfiguration,
     data: Data

@@ -35,7 +35,7 @@ pub enum DataError {
     DatabaseError
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Data {
     pool: Pool
 }
