@@ -205,6 +205,43 @@ impl Data {
             return Err(DataError::DatabaseError);
         } else {
             return Ok(());
-        }        
+        }
+    }
+
+    pub async fn user_join_client(
+        &self,
+        user_id: &uuid::Uuid,
+        client_id: &uuid::Uuid
+    ) -> Result<(), DataError> {
+        info!("user_join_client");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_client_add($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.execute(
+            &stmt, 
+            &[
+                &user_id,
+                &client_id
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }
     }
 }

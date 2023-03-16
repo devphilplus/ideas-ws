@@ -111,4 +111,26 @@ impl Users {
             }
         }
     }
+
+    pub async fn user_join_client(
+        &self,
+        user_id: &uuid::Uuid,
+        client_id: &uuid::Uuid
+    ) -> Result<(), UsersError> {
+        info!("user_join_client");
+
+        match self.data.user_join_client(
+            &user_id,
+            &client_id
+        ).await {
+            Err(e) => {
+                error!("error: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_join_client")));
+            }
+            Ok(result) => {
+                debug!("result: {:?}", result);
+                return Ok(());
+            }
+        }
+    }
 }
