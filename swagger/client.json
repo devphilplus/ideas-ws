@@ -1,0 +1,103 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "authentication & authorization tests",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "localhost api server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "apiResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "success",
+                    "message"
+                ]
+            },
+            "ClientGetInfoRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "bearer": {
+                "type": "http",
+                "description": "Bearer authentication",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "paths": {
+        "/clients/client/get": {
+            "summary": "get client information",
+            "post": {
+                "summary": "POST method",
+                "tags": ["client"],
+                "operationId": "client_get",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientGetInfoRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully retrieved client information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "client information failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
