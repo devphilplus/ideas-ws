@@ -44,7 +44,10 @@
                 },
                 "required": [
                     "name"
-                ]
+                ],
+                "example": {
+                    "name": "test"
+                }
             },
             "ClientSetActiveRequest": {
                 "type": "object",
@@ -62,7 +65,11 @@
                 "required": [
                     "id",
                     "active"
-                ]
+                ],
+                "example": {
+                    "id": "14a1c7f9-bdb0-4b60-8479-68a0b021083a",
+                    "active": false
+                }
             }
         },
         "securitySchemes": {
