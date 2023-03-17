@@ -26,7 +26,15 @@ use crate::classes::guards::{
     authenticated::Authenticated,
     permission::Permission
 };
+use clients::clients::{Clients, ClientsError};
 use crate::classes::user::CurrentUser;
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct ClientGetByNameRequest {
+    pub name: String
+}
+
 
 
 pub fn config(cfg: &mut web::ServiceConfig) {
@@ -43,7 +51,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::get().to(client_get_get))
                 .route(web::post()
                     // .guard(Permission::new("permission.test"))
-                    .guard(Authenticated::new())
+                    // .guard(Authenticated::new())
                     .to(client_get_post)
                 )
                 .default_service(web::to(default_service))
@@ -90,15 +98,35 @@ async fn client_get_get() -> impl Responder {
 
 
 async fn client_get_post(
-    user: CurrentUser
+    clients: web::Data<Clients>,
+    // user: CurrentUser,
+    params: web::Json<ClientGetByNameRequest>
 ) -> impl Responder {
     info!("client_get_post()");
-    return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
+    debug!("params: {:?}", params);
+
+    let client_name = params.name.clone();
+    match clients.client_by_name(&client_name).await {
+        Err(e) => {
+            error!("client_get_post: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "an error occured while trying to retrieve client by name",
+                    None
+                ));
+        }
+        Ok(result) => {
+            debug!("//TODO client_get_post: {:?}", result);
+
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    false,
+                    "Service is up. version: 1.0.0.0.dev",
+                    None
+                ));
+        }
+    }
 }
 
 
