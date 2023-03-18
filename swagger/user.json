@@ -48,6 +48,21 @@
                 "example": {
                     "password": "testTest"
                 }
+            },
+            "UserClientJoinRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "example": {
+                    "name": "test"
+                }
             }
         },
         "securitySchemes": {
@@ -108,6 +123,51 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/UserPasswordChangeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "set user password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "password changed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/user/client/join": {
+            "summary": "join a client",
+            "post": {
+                "summary": "POST method",
+                "tags": ["user"],
+                "operationId": "user_client_join",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserClientJoinRequest"
                             }
                         }
                     }
