@@ -24,4 +24,12 @@ impl Client {
             name: String::from(name)
         };
     }
+
+    pub fn id(&self) -> uuid::Uuid {
+        return self.id.clone();
+    }
+
+    pub fn name(&self) -> String {
+        return self.name.clone();
+    }
 }
