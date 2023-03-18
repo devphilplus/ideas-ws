@@ -181,24 +181,44 @@ async fn user_client_join_post(
     params: web::Json<UserClientJoinRequest>
 ) -> impl Responder {
     info!("user_client_join_post()");
-
     debug!("params: {:?}", params);
-
-    let user_id = user.id();
     
     match clients.client_by_name(&params.client).await {
         Err(e) => {
             error!("unable to fetch client by name: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "an error occured while trying to join a client",
+                    None
+                ));
         }
         Ok(client) => {
             debug!("client found: {:?}", client);
+
+            match users.user_join_client(
+                &user.id(),
+            &client.id()
+            ).await {
+                Err(e) => {
+                    error!("user_client_join_post: {:?}", e);
+                    return HttpResponse::InternalServerError()
+                        .json(ApiResponse::new(
+                            false,
+                            "an error occured while trying to join a client",
+                            None
+                        ));
+                }
+                Ok(result) => {
+                    debug!("use_client_join_post: {:?}", result);
+                    return HttpResponse::Ok()
+                        .json(ApiResponse::new(
+                            true,
+                            "successfully joined client",
+                            None
+                        ));
+                }
+            }
         }
     }
-
-    return HttpResponse::Ok()
-        .json(ApiResponse::new(
-            false,
-            "unable to set user password",
-            None
-        ));
 }
