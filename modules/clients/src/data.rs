@@ -124,4 +124,55 @@ impl Data {
             }
         }
     }
+
+
+    pub async fn client_add(
+        &self,
+        id: &uuid::Uuid,
+        name: &str,
+        slug: &str,
+        description: &str
+    ) -> Result<(), DataError> {
+        info!("Data::client_add()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from client.client_add($1, $2, $3, $4)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &id,
+                &name,
+                &slug,
+                &description
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+
+                let id: uuid::Uuid = row.get(0);
+                let name: String = row.get(1);
+
+                return Ok(());
+            }
+        }
+
+    }
 }

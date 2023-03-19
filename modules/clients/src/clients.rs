@@ -59,4 +59,29 @@ impl Clients {
             }
         }
     }
+
+    pub async fn client_add(
+        &self,
+        id: uuid::Uuid,
+        name: &str,
+        slug: &str,
+        description: &str
+    ) -> Result<(), ClientsError> {
+        info!("Clients::client_add()");
+
+        match self.data.client_add(
+            &id,
+            &name,
+            &slug,
+            &description
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve client: {:?}", e);
+                return Err(ClientsError::ToBeImplemented(String::from("Clients::client_add()")));
+            }
+            Ok(client) => {
+                return Ok(client);
+            }
+        }
+    }
 }
