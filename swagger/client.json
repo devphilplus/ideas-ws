@@ -70,6 +70,40 @@
                     "id": "14a1c7f9-bdb0-4b60-8479-68a0b021083a",
                     "active": false
                 }
+            },
+            "ClientAddRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "slug": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "slug",
+                    "description"
+                ],
+                "example": {
+                    "id": "14a1c7f9-bdb0-4b60-8479-68a0b021083a",
+                    "name": "test add client",
+                    "slug": "test_add_client",
+                    "description": "test add client description"
+                }
             }
         },
         "securitySchemes": {
@@ -152,6 +186,46 @@
                     },
                     "400": {
                         "description": "client information failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/clients/client/add": {
+            "summary": "create client",
+            "post": {
+                "summary": "POST method",
+                "tags": ["client"],
+                "operationId": "client_add",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientAddRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully added client",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "adding a client failed",
                         "content": {
                             "application/json": {
                                 "schema": {
