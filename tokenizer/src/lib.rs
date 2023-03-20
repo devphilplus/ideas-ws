@@ -68,6 +68,9 @@ impl Tokenizer {
 
         claims.insert("email", email);
 
+        let iat = Utc::now().to_rfc3339();
+        claims.insert("iat", iat.as_str());
+
         match <Hmac<Sha256>>::new_from_slice(self.secret.as_bytes()) {
             Err(e) => {
                 error!("unable to generate key: {:?}", e);
