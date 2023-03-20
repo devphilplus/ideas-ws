@@ -118,9 +118,10 @@ impl Data {
 
                 let id: uuid::Uuid = row.get("id");
                 let active: bool = row.get("active");
-                let given_name: String = row.get(1);
-                let middle_name: String = row.get(2);
-                let family_name: String = row.get(3);
+                let email: String = row.get("email");
+                let given_name: String = row.get("given_name");
+                let middle_name: String = row.get("middle_name");
+                let family_name: String = row.get("family_name");
                 // debug!("{:?} {:?} {:?}", given_name, middle_name, family_name);
 
                 return Ok(User::new(
