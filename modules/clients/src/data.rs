@@ -1,3 +1,4 @@
+use common::user::User;
 use log::{
     info,
     debug,
@@ -171,6 +172,60 @@ impl Data {
                 let name: String = row.get(1);
 
                 return Ok(());
+            }
+        }
+
+    }
+
+    pub async fn users(
+        &self,
+        client_id: &uuid::Uuid
+    ) -> Result<Vec<User>, DataError> {
+        info!("Data::users()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from client.user_clients_by_client($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query(
+            &stmt,
+            &[
+                &client_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(rows) => {
+                debug!("rows: {:?}", rows);
+
+                let results = rows.iter().map(|r| {
+                    let user_id: uuid::Uuid = r.get("user_id");
+                    let email: String = r.get("email");
+
+                    return User::new(
+                        &user_id,
+                        &email,
+                        &"",
+                        &"",
+                        &""
+                    );
+                }).collect();
+
+                return Ok(results);
             }
         }
 

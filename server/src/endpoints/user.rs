@@ -197,8 +197,8 @@ async fn user_client_join_post(
             debug!("client found: {:?}", client);
 
             match users.user_join_client(
-                &user.id(),
-            &client.id()
+        &user.id(),
+        &client.id()
             ).await {
                 Err(e) => {
                     error!("user_client_join_post: {:?}", e);

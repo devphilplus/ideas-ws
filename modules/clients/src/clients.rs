@@ -10,7 +10,7 @@ use serde::{
 };
 
 use configuration::ApplicationConfiguration;
-use common::client::Client;
+use common::{client::Client, user::User};
 
 use crate::data::Data;
 
@@ -83,5 +83,25 @@ impl Clients {
                 return Ok(client);
             }
         }
+    }
+
+    pub async fn users(
+        &self,
+        client_id: &uuid::Uuid
+    ) -> Result<Vec<User>, ClientsError> {
+        info!("Clients::users()");
+
+        match self.data.users(
+            &client_id
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve users: {:?}", e);
+                return Err(ClientsError::ToBeImplemented(String::from("Clients::users()")));
+            }
+            Ok(users) => {
+                return Ok(users);
+            }
+        }
+
     }
 }
