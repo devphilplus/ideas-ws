@@ -214,10 +214,12 @@ impl Data {
 
                 let results = rows.iter().map(|r| {
                     let user_id: uuid::Uuid = r.get("user_id");
+                    let active: bool = r.get("active");
                     let email: String = r.get("email");
 
                     return User::new(
                         &user_id,
+                        &active,
                         &email,
                         &"",
                         &"",

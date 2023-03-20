@@ -116,7 +116,8 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
 
-                let id: uuid::Uuid = row.get(0);
+                let id: uuid::Uuid = row.get("id");
+                let active: bool = row.get("active");
                 let given_name: String = row.get(1);
                 let middle_name: String = row.get(2);
                 let family_name: String = row.get(3);
@@ -124,6 +125,7 @@ impl Data {
 
                 return Ok(User::new(
                     &id,
+                    &active,
                     &email,
                     &given_name,
                     &middle_name,

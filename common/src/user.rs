@@ -8,6 +8,7 @@ use log::{
 #[derive(Debug)]
 pub struct User {
     id: uuid::Uuid,
+    active: bool,
     email: String,
     given_name: String,
     middle_name: String,
@@ -17,6 +18,7 @@ pub struct User {
 impl User {
     pub fn new(
         id: &uuid::Uuid,
+        active: &bool,
         email: &str,
         given_name: &str,
         middle_name: &str,
@@ -24,6 +26,7 @@ impl User {
     ) -> Self {
         return Self {
             id: id.clone(),
+            active: active.clone(),
             email: String::from(email),
             given_name: String::from(given_name),
             middle_name: String::from(middle_name),
@@ -34,6 +37,7 @@ impl User {
     pub fn anonymous() -> Self {
         return Self {
             id: uuid::Uuid::nil(),
+            active: false,
             email: String::from(""),
             given_name: String::from(""),
             middle_name: String::from(""),
@@ -43,6 +47,10 @@ impl User {
 
     pub fn id(&self) -> uuid::Uuid {
         return self.id.to_owned();
+    }
+
+    pub fn active(&self) -> bool {
+        return self.active.to_owned();
     }
 
     pub fn email(&self) -> String {
