@@ -115,11 +115,13 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
 
-                let id: uuid::Uuid = row.get(0);
-                let name: String = row.get(1);
+                let id: uuid::Uuid = row.get("id");
+                let active: bool = row.get("active");
+                let name: String = row.get("name");
 
                 return Ok(Client::new(
                     &id,
+                    &active,
                     &name
                 ));
             }
