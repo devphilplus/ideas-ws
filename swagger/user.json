@@ -52,16 +52,16 @@
             "UserClientJoinRequest": {
                 "type": "object",
                 "properties": {
-                    "name": {
+                    "client": {
                         "type": "string",
                         "readOnly": true
                     }
                 },
                 "required": [
-                    "name"
+                    "client"
                 ],
                 "example": {
-                    "name": "test"
+                    "client": "test"
                 }
             }
         },
