@@ -3,6 +3,8 @@ use log::{
     debug,
     error
 };
+use tokenizer::Tokenizer;
+use users::users::Users;
 
 use std::rc::Rc;
 use std::task::{ Context, Poll };
@@ -110,6 +112,46 @@ where
             // }
 
             // request.extensions_mut().insert(user);
+
+            let mut user = CurrentUser::anonymous();
+            if request.method() == Method::POST {
+                let mut token_value = String::from("");
+                let mut email = String::from("");
+                if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
+                    token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
+                }
+
+                if !token_value.is_empty() {
+                    if let Some(tokenizer) = request.app_data::<web::Data<Tokenizer>>() {
+                        if tokenizer.is_valid(&token_value) {
+                            if let Ok(claims) = tokenizer.get_claims(&token_value) {
+                                email = claims.email().clone();
+                            }
+                        }
+                    } else {
+                        error!("tokenizer not found");
+                    }
+                }
+
+                if !email.is_empty() {
+                    if let Some(users) = request.app_data::<web::Data<Users>>() {
+                        match users.user_by_email(&email.as_str()).await {
+                            Err(e) => {
+                                error!("unable to retrieve user data: {:?}", e);
+                            }
+                            Ok(user_data) => {
+                                user = CurrentUser::new(
+                                    &user_data.id(),
+                                    &user_data.email()
+                                );
+                            }
+                        }
+                    } else {
+                        error!("users not found");
+                    }
+                }
+            }
+            request.extensions_mut().insert(user);
 
             let f = service.call(request);
             match f.await {

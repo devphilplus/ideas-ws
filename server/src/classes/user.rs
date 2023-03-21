@@ -1,5 +1,6 @@
 use std::pin::Pin;
 
+use actix_http::header::HeaderMap;
 use configuration::ApplicationConfiguration;
 use log::{
     info,
@@ -59,7 +60,7 @@ impl ResponseError for UserError {
 }
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CurrentUser {
     id: uuid::Uuid,
     email: String
@@ -72,7 +73,7 @@ impl CurrentUser {
         email: &str
     ) -> Self {
         return Self {
-            id: uuid::Uuid::nil(),
+            id: id.clone(),
             email: String::from(email)
         };
     }
@@ -85,7 +86,7 @@ impl CurrentUser {
     }
 
     pub fn is_authenticated(&self) -> bool {
-        return self.id.is_nil() && self.email != "";
+        return !self.id.is_nil() && self.email != "";
     }
 
     pub fn id(&self) -> uuid::Uuid {
@@ -100,50 +101,58 @@ impl CurrentUser {
 
 impl FromRequest for CurrentUser {
     type Error = UserError;
-    // type Future = Ready<Result<Self, Self::Error>>;
-    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+    type Future = Ready<Result<Self, Self::Error>>;
+    // type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
 
     fn from_request(request: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         debug!("CurrentUser::from_request");
         
-        let sr = request.clone();
-        return Box::pin(async move {
-            let mut user = CurrentUser::anonymous();
-            let mut token_value = String::from("");
-            let mut email = String::from("");
+        // let sr = request.clone();
+        // return Box::pin(async move {
+        //     let mut user = CurrentUser::anonymous();
+        //     let mut token_value = String::from("");
+        //     let mut email = String::from("");
 
-            if let Some(header_value) = sr.headers().get(header::AUTHORIZATION) {
-                token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
-                debug!("token_value: {:?}", token_value);
-            }
+        //     if let Some(header_value) = sr.headers().get(header::AUTHORIZATION) {
+        //         token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
+        //         debug!("token_value: {:?}", token_value);
+        //     }
 
-            if !token_value.is_empty() {
-                if let Some(tokenizer) = sr.app_data::<web::Data<Tokenizer>>() {
-                    if tokenizer.is_valid(&token_value) {
-                        if let Ok(claims) = tokenizer.get_claims(&token_value) {
-                            email = claims.email().clone();
-                        }
-                    }
-                }
-            }
+        //     if !token_value.is_empty() {
+        //         if let Some(tokenizer) = sr.app_data::<web::Data<Tokenizer>>() {
+        //             if tokenizer.is_valid(&token_value) {
+        //                 if let Ok(claims) = tokenizer.get_claims(&token_value) {
+        //                     email = claims.email().clone();
+        //                 }
+        //             }
+        //         }
+        //     }
 
-            if !email.is_empty() {
-                if let Some(users) = sr.app_data::<web::Data<Users>>() {
-                    match users.user_by_email(&email.as_str()).await {
-                        Err(e) => {
-                            error!("unable to retrieve user data: {:?}", e);
-                        }
-                        Ok(user_data) => {
-                            user = CurrentUser::new(
-                                &user_data.id(),
-                                &user_data.email()
-                            );
-                        }
-                    }
-                }
-            }
+        //     if !email.is_empty() {
+        //         if let Some(users) = sr.app_data::<web::Data<Users>>() {
+        //             match users.user_by_email(&email.as_str()).await {
+        //                 Err(e) => {
+        //                     error!("unable to retrieve user data: {:?}", e);
+        //                 }
+        //                 Ok(user_data) => {
+        //                     user = CurrentUser::new(
+        //                         &user_data.id(),
+        //                         &user_data.email()
+        //                     );
+        //                 }
+        //             }
+        //         }
+        //     }
 
-            return Ok(user);
-        });
+        //     return Ok(user);
+        // });
+
+        if let Some(user) = request.extensions().get::<CurrentUser>() {
+        // if let Some(user) = request.app_data::<CurrentUser>() {
+            return ok(user.clone());
+        } else {
+            error!("current user not found");
+            return ok(CurrentUser::anonymous());
+        }
     }
 }
