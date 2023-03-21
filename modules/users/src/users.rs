@@ -50,6 +50,26 @@ impl Users {
         return Err(UsersError::ConfigurationError);
     }
 
+    pub async fn user_by_id(
+        &self,
+        id: &uuid::Uuid
+    ) -> Result<User, UsersError> {
+        info!("Users::user_by_id()");
+
+        match self.data.by_id(
+            &id
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve user: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_by_id")));
+            }
+            Ok(user) => {
+                debug!("Users::user_by_id(): {:?}", user);
+                return Ok(user);
+            }
+        }
+    }
+
     pub async fn user_by_email(
         &self,
         email: &str

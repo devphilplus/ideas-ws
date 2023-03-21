@@ -81,6 +81,61 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
+    pub async fn by_id(
+        &self,
+        id: &uuid::Uuid
+    ) -> Result<User ,DataError> {
+        info!("Data::by_id()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from iam.user_by_id($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+
+                let id: uuid::Uuid = row.get("id");
+                let active: bool = row.get("active");
+                let email: String = row.get("email");
+                let given_name: String = row.get("given_name");
+                let middle_name: String = row.get("middle_name");
+                let family_name: String = row.get("family_name");
+                // debug!("{:?} {:?} {:?}", given_name, middle_name, family_name);
+
+                return Ok(User::new(
+                    &id,
+                    &active,
+                    &email,
+                    &given_name,
+                    &middle_name,
+                    &family_name
+                ));
+            }
+        }
+    }
+
     pub async fn by_email(
         &self,
         email: &str
