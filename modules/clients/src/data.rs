@@ -193,7 +193,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * from client.user_clients_by_client($1)"
+            "select * from iam.user_clients_by_client($1)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
