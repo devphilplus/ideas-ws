@@ -181,6 +181,7 @@ async fn user_client_join_post(
     params: web::Json<UserClientJoinRequest>
 ) -> impl Responder {
     info!("user_client_join_post()");
+    debug!("user: {:?}", user);
     debug!("params: {:?}", params);
     
     match clients.client_by_name(&params.client).await {
