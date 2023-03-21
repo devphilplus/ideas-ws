@@ -104,6 +104,22 @@
                     "slug": "test_add_client",
                     "description": "test add client description"
                 }
+            },
+            "ClientMembersRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "readOnly": true,
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "example": {
+                    "id": "14a1c7f9-bdb0-4b60-8479-68a0b021083a"
+                }
             }
         },
         "securitySchemes": {
@@ -194,7 +210,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
             }
         },
         "/clients/client/add": {
@@ -234,7 +255,57 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/clients/client/members": {
+            "summary": "retrieve client members",
+            "post": {
+                "summary": "POST method",
+                "tags": ["client"],
+                "operationId": "client_members",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientMembersRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully retrieved members",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "failed to retrieve members",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
             }
         }
     }
