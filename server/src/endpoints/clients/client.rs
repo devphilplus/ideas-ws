@@ -95,6 +95,17 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 )
                 .default_service(web::to(default_service))
         )
+        .service(
+            web::resource("/clients")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(client_clients_get))
+                .route(web::post()
+                    // .guard(Permission::new("permission.test"))
+                    .guard(Authenticated::new())
+                    .to(client_clients_post)
+                )
+                .default_service(web::to(default_service))
+        )
     ;
 }
 
@@ -194,6 +205,26 @@ async fn client_add_post(
     user: CurrentUser
 ) -> impl Responder {
     info!("client_add_post()");
+    return HttpResponse::Ok()
+        .json(ApiResponse {
+            success: false,
+            message: String::from("Service is up. version: 1.0.0.0.dev"),
+            data: None
+        });
+}
+
+
+async fn client_clients_get() -> impl Responder {
+    info!("client_clients_get()");
+
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+
+async fn client_clients_post(
+    user: CurrentUser
+) -> impl Responder {
+    info!("client_clients_post()");
     return HttpResponse::Ok()
         .json(ApiResponse {
             success: false,
