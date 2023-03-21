@@ -129,6 +129,54 @@ impl Data {
     }
 
 
+    pub async fn clients(
+        &self
+    ) -> Result<Vec<Client>, DataError> {
+        info!("Data::clients()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from client.clients_fetch()"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query(
+            &stmt,
+            &[
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(rows) => {
+                let clients = rows.iter().map(|r| {
+                    let id: uuid::Uuid = r.get("id");
+                    let active: bool = r.get("active");
+                    let name: String = r.get("name");
+
+                    return Client::new(
+                        &id,
+                        &active,
+                        &name
+                    );
+                }).collect();
+                return Ok(clients);
+            }
+        }
+    }
+
+
     pub async fn client_add(
         &self,
         id: &uuid::Uuid,

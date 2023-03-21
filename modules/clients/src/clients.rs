@@ -85,6 +85,20 @@ impl Clients {
         }
     }
 
+    pub async fn clients(&self) -> Result<Vec<Client>, ClientsError> {
+        info!("Clients::clients()");
+
+        match self.data.clients().await {
+            Err(e) => {
+                error!("unable to retrieve clients: {:?}", e);
+                return Err(ClientsError::ToBeImplemented(String::from("Clients::clients()")));
+            }
+            Ok(clients) => {
+                return Ok(clients);
+            }
+        }
+    }
+
     pub async fn users(
         &self,
         client_id: &uuid::Uuid
