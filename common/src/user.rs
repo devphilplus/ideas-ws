@@ -3,9 +3,10 @@ use log::{
     debug,
     error
 };
+use serde::{Serialize, Deserialize};
 
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     id: uuid::Uuid,
     active: bool,
