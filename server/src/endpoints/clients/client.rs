@@ -36,6 +36,12 @@ struct ClientGetByNameRequest {
 }
 
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ClientMembersRequest {
+    pub id: uuid::Uuid
+}
+
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -79,7 +85,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
-            web::resource("/client/users")
+            web::resource("/client/members")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(client_users_get))
                 .route(web::post()
@@ -138,15 +144,19 @@ async fn client_get_post(
                     None
                 ));
         }
-        Ok(result) => {
-            debug!("//TODO client_get_post: {:?}", result);
+        Ok(client) => {
+            debug!("//TODO client_get_post: {:?}", client);
 
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     false,
                     "Service is up. version: 1.0.0.0.dev",
-                    None
-                ));
+                    Some(json!({
+                        "id": client.id(),
+                        "active": client.active(),
+                        "name": client.name()
+                    })
+                )));
         }
     }
 }
@@ -202,13 +212,35 @@ async fn client_users_get() -> impl Responder {
 
 
 async fn client_users_post(
-    user: CurrentUser
+    clients: web::Data<Clients>,
+    user: CurrentUser,
+    params: web::Json<ClientMembersRequest>
 ) -> impl Responder {
     info!("client_users_post()");
-    return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
+    debug!("params: {:?}", params);
+
+    match clients.users(
+        &params.id
+    ).await {
+        Err(e) => {
+            error!("unable to fetch client members: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to fetch client members",
+                    None
+                ));
+        }
+        Ok(users) => {
+            debug!("users: {:?}", users);
+            return HttpResponse::Ok()
+                .json(ApiResponse {
+                    success: true,
+                    message: String::from("Service is up. version: 1.0.0.0.dev"),
+                    data: Some(json!({
+                        "members": users
+                    }))
+                });
+        }
+    }
 }
