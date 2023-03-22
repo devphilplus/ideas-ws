@@ -1,9 +1,10 @@
 idEAS
 
-idEAS is an Enterprise Application Server for business applications. It aims to provide the tools necessary for running a business. It will provide features for Enterprise Resource Planning, Manufacturing, Accounting, Human Resources, Project Management, etc. This server provides REST services for 
+idEAS is an Enterprise Application Server for business applications. It aims to provide the tools necessary for running a business. It will provide features for Enterprise Resource Planning, Manufacturing, Accounting, Human Resources, Project Management, etc. This server provides REST services for primarily for the [idEAS web-based user interface](https://github.com/devphilplus/ideas-ui-ng).
 
-[Provide instructions on how to get started with the project. This should include information about installation and setup.]
 Prerequisites:
+- A postgres database server or you can create one from the [idEAS database project](https://github.com/devphilplus/ideas-postgres). There is also an included docker file if you want to run a dockerized postgres installation.
+- A static web server such as apache or nginx to host the static html and js files needed for the web based user interface. There is also an included docker file if you want to run nginx in a docker host.
 
 [Insert a list of the software and hardware requirements necessary to run the ERP system.]
 Installation:
