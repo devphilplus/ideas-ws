@@ -11,6 +11,13 @@ use postgres_types::{
 // use chrono::prelude::*;
 
 
+pub enum DataError {
+    ToBeImplemented(String),
+    ConfigurationError,
+    DatabaseError
+}
+
+
 #[derive(Debug)]
 pub struct Email(String);
 
