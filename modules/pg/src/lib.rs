@@ -11,6 +11,7 @@ use postgres_types::{
 // use chrono::prelude::*;
 
 
+#[derive(Debug)]
 pub enum DataError {
     ToBeImplemented(String),
     ConfigurationError,
