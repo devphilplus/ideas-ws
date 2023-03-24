@@ -1,4 +1,3 @@
-use configuration::ApplicationConfiguration;
 use log::{
     info,
     debug,
@@ -15,6 +14,14 @@ use configuration::{
     ApplicationConfiguration,
     ProviderType
 };
+use crate::data::Data;
+
+
+#[derive(Debug)]
+pub enum RolesError {
+    ToBeImplemented(String),
+    ConfigurationError
+}
 
 
 #[derive(Debug, Clone)]
@@ -25,4 +32,17 @@ pub struct Roles {
 
 
 impl Roles {
+
+    pub fn new(
+        cfg: ApplicationConfiguration
+    ) -> Result<Self, RolesError> {
+        if let Ok(data) = Data::new(&cfg) {
+            return Ok(Self {
+                cfg: cfg,
+                data: data
+            });
+        }
+
+        return Err(RolesError::ConfigurationError);
+    }
 }
