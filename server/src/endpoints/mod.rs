@@ -3,6 +3,7 @@ pub mod auth;
 pub mod user;
 pub mod common;
 pub mod clients;
+pub mod tenants;
 pub mod accounting;
 pub mod inventory;
 
