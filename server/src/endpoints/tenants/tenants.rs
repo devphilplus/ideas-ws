@@ -27,6 +27,18 @@ use crate::classes::guards::{
     permission::Permission
 };
 
+use tenants::tenants::Tenants;
+
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TenantUserAddRequest {
+    pub id: uuid::Uuid,
+    pub name: String,
+    pub slug: String,
+    pub description: String
+}
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -50,13 +62,34 @@ async fn tenant_add_get() -> impl Responder {
 }
 
 async fn tenant_add_post(
-    user: CurrentUser
+    user: CurrentUser,
+    tenants: web::Data<Tenants>,
+    params: web::Json<TenantUserAddRequest>
 ) -> impl Responder {
     info!("tenant_add_post");
-    return HttpResponse::InternalServerError()
-        .json(ApiResponse::new(
-            false,
-            &"todo",
-            None
-        ));
+
+    match tenants.tenant_add(
+        params.id,
+        &params.name,
+        &params.slug,
+        &params.description
+    ).await {
+        Err(e) => {
+            error!("tenant_add_post(): {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    &"an error occured while trying to add a tenant",
+                    None
+                ));
+        }
+        Ok(_) => {
+            return HttpResponse::Created()
+                .json(ApiResponse::new(
+                    true,
+                    &"successfully added tenant",
+                    None
+                ));
+        }
+    }
 }

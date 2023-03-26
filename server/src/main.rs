@@ -80,6 +80,14 @@ async fn main() -> std::io::Result<()> {
         }
         let clients = result_clients.unwrap();
 
+        // tenants module
+        let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
+        if let Err(e) = result_tenants {
+            error!("unable to create tenants object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create tenants object"));
+        }
+        let tenants = result_tenants.unwrap();
+
 
         let server = HttpServer::new(move || {
             App::new()
@@ -89,6 +97,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
                 .app_data(web::Data::new(clients.clone()))
+                .app_data(web::Data::new(tenants.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))
