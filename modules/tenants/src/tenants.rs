@@ -51,7 +51,7 @@ impl Tenants {
         &self,
         name: &str
     ) -> Result<Tenant, TenantsError> {
-        info!("Clients::tenant_by_name()");
+        info!("Tenants::tenant_by_name()");
 
         match self.data.tenant_by_name(name).await {
             Err(e) => {
@@ -80,11 +80,32 @@ impl Tenants {
             &description
         ).await {
             Err(e) => {
-                error!("unable to retrieve tenant: {:?}", e);
+                error!("unable to add tenant: {:?}", e);
                 return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_add()")));
             }
-            Ok(client) => {
-                return Ok(client);
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
+
+    pub async fn tenant_set_active(
+        &self,
+        tenant_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), TenantsError> {
+        info!("Tenants::tenant_set_active()");
+
+        match self.data.tenant_set_active(
+            &tenant_id,
+            &active
+        ).await {
+            Err(e) => {
+                error!("unable to set tenant active status: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_set_active()")));
+            }
+            Ok(_) => {
+                return Ok(());
             }
         }
     }

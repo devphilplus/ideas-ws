@@ -141,7 +141,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * from tenants.tenant_add($1, $2, $3, $4)"
+            "call tenants.tenant_add($1, $2, $3, $4)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -149,7 +149,7 @@ impl Data {
         }
         let stmt = result.unwrap();
 
-        match client.query_one(
+        match client.execute(
             &stmt,
             &[
                 &id,
@@ -162,12 +162,47 @@ impl Data {
                 error!("unable to execute statement: {:?}", e);
                 return Err(DataError::DatabaseError);
             }
-            Ok(row) => {
-                debug!("row: {:?}", row);
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
 
-                let id: uuid::Uuid = row.get(0);
-                let name: String = row.get(1);
+    pub async fn tenant_set_active(
+        &self,
+        tenant_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), DataError> {
+        info!("Data::set_active()");
 
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database tenant: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call tenants.set_active($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.execute(
+            &stmt,
+            &[
+                &tenant_id,
+                &active
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(_) => {
                 return Ok(());
             }
         }
