@@ -15,7 +15,8 @@ use serde::{
 };
 use serde_json::json;
 use users::users::Users;
-use clients::clients::Clients;
+// use clients::clients::Clients;
+use tenants::tenants::Tenants;
 
 // use configuration::ApplicationConfiguration;
 use crate::endpoints::{
@@ -43,8 +44,8 @@ struct UserPasswordRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct UserClientJoinRequest {
-    pub client: String
+struct UserTenantJoinRequest {
+    pub tenant: String
 }
 
 
@@ -72,13 +73,13 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
-            web::resource("/client/join")
+            web::resource("/tenant/join")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
-                .route(web::get().to(user_client_join_get))
+                .route(web::get().to(user_tenant_join_get))
                 .route(web::post()
                     // .guard(Permission::new("permission.test"))
                     .guard(Authenticated::new())
-                    .to(user_client_join_post)
+                    .to(user_tenant_join_post)
                 )
                 .default_service(web::to(default_service))
         )
@@ -169,53 +170,54 @@ async fn user_set_password_post(
     }
 }
 
-async fn user_client_join_get() -> impl Responder {
+async fn user_tenant_join_get() -> impl Responder {
     info!("user_client_join_get()");
     return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }
 
-async fn user_client_join_post(
-    clients: web::Data<Clients>,
+async fn user_tenant_join_post(
+    // clients: web::Data<Clients>,
+    tenants: web::Data<Tenants>,
     users: web::Data<Users>,
     user: crate::classes::user::CurrentUser,
-    params: web::Json<UserClientJoinRequest>
+    params: web::Json<UserTenantJoinRequest>
 ) -> impl Responder {
     info!("user_client_join_post()");
     debug!("user: {:?}", user);
     debug!("params: {:?}", params);
     
-    match clients.client_by_name(&params.client).await {
+    match tenants.tenant_by_name(&params.tenant).await {
         Err(e) => {
             error!("unable to fetch client by name: {:?}", e);
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,
-                    "an error occured while trying to join a client",
+                    "an error occured while trying to join a tenant",
                     None
                 ));
         }
-        Ok(client) => {
-            debug!("client found: {:?}", client);
+        Ok(tenant) => {
+            debug!("tenant found: {:?}", tenant);
 
             match users.user_join_client(
             &user.id(),
-            &client.id()
+            &tenant.id()
             ).await {
                 Err(e) => {
-                    error!("user_client_join_post: {:?}", e);
+                    error!("user_tenant_join_post: {:?}", e);
                     return HttpResponse::InternalServerError()
                         .json(ApiResponse::new(
                             false,
-                            "an error occured while trying to join a client",
+                            "an error occured while trying to join a tenant",
                             None
                         ));
                 }
                 Ok(result) => {
-                    debug!("use_client_join_post: {:?}", result);
+                    debug!("user_tenant_join_post: {:?}", result);
                     return HttpResponse::Ok()
                         .json(ApiResponse::new(
                             true,
-                            "successfully joined client",
+                            "successfully joined tenant",
                             None
                         ));
                 }

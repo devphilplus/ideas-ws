@@ -71,14 +71,14 @@ async fn main() -> std::io::Result<()> {
         let users = result_users.unwrap();
 
         // clients module
-        let result_clients = clients::clients::Clients::new(
-            cfg.clone()
-        );
-        if let Err(e) = result_clients {
-            error!("unable to create clients object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create clients object"));
-        }
-        let clients = result_clients.unwrap();
+        // let result_clients = clients::clients::Clients::new(
+        //     cfg.clone()
+        // );
+        // if let Err(e) = result_clients {
+        //     error!("unable to create clients object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create clients object"));
+        // }
+        // let clients = result_clients.unwrap();
 
         // tenants module
         let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
@@ -96,7 +96,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
-                .app_data(web::Data::new(clients.clone()))
+                // .app_data(web::Data::new(clients.clone()))
                 .app_data(web::Data::new(tenants.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
@@ -106,7 +106,7 @@ async fn main() -> std::io::Result<()> {
                 // .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
-                .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
+                // .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
                 .service(web::scope("/tenants").configure(crate::endpoints::tenants::tenants::config))
         })
         .workers(2)
