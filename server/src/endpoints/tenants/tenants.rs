@@ -66,6 +66,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
+            web::resource("/set/active")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(tenant_set_active_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(tenant_set_active_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
             web::resource("/get")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(tenant_get_get))
@@ -76,12 +86,12 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
-            web::resource("/set/active")
+            web::resource("/get/slug")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
-                .route(web::get().to(tenant_set_active_get))
+                .route(web::get().to(tenant_get_slug_get))
                 .route(web::post()
                     .guard(Permission::new("permission.test"))
-                    .to(tenant_set_active_post)
+                    .to(tenant_get_slug_post)
                 )
                 .default_service(web::to(default_service))
         )
@@ -102,7 +112,7 @@ async fn tenant_add_post(
     info!("tenant_add_post");
 
     match tenants.tenant_add(
-        params.id,
+        params.tenant_id,
         &params.name,
         &params.slug,
         &params.description
@@ -139,6 +149,28 @@ async fn tenant_get_post(
     params: web::Json<TenantGetInfoRequest>
 ) -> impl Responder {
     info!("tenant_get_post()");
+    debug!("params: {:?}", params);
+
+    return HttpResponse::InternalServerError()
+        .json(ApiResponse::new(
+            false,
+            "Service is up. version: 1.0.0.0.dev",
+            None
+        ));
+}
+
+
+async fn tenant_get_slug_get() -> impl Responder {
+    info!("tenant_get_slug_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+
+async fn tenant_get_slug_post(
+    user: CurrentUser,
+    params: web::Json<TenantGetInfoRequest>
+) -> impl Responder {
+    info!("tenant_get_slug_post()");
     debug!("params: {:?}", params);
 
     return HttpResponse::InternalServerError()
