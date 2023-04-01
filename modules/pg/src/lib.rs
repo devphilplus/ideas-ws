@@ -1,11 +1,14 @@
-use log::{
-    debug
-};
+pub mod email;
+pub mod slug;
 
-use postgres_types::{
-    ToSql,
-    to_sql_checked
-};
+// use log::{
+//     debug
+// };
+
+// use postgres_types::{
+//     ToSql,
+//     to_sql_checked
+// };
 
 
 // use chrono::prelude::*;
@@ -19,30 +22,6 @@ pub enum DataError {
 }
 
 
-#[derive(Debug)]
-pub struct Email(String);
-
-impl Email {
-    pub fn new(email: &str) -> Self {
-        return Self(String::from(email));
-    }
-}
-
-impl ToSql for Email {
-    fn to_sql(&self, ty: &postgres_types::Type, out: &mut postgres_types::private::BytesMut) -> Result<postgres_types::IsNull, Box<dyn std::error::Error + Sync + Send>>
-        where
-            Self: Sized {
-        return self.0.to_sql(ty, out);
-    }
-
-    to_sql_checked!();
-
-    fn accepts(ty: &postgres_types::Type) -> bool
-        where
-            Self: Sized {
-        return ty.name() == "email_address";
-    }
-}
 
 
 // impl ToSql for DateTime<Utc> {
