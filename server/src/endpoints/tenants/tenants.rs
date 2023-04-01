@@ -47,6 +47,12 @@ struct TenantGetInfoRequest {
 
 
 #[derive(Debug, Serialize, Deserialize)]
+struct TenantGetInfoBySlugRequest {
+    pub name: String
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
 struct TenantSetActiveRequest {
     pub tenant_id: uuid::Uuid,
     pub active: bool
@@ -184,17 +190,33 @@ async fn tenant_get_slug_get() -> impl Responder {
 
 async fn tenant_get_slug_post(
     user: CurrentUser,
-    params: web::Json<TenantGetInfoRequest>
+    tenants: web::Data<Tenants>,
+    params: web::Json<TenantGetInfoBySlugRequest>
 ) -> impl Responder {
     info!("tenant_get_slug_post()");
     debug!("params: {:?}", params);
 
-    return HttpResponse::InternalServerError()
-        .json(ApiResponse::new(
-            false,
-            "Service is up. version: 1.0.0.0.dev",
-            None
-        ));
+    match tenants.tenant_by_name(&params.name).await {
+        Err(e) => {
+            error!("tenant_get_slug_post: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "//TODO an error occured while trying to retrieve tenant by slug",
+                    None
+                ));
+        }
+        Ok(tenant) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    "successfully retrieved tenant by slug",
+                    Some(json!({
+                        "tenant": tenant
+                    }))
+                ));
+        }
+    }
 }
 
 

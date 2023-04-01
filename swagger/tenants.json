@@ -50,6 +50,21 @@
                     "tenant_id": "f7dfed28-ebaa-4bc3-b556-b1787c74e554"
                 }
             },
+            "TenantGetInfoBySlugRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "example": {
+                    "name": "default"
+                }
+            },
             "TenantAddRequest": {
                 "type": "object",
                 "properties": {
@@ -123,13 +138,53 @@
             "post": {
                 "summary": "POST method",
                 "tags": ["tenants"],
-                "operationId": "tenant_get",
+                "operationId": "tenant_get_by_id",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/TenantGetInfoRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully retrieved tenant information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "tenant information failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/apiResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tenants/get/slug": {
+            "summary": "get tenant information",
+            "post": {
+                "summary": "POST method",
+                "tags": ["tenants"],
+                "operationId": "tenant_get_by_slug",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TenantGetInfoBySlugRequest"
                             }
                         }
                     }
