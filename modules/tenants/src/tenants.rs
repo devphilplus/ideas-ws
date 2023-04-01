@@ -47,6 +47,10 @@ impl Tenants {
         return Err(TenantsError::ConfigurationError);
     }
 
+    pub fn members(&self) -> crate::members::Members {
+        return crate::members::Members::new(&self.data);
+    }
+
     pub async fn tenant_by_id(
         &self,
         tenant_id: &uuid::Uuid

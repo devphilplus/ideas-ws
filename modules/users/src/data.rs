@@ -266,12 +266,12 @@ impl Data {
         }
     }
 
-    pub async fn user_join_client(
+    pub async fn user_tenant_add(
         &self,
         user_id: &uuid::Uuid,
-        client_id: &uuid::Uuid
+        tenant_id: &uuid::Uuid
     ) -> Result<(), DataError> {
-        info!("user_join_client");
+        info!("user_tenant_add");
 
         let result = self.pool.get().await;
         if let Err(e) = result {
@@ -281,7 +281,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "call iam.user_client_add($1, $2)"
+            "call iam.user_tenant_add($1, $2)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -293,7 +293,46 @@ impl Data {
             &stmt, 
             &[
                 &user_id,
-                &client_id
+                &tenant_id
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }
+    }
+
+    pub async fn user_tenant_set_active(
+        &self,
+        user_id: &uuid::Uuid,
+        tenant_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), DataError> {
+        info!("user_tenant_set_active");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_tenant_set_active($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.execute(
+            &stmt, 
+            &[
+                &user_id,
+                &tenant_id,
+                &active
             ]
         ).await {
             error!("unable to execute statement: {:?}", e);

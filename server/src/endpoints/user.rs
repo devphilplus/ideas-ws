@@ -48,6 +48,13 @@ struct UserTenantJoinRequest {
     pub tenant: String
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct UserTenantSetActiveRequest {
+    pub user_id: uuid::Uuid,
+    pub tenant_id: uuid::Uuid,
+    pub active: bool
+}
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -80,6 +87,17 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                     // .guard(Permission::new("permission.test"))
                     .guard(Authenticated::new())
                     .to(user_tenant_join_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
+            web::resource("/user/tenant/active")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(user_tenant_set_active_get))
+                .route(web::post()
+                    // .guard(Permission::new("permission.test"))
+                    .guard(Authenticated::new())
+                    .to(user_tenant_set_active_post)
                 )
                 .default_service(web::to(default_service))
         )
@@ -182,7 +200,7 @@ async fn user_tenant_join_post(
     user: crate::classes::user::CurrentUser,
     params: web::Json<UserTenantJoinRequest>
 ) -> impl Responder {
-    info!("user_client_join_post()");
+    info!("user_tenant_join_post()");
     debug!("user: {:?}", user);
     debug!("params: {:?}", params);
     
@@ -199,9 +217,9 @@ async fn user_tenant_join_post(
         Ok(tenant) => {
             debug!("tenant found: {:?}", tenant);
 
-            match users.user_join_client(
-            &user.id(),
-            &tenant.id()
+            match users.user_tenant_add(
+                &user.id(),
+                &tenant.id()
             ).await {
                 Err(e) => {
                     error!("user_tenant_join_post: {:?}", e);
@@ -222,6 +240,46 @@ async fn user_tenant_join_post(
                         ));
                 }
             }
+        }
+    }
+}
+
+async fn user_tenant_set_active_get() -> impl Responder {
+    info!("user_tenant_set_active_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn user_tenant_set_active_post(
+    tenants: web::Data<Tenants>,
+    users: web::Data<Users>,
+    user: crate::classes::user::CurrentUser,
+    params: web::Json<UserTenantSetActiveRequest>
+) -> impl Responder {
+    info!("user_tenant_set_active_post()");
+    debug!("user: {:?}", user);
+    debug!("params: {:?}", params);
+    
+    match users.user_tenant_set_active(
+        &params.user_id,
+        &params.tenant_id,
+        &params.active
+    ).await {
+        Err(e) => {
+            error!("unable to fetch client by name: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "an error occured while trying to set user-tenant active status",
+                    None
+                ));
+        }
+        Ok(result) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    &"Successfully set user-tenant active status",
+                    None
+                ));
         }
     }
 }

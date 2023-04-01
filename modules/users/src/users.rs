@@ -132,20 +132,44 @@ impl Users {
         }
     }
 
-    pub async fn user_join_client(
+    pub async fn user_tenant_add(
         &self,
         user_id: &uuid::Uuid,
-        client_id: &uuid::Uuid
+        tenant_id: &uuid::Uuid
     ) -> Result<(), UsersError> {
-        info!("user_join_client");
+        info!("user_tenant_add");
 
-        match self.data.user_join_client(
+        match self.data.user_tenant_add(
             &user_id,
-            &client_id
+            &tenant_id
         ).await {
             Err(e) => {
                 error!("error: {:?}", e);
-                return Err(UsersError::ToBeImplemented(String::from("user_join_client")));
+                return Err(UsersError::ToBeImplemented(String::from("user_join_tenant")));
+            }
+            Ok(result) => {
+                debug!("result: {:?}", result);
+                return Ok(());
+            }
+        }
+    }
+
+    pub async fn user_tenant_set_active(
+        &self,
+        user_id: &uuid::Uuid,
+        tenant_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), UsersError> {
+        info!("user_tenant_set_active");
+
+        match self.data.user_tenant_set_active(
+            &user_id,
+            &tenant_id,
+            &active
+        ).await {
+            Err(e) => {
+                error!("error: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_tenant_set_active")));
             }
             Ok(result) => {
                 debug!("result: {:?}", result);
