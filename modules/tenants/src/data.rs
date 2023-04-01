@@ -216,6 +216,52 @@ impl Data {
         }
     }
 
+
+    pub async fn tenant_update(
+        &self,
+        id: &uuid::Uuid,
+        name: &str,
+        slug: &str,
+        description: &str
+    ) -> Result<(), DataError> {
+        info!("Data::tenant_update()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database tenant: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call tenants.tenant_update($1, $2, $3, $4)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.execute(
+            &stmt,
+            &[
+                &id,
+                &name,
+                &pg::slug::Slug::new(&slug),
+                &description
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
+
+
     pub async fn tenant_set_active(
         &self,
         tenant_id: &uuid::Uuid,

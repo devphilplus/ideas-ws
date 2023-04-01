@@ -72,6 +72,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
+            web::resource("/update")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(tenant_update_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(tenant_update_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
             web::resource("/set/active")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(tenant_set_active_get))
@@ -137,6 +147,45 @@ async fn tenant_add_post(
                 .json(ApiResponse::new(
                     true,
                     &"successfully added tenant",
+                    None
+                ));
+        }
+    }
+}
+
+
+async fn tenant_update_get() -> impl Responder {
+    info!("tenant_update_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn tenant_update_post(
+    user: CurrentUser,
+    tenants: web::Data<Tenants>,
+    params: web::Json<TenantUserAddRequest>
+) -> impl Responder {
+    info!("tenant_update_post");
+
+    match tenants.tenant_update(
+        params.tenant_id,
+        &params.name,
+        &params.slug.as_str(),
+        &params.description
+    ).await {
+        Err(e) => {
+            error!("tenant_add_post(): {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    &"an error occured while trying to update tenant",
+                    None
+                ));
+        }
+        Ok(_) => {
+            return HttpResponse::Created()
+                .json(ApiResponse::new(
+                    true,
+                    &"successfully updated tenant",
                     None
                 ));
         }

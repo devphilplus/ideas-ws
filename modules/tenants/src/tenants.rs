@@ -106,6 +106,31 @@ impl Tenants {
         }
     }
 
+    pub async fn tenant_update(
+        &self,
+        id: uuid::Uuid,
+        name: &str,
+        slug: &str,
+        description: &str
+    ) -> Result<(), TenantsError> {
+        info!("Tenants::tenant_update()");
+
+        match self.data.tenant_update(
+            &id,
+            &name,
+            &slug,
+            &description
+        ).await {
+            Err(e) => {
+                error!("unable to update tenant: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_update()")));
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
+
     pub async fn tenant_set_active(
         &self,
         tenant_id: &uuid::Uuid,
