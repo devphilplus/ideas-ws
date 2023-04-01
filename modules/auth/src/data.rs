@@ -144,7 +144,7 @@ impl Data {
             &stmt, 
             &[
                 &id,
-                &pg::Email::new(&email),
+                &pg::email::Email::new(&email),
                 &token
             ]
         ).await {
@@ -267,7 +267,7 @@ impl Data {
         match client.query_one(
             &stmt,
             &[
-                &pg::Email::new(&email),
+                &pg::email::Email::new(&email),
                 &pw
             ]
         ).await {
@@ -307,7 +307,7 @@ impl Data {
         match client.query_one(
             &stmt,
             &[
-                &pg::Email::new(&email)
+                &pg::email::Email::new(&email)
             ]
         ).await {
             Err(e) => {
