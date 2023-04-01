@@ -75,6 +75,54 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
+    pub async fn tenant_by_id(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Tenant, DataError> {
+        info!("Data::tenant_by_name()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from tenants.tenant_by_id($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &tenant_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+
+                let id: uuid::Uuid = row.get("id");
+                let active: bool = row.get("active");
+                let name: String = row.get("name");
+
+                return Ok(Tenant::new(
+                    &id,
+                    &active,
+                    &name
+                ));
+            }
+        }
+    }
+
     pub async fn tenant_by_name(
         &self,
         name: &str

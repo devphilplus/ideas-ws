@@ -27,7 +27,7 @@ use crate::classes::guards::{
     permission::Permission
 };
 
-use tenants::tenants::Tenants;
+use tenants::tenants::{Tenants, TenantsError};
 
 
 
@@ -146,17 +146,33 @@ async fn tenant_get_get() -> impl Responder {
 
 async fn tenant_get_post(
     user: CurrentUser,
+    tenants: web::Data<Tenants>,
     params: web::Json<TenantGetInfoRequest>
 ) -> impl Responder {
     info!("tenant_get_post()");
     debug!("params: {:?}", params);
 
-    return HttpResponse::InternalServerError()
-        .json(ApiResponse::new(
-            false,
-            "Service is up. version: 1.0.0.0.dev",
-            None
-        ));
+    match tenants.tenant_by_id(&params.tenant_id).await {
+        Err(e) => {
+            error!("tenant_get_post: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "//TODO an error occured while trying to retrieve tenant by id",
+                    None
+                ));
+        }
+        Ok(tenant) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    "successfully retrieved tenant by id",
+                    Some(json!({
+                        "tenant": tenant
+                    }))
+                ));
+        }
+    }
 }
 
 

@@ -47,6 +47,23 @@ impl Tenants {
         return Err(TenantsError::ConfigurationError);
     }
 
+    pub async fn tenant_by_id(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Tenant, TenantsError> {
+        info!("Tenants::tenant_by_name()");
+
+        match self.data.tenant_by_id(&tenant_id).await {
+            Err(e) => {
+                error!("unable to retrieve tenant: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_by_id()")));
+            }
+            Ok(tenant) => {
+                return Ok(tenant);
+            }
+        }
+    }
+
     pub async fn tenant_by_name(
         &self,
         name: &str
