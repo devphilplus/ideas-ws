@@ -1,3 +1,4 @@
+use common::user::User;
 use log::{
     info,
     debug,
@@ -267,7 +268,7 @@ impl Data {
         tenant_id: &uuid::Uuid,
         active: &bool
     ) -> Result<(), DataError> {
-        info!("Data::set_active()");
+        info!("Data::tenant_set_active()");
 
         let result = self.pool.get().await;
         if let Err(e) = result {
@@ -298,6 +299,59 @@ impl Data {
             }
             Ok(_) => {
                 return Ok(());
+            }
+        }
+    }
+
+    pub async fn tenant_users_fetch(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Vec<common::user::User>, DataError> {
+        info!("Data::tenant_users_fetch()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database tenant: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.tenant_set_active($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query(
+            &stmt,
+            &[
+                &tenant_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(results) => {
+                debug!("Data::tenant_users_fetch(): {:?}", results);
+                let users = results.iter().map(|r| {
+                    let id: uuid::Uuid = r.get("id");
+                    let email: String = r.get("email");
+                    let active: bool = r.get("active");
+
+                    return User::new(
+                        &id,
+                        &active,
+                        &email,
+                        "",
+                        "",
+                    ""
+                    );
+                }).collect();
+                return Ok(users);
             }
         }
 

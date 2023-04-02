@@ -155,4 +155,23 @@ impl Tenants {
             }
         }
     }
+
+    pub async fn tenant_users_fetch(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Vec<common::user::User>, TenantsError> {
+        info!("Tenants::tenant_users_fetch()");
+
+        match self.data.tenant_users_fetch(
+            &tenant_id
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve tenant users: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_users_fetch()")));
+            }
+            Ok(users) => {
+                return Ok(users);
+            }
+        }
+    }
 }

@@ -38,6 +38,6 @@ impl Members {
         tenant_id: &uuid::Uuid,
         member_id: &uuid::Uuid
     ) {
-        
+
     }
 }
