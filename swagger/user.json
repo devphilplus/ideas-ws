@@ -49,10 +49,10 @@
                     "password": "testTest"
                 }
             },
-            "UserClientJoinRequest": {
+            "UserTenantJoinRequest": {
                 "type": "object",
                 "properties": {
-                    "client": {
+                    "tenant": {
                         "type": "string",
                         "readOnly": true
                     }
@@ -156,18 +156,18 @@
                 ]
             }
         },
-        "/user/client/join": {
-            "summary": "join a client",
+        "/user/tenant/join": {
+            "summary": "join a tenant",
             "post": {
                 "summary": "POST method",
                 "tags": ["user"],
-                "operationId": "user_client_join",
+                "operationId": "user_tenant_join",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserClientJoinRequest"
+                                "$ref": "#/components/schemas/UserTenantJoinRequest"
                             }
                         }
                     }
