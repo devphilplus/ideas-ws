@@ -111,6 +111,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 )
                 .default_service(web::to(default_service))
         )
+        .service(
+            web::resource("/members/fetch")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(tenant_members_fetch_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(tenant_members_fetch_post)
+                )
+                .default_service(web::to(default_service))
+        )
     ;
 }
 
@@ -289,3 +299,27 @@ async fn tenant_set_active_post(
             None
         ));
 }
+
+
+async fn tenant_members_fetch_get() -> impl Responder {
+    info!("tenant_members_fetch_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+
+async fn tenant_members_fetch_post(
+    user: CurrentUser,
+    tenants: web::Data<Tenants>
+) -> impl Responder {
+    info!("tenant_members_fetch_post()");
+
+    
+
+    return HttpResponse::InternalServerError()
+        .json(ApiResponse::new(
+            false,
+            "Service is up. version: 1.0.0.0.dev",
+            None
+        ));
+}
+
