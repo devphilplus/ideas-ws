@@ -8,7 +8,6 @@ members = [
     "modules/auth",
     "modules/users",
     "modules/roles",
-    "modules/clients",
     "modules/tenants",
     "server"
 ]
