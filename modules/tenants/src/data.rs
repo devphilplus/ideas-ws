@@ -356,4 +356,53 @@ impl Data {
         }
 
     }
+
+    pub async fn tenant_default_fetch(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<common::tenant::Tenant, DataError> {
+        info!("Data::tenant_users_fetch()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database tenant: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from tenants.tenant_default_fetch()"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("Data::tenant_default_fetch(): {:?}", row);
+
+                let tenant_id: uuid::Uuid = row.get("id");
+                let tenant_active: bool = row.get("active");
+                let tenant_name: String = row.get("name");
+
+                let tenant = Tenant::new(
+                    &tenant_id,
+                    &tenant_active,
+                    &tenant_name
+                );
+                return Ok(tenant);
+            }
+        }
+
+    }
 }

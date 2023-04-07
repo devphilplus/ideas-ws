@@ -12,7 +12,7 @@ use serde::{
 
 use configuration::ApplicationConfiguration;
 use mailer::Mailer;
-use common::user::User;
+use common::{user::User, tenant::Tenant};
 
 use crate::data::Data;
 
@@ -174,6 +174,64 @@ impl Users {
             Ok(result) => {
                 debug!("result: {:?}", result);
                 return Ok(());
+            }
+        }
+    }
+
+    pub async fn user_tenant_set_default(
+        &self,
+        user_id: &uuid::Uuid,
+        tenant_id: &uuid::Uuid
+    ) -> Result<(), UsersError> {
+        info!("user_tenant_set_default");
+
+        match self.data.user_tenant_set_default(
+            &user_id,
+            &tenant_id
+        ).await {
+            Err(e) => {
+                error!("error: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_tenant_set_default")));
+            }
+            Ok(result) => {
+                debug!("result: {:?}", result);
+                return Ok(());
+            }
+        }
+    }
+
+    pub async fn user_tenants(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<Vec<Tenant>, UsersError> {
+        info!("user_tenants");
+
+        match self.data.user_tenants(&user_id).await {
+            Err(e) => {
+                error!("error: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_tenants")));
+            }
+            Ok(result) => {
+                debug!("//TODO result: {:?}", result);
+                return Ok(Vec::new());
+            }
+        }
+    }
+
+    pub async fn user_tenant_default(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<Tenant, UsersError> {
+        info!("user_tenant_default");
+
+        match self.data.user_tenants_default(&user_id).await {
+            Err(e) => {
+                error!("error: {:?}", e);
+                return Err(UsersError::ToBeImplemented(String::from("user_tenant_default")));
+            }
+            Ok(result) => {
+                debug!("//TODO result: {:?}", result);
+                return Ok(result);
             }
         }
     }

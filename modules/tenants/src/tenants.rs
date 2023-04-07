@@ -174,4 +174,23 @@ impl Tenants {
             }
         }
     }
+
+    pub async fn tenant_default_fetch(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Vec<common::user::User>, TenantsError> {
+        info!("Tenants::tenant_default_fetch()");
+
+        match self.data.tenant_default_fetch(
+            &tenant_id
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve default tenant: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_default_fetch()")));
+            }
+            Ok(tenant) => {
+                return Ok(tenant);
+            }
+        }
+    }
 }

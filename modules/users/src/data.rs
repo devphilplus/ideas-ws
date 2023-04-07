@@ -1,3 +1,4 @@
+use common::tenant::Tenant;
 use log::{
     info,
     debug,
@@ -339,6 +340,166 @@ impl Data {
             return Err(DataError::DatabaseError);
         } else {
             return Ok(());
+        }
+    }
+
+    pub async fn user_tenant_default(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<(), DataError> {
+        info!("user_tenant_default");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_tenant_fetch_default($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.query_one(
+            &stmt, 
+            &[
+                &user_id
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }
+    }
+
+    pub async fn user_tenant_set_default(
+        &self,
+        user_id: &uuid::Uuid,
+        tenant_id: &uuid::Uuid
+    ) -> Result<(), DataError> {
+        info!("user_tenant_default");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_tenant_set_default($1, $2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        if let Err(e) = client.query_one(
+            &stmt, 
+            &[
+                &user_id,
+                &tenant_id
+            ]
+        ).await {
+            error!("unable to execute statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        } else {
+            return Ok(());
+        }
+    }
+
+    pub async fn user_tenants(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<(), DataError> {
+        info!("user_tenants");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_tenant_fetch($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query(
+            &stmt,
+            &[
+                &user_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(rows) => {
+                debug!("rows: {:?}", rows);
+                return Ok(());
+            }
+        }
+    }
+
+    pub async fn user_tenants_default(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<Tenant, DataError> {
+        info!("user_tenants_default");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call iam.user_tenant_fetch_default($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &user_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("rows: {:?}", row);
+
+                let tenant_id: uuid::Uuid = row.get("id");
+                let tenant_active: bool = row.get("active");
+                let tenant_name: String = row.get("name");
+
+                let tenant = Tenant::new(
+                    &tenant_id,
+                    &tenant_active,
+                    &tenant_name
+                );
+                return Ok(tenant);
+            }
         }
     }
 }
