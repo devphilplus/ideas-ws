@@ -91,7 +91,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
-            web::resource("/user/tenant/active")
+            web::resource("/tenant/active")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(user_tenant_set_active_get))
                 .route(web::post()
