@@ -63,25 +63,29 @@ impl ResponseError for UserError {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CurrentUser {
     id: uuid::Uuid,
-    email: String
+    email: String,
+    tenant_id: uuid::Uuid
 }
 
 impl CurrentUser {
 
     pub fn new(
         id: &uuid::Uuid,
-        email: &str
+        email: &str,
+        tenant_id: &uuid::Uuid
     ) -> Self {
         return Self {
             id: id.clone(),
-            email: String::from(email)
+            email: String::from(email),
+            tenant_id: tenant_id.clone()
         };
     }
 
     pub fn anonymous() -> Self {
         return Self {
             id: uuid::Uuid::nil(),
-            email: String::from("")
+            email: String::from(""),
+            tenant_id: uuid::Uuid::nil()
         };
     }
 
@@ -95,6 +99,10 @@ impl CurrentUser {
 
     pub fn email(&self) -> String {
         return self.email.to_owned();
+    }
+
+    pub fn tenant_id(&self) -> uuid::Uuid {
+        return self.tenant_id.clone();
     }
 }
 

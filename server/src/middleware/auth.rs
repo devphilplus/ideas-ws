@@ -1,3 +1,4 @@
+use common::tenant::Tenant;
 use log::{
     info,
     debug,
@@ -140,9 +141,17 @@ where
                                 error!("unable to retrieve user data: {:?}", e);
                             }
                             Ok(user_data) => {
+                                let user_id = user_data.id();
+
+                                let mut tenants: Vec<Tenant> = Vec::new();
+                                if let Ok(result) = users.user_tenants(&user_id).await {
+                                    debug!("result: {:?}", result);
+                                }
+
                                 user = CurrentUser::new(
                                     &user_data.id(),
-                                    &user_data.email()
+                                    &user_data.email(),
+                                    &uuid::Uuid::nil()
                                 );
                             }
                         }
