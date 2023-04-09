@@ -178,7 +178,7 @@ impl Tenants {
     pub async fn tenant_default_fetch(
         &self,
         tenant_id: &uuid::Uuid
-    ) -> Result<Vec<common::user::User>, TenantsError> {
+    ) -> Result<common::tenant::Tenant, TenantsError> {
         info!("Tenants::tenant_default_fetch()");
 
         match self.data.tenant_default_fetch(
