@@ -50,12 +50,12 @@
     "method": "POST",
     "sortNum": 20000,
     "created": "2023-04-09T07:41:55.639Z",
-    "modified": "2023-04-09T07:43:00.418Z",
+    "modified": "2023-04-09T22:17:07.779Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"id\": \"48f2bd8f-f3c3-45d2-af92-b69d83993e5f\",\n    \"email\": \"tester@mailinator.com\"\n}",
+      "raw": "{\n    \"id\": \"c7e4fd47-ebd2-425e-8e69-a5d38a9be5bf\",\n    \"email\": \"tester1@mailinator.com\"\n}",
       "form": []
     },
     "tests": []
@@ -83,12 +83,12 @@
     "method": "POST",
     "sortNum": 40000,
     "created": "2023-04-09T07:44:55.089Z",
-    "modified": "2023-04-09T07:45:59.931Z",
+    "modified": "2023-04-09T22:31:50.578Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"token\": \"48f2bd8ff3c345d2af92b69d83993e5f\"\n}",
+      "raw": "{\n    \"token\": \"L6a3VwdfdmycLZ9SPcTvTAVpXWkcfZ\"\n}",
       "form": []
     },
     "tests": []
@@ -114,12 +114,12 @@
     "method": "POST",
     "sortNum": 60000,
     "created": "2023-04-09T07:47:51.785Z",
-    "modified": "2023-04-09T07:48:37.817Z",
+    "modified": "2023-04-09T22:31:59.039Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"token\": \"48f2bd8ff3c345d2af92b69d83993e5f\",\n    \"password\": \"some_random_pw\"\n}",
+      "raw": "{\n    \"token\": \"L6a3VwdfdmycLZ9SPcTvTAVpXWkcfZ\",\n    \"password\": \"replace_me\"\n}",
       "form": []
     },
     "tests": []
@@ -147,12 +147,12 @@
     "method": "POST",
     "sortNum": 80000,
     "created": "2023-04-09T07:50:21.760Z",
-    "modified": "2023-04-09T07:50:45.042Z",
+    "modified": "2023-04-09T22:33:19.747Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"email\": \"tester@mailinator.com\",\n    \"password\": \"tester\"\n}",
+      "raw": "{\n    \"email\": \"tester1@mailinator.com\",\n    \"password\": \"replace_me\"\n}",
       "form": []
     },
     "tests": []
@@ -194,12 +194,18 @@
     "method": "POST",
     "sortNum": 30000,
     "created": "2023-04-09T07:55:58.121Z",
-    "modified": "2023-04-09T07:56:56.264Z",
-    "headers": [],
+    "modified": "2023-04-09T22:35:07.562Z",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTA5IDIzOjMzOjE5Ljc0NTgzOTQ3NCBVVEMiLCJpYXQiOiIyMDIzLTA0LTA5VDIyOjMzOjE5Ljc0NTgyMjEyNCswMDowMCJ9.sD5yIboaobS7p33mF_nSFVNuz3hNB_Pw44kHRlLC9js",
+        "isDisabled": true
+      }
+    ],
     "params": [],
     "auth": {
       "type": "bearer",
-      "bearer": "bearer_token"
+      "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTA5IDIzOjMzOjE5Ljc0NTgzOTQ3NCBVVEMiLCJpYXQiOiIyMDIzLTA0LTA5VDIyOjMzOjE5Ljc0NTgyMjEyNCswMDowMCJ9.sD5yIboaobS7p33mF_nSFVNuz3hNB_Pw44kHRlLC9js"
     },
     "tests": []
   },
@@ -234,12 +240,19 @@
     "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
     "containerId": "",
     "name": "sign_in_post",
-    "url": "",
-    "method": "GET",
+    "url": "http://localhost:8081/auth/sign-in",
+    "method": "POST",
     "sortNum": 15000,
     "created": "2023-04-09T13:57:59.578Z",
-    "modified": "2023-04-09T13:58:04.830Z",
-    "headers": []
+    "modified": "2023-04-09T23:04:54.810Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"tester1@mailinator.com\",\n  \"password\": \"replace_me\"\n}",
+      "form": []
+    },
+    "tests": []
   },
   {
     "_id": "3dcffba8-1ce7-43eb-a098-271a7851df46",
