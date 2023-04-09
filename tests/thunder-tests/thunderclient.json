@@ -202,5 +202,128 @@
       "bearer": "bearer_token"
     },
     "tests": []
+  },
+  {
+    "_id": "95577109-0b29-49cf-947c-6f0825edff5e",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "sign_in",
+    "url": "",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-09T13:56:35.234Z",
+    "modified": "2023-04-09T13:56:35.235Z",
+    "headers": []
+  },
+  {
+    "_id": "6494b37f-8f68-4d84-856d-4e323c6cf94d",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_get",
+    "url": "http://localhost:8081/auth/register",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2023-04-09T13:57:27.546Z",
+    "modified": "2023-04-09T13:57:40.812Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "933c66d7-f232-4bd7-98ef-3967a57c9710",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "sign_in_post",
+    "url": "",
+    "method": "GET",
+    "sortNum": 15000,
+    "created": "2023-04-09T13:57:59.578Z",
+    "modified": "2023-04-09T13:58:04.830Z",
+    "headers": []
+  },
+  {
+    "_id": "3dcffba8-1ce7-43eb-a098-271a7851df46",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_post",
+    "url": "http://localhost:8081/auth/register",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2023-04-09T13:58:18.346Z",
+    "modified": "2023-04-09T14:00:17.189Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"id\": \"48f2bd8f-f3c3-45d2-af92-b69d83993e5f\",\n    \"email\": \"tester@mailinator.com\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "8f3d6098-455d-4a03-b33c-d84d7b7e4ed3",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_info_get",
+    "url": "http://localhost:8081/auth/register/info",
+    "method": "GET",
+    "sortNum": 50000,
+    "created": "2023-04-09T14:01:19.542Z",
+    "modified": "2023-04-09T14:01:34.024Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "edbe37f6-71bc-4cb2-aa83-897d5a7f90f6",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_info_post",
+    "url": "http://localhost:8081/auth/register/info",
+    "method": "POST",
+    "sortNum": 60000,
+    "created": "2023-04-09T14:01:43.547Z",
+    "modified": "2023-04-09T14:03:51.790Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"token\": \"Pp5sdjCVpInUW45PFvd9b5DYhOfxG5\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "efa15b17-f400-41ac-9b26-fead685c85de",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_complete_get",
+    "url": "http://localhost:8081/auth/register/complete",
+    "method": "GET",
+    "sortNum": 70000,
+    "created": "2023-04-09T14:05:43.775Z",
+    "modified": "2023-04-09T14:05:58.051Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "1ef16199-fd18-4b88-8e07-adb5884e7a91",
+    "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "containerId": "",
+    "name": "register_complete_post",
+    "url": "http://localhost:8081/auth/register/complete",
+    "method": "POST",
+    "sortNum": 80000,
+    "created": "2023-04-09T14:06:23.124Z",
+    "modified": "2023-04-09T14:07:38.575Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"token\": \"Pp5sdjCVpInUW45PFvd9b5DYhOfxG5\",\n  \"password\": \"test\"\n}",
+      "form": []
+    },
+    "tests": []
   }
 ]

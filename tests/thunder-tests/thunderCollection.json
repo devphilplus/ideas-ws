@@ -34,5 +34,17 @@
         "baseUrl": "http://localhost:8081"
       }
     }
+  },
+  {
+    "_id": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
+    "colName": "authentication",
+    "created": "2023-04-09T13:56:04.570Z",
+    "sortNum": 40000,
+    "folders": [],
+    "settings": {
+      "options": {
+        "baseUrl": "http://localhost:8081"
+      }
+    }
   }
 ]
