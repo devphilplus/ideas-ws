@@ -169,7 +169,7 @@ async fn register_complete_post(
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,
-                    "an error occured while trying to complete the registratoin",
+                    "an error occured while trying to complete the registration",
                     None
                 ));
         }

@@ -93,7 +93,7 @@ impl Tokenizer {
         claims.insert("iat", iat.as_str());
 
         // exp (expiry)
-        let exp = (Utc::now() + Duration::hours(1)).to_string();
+        let exp = (Utc::now() + Duration::hours(1)).to_rfc3339();
         claims.insert("exp", exp.as_str());
 
         match <Hmac<Sha256>>::new_from_slice(self.secret.as_bytes()) {
@@ -157,13 +157,19 @@ impl Tokenizer {
             if let Ok(claims) = result {
                 debug!("claims: {:?}", claims);
 
-                let issued_at = chrono::DateTime::parse_from_rfc2822(
-                    claims.get("iat").unwrap()
-                ).unwrap().with_timezone(&chrono::Utc);
+                let mut issued_at = Utc::now();
+                if let Some(iat) = claims.get("iat") {
+                    if let Ok(iat) = chrono::DateTime::parse_from_rfc3339(iat) {
+                        issued_at = iat.with_timezone(&chrono::Utc);
+                    }
+                }
 
-                let expiry = chrono::DateTime::parse_from_rfc2822(
-                    claims.get("exp").unwrap()
-                ).unwrap().with_timezone(&chrono::Utc);
+                let mut expiry = Utc::now();
+                if let Some(exp) = claims.get("exp") {
+                    if let Ok(exp) = chrono::DateTime::parse_from_rfc3339(exp) {
+                        expiry = exp.with_timezone(&chrono::Utc);
+                    }
+                }
 
                 return Ok(Claims::new(
                     claims.get("email").unwrap(),
