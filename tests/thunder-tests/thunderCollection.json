@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "1d150248-2a70-4357-bb92-783d0e33bc75",
+    "colName": "status",
+    "created": "2023-04-09T07:33:35.249Z",
+    "sortNum": 10000,
+    "folders": [],
+    "settings": {
+      "options": {
+        "baseUrl": "http://localhost:8081"
+      }
+    }
+  }
+]
