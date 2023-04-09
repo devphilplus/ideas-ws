@@ -156,5 +156,51 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "2e26fead-866e-4bfc-b866-c92a08ec5645",
+    "colId": "4f267f29-3aef-4548-b219-fba9820c277d",
+    "containerId": "",
+    "name": "current_get",
+    "url": "http://localhost:8081/user/current",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-09T07:54:19.009Z",
+    "modified": "2023-04-09T07:54:44.637Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "3c5d38bc-7d98-4044-9b59-c283460e8e0e",
+    "colId": "4f267f29-3aef-4548-b219-fba9820c277d",
+    "containerId": "",
+    "name": "current_post_anonymous",
+    "url": "http://localhost:8081/user/current",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-09T07:55:05.749Z",
+    "modified": "2023-04-09T07:55:26.124Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "8a52cdf8-3922-40e8-98e7-455a92492599",
+    "colId": "4f267f29-3aef-4548-b219-fba9820c277d",
+    "containerId": "",
+    "name": "current_post_logged_in",
+    "url": "http://localhost:8081/user/current",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2023-04-09T07:55:58.121Z",
+    "modified": "2023-04-09T07:56:56.264Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "bearer_token"
+    },
+    "tests": []
   }
 ]
