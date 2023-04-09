@@ -4,7 +4,7 @@ use log::{
     debug
 };
 
-use chrono::prelude::*;
+use chrono::{prelude::*, Duration};
 
 use hmac::{
     Hmac,
@@ -24,28 +24,42 @@ use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct Claims {
     email: String,
-    // issued: chrono::DateTime<Utc>
+    issued: chrono::DateTime<Utc>,
+    expiry: chrono::DateTime<Utc>
 }
 
 impl Claims {
 
     pub fn new(
-        email: &str
+        email: &str,
+        issued: &chrono::DateTime<Utc>,
+        expiry: &chrono::DateTime<Utc>
     ) -> Self {
         return Self {
-            email: String::from(email)
+            email: String::from(email),
+            issued: issued.clone(),
+            expiry: expiry.clone()
         };
     }
 
     pub fn email(&self) -> String {
         return self.email.clone();
     }
+
+    pub fn issued_at(&self) -> chrono::DateTime<Utc> {
+        return self.issued;
+    }
+
+    pub fn expiry(&self) -> chrono::DateTime<Utc> {
+        return self.expiry;
+    }
 }
 
 
 pub enum TokenError {
     HashError,
-    SigningError
+    SigningError,
+    ToBeImplementedError
 }
 
 #[derive(Debug, Clone)]
@@ -60,6 +74,10 @@ impl Tokenizer {
         };
     }
 
+    /**
+     * TODO: implement a token prefix for some obfuscation
+     * TODO: implement some simple encryption for obfuscation
+     */
     pub fn generate(
         &self,
         email: &str
@@ -68,8 +86,15 @@ impl Tokenizer {
 
         claims.insert("email", email);
 
+        // iss (issuer)
+
+        // iat (issued at)
         let iat = Utc::now().to_rfc3339();
         claims.insert("iat", iat.as_str());
+
+        // exp (expiry)
+        let exp = (Utc::now() + Duration::hours(1)).to_string();
+        claims.insert("exp", exp.as_str());
 
         match <Hmac<Sha256>>::new_from_slice(self.secret.as_bytes()) {
             Err(e) => {
@@ -132,36 +157,28 @@ impl Tokenizer {
             if let Ok(claims) = result {
                 debug!("claims: {:?}", claims);
 
+                let issued_at = chrono::DateTime::parse_from_rfc2822(
+                    claims.get("iat").unwrap()
+                ).unwrap().with_timezone(&chrono::Utc);
+
+                let expiry = chrono::DateTime::parse_from_rfc2822(
+                    claims.get("exp").unwrap()
+                ).unwrap().with_timezone(&chrono::Utc);
+
                 return Ok(Claims::new(
-                    claims.get("email").unwrap()
+                    claims.get("email").unwrap(),
+                    &issued_at,
+                    &expiry
+                    
                 ));
             } else {
-                debug!("unable to get claims");
+                error!("unable to get claims");
+                return Err(TokenError::ToBeImplementedError);
             }
+        } else {
+            error!("unable to get claims");
+            return Err(TokenError::ToBeImplementedError);
         }
-
-        return Ok(Claims::new("test@test.com"));
-
-        // match <Hmac<Sha256>>::new_from_slice(
-        //     self.secret.as_bytes()
-        // ) {
-        //     Err(e) => {
-        //         error!("unable to generate key: {:?}", e);
-        //         return false;
-        //     }
-        //     Ok(key) => {
-        //         let result: Result<BTreeMap<String, String>, error::Error> = token.verify_with_key(&key);
-        //         match result {
-        //             Err(e) => {
-        //                 error!("unable to verify token: {:?}", e);
-        //                 return false;
-        //             }
-        //             Ok(_) => {
-        //                 return true;
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
 
