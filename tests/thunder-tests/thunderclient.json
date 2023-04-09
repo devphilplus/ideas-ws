@@ -26,5 +26,135 @@
     "headers": [],
     "params": [],
     "tests": []
+  },
+  {
+    "_id": "88d21113-904d-4f36-9528-3d7907603cab",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_get",
+    "url": "http://localhost:8081/auth/register",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-09T07:40:54.390Z",
+    "modified": "2023-04-09T07:41:36.385Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "283dd372-1965-434f-abfb-36827663c48d",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_post",
+    "url": "http://localhost:8081/auth/register",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-09T07:41:55.639Z",
+    "modified": "2023-04-09T07:43:00.418Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"id\": \"48f2bd8f-f3c3-45d2-af92-b69d83993e5f\",\n    \"email\": \"tester@mailinator.com\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "41739407-7d48-4b88-9ae0-73a5ec60543a",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_info_get",
+    "url": "http://localhost:8081/auth/register/info",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2023-04-09T07:43:57.092Z",
+    "modified": "2023-04-09T07:44:31.568Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "0698f681-a54f-4a3c-899d-4c178970e500",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_info_post",
+    "url": "http://localhost:8081/auth/register/info",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2023-04-09T07:44:55.089Z",
+    "modified": "2023-04-09T07:45:59.931Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"token\": \"48f2bd8ff3c345d2af92b69d83993e5f\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "7dd0533f-51ec-4e18-b1f9-ae3d4a1326a4",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_complete_get",
+    "url": "",
+    "method": "GET",
+    "sortNum": 50000,
+    "created": "2023-04-09T07:46:50.861Z",
+    "modified": "2023-04-09T07:46:50.861Z",
+    "headers": []
+  },
+  {
+    "_id": "7f9d4504-0099-47a8-b8fc-66ca3b3ff643",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_register_complete_post",
+    "url": "http://localhost:8081/auth/register/complete",
+    "method": "POST",
+    "sortNum": 60000,
+    "created": "2023-04-09T07:47:51.785Z",
+    "modified": "2023-04-09T07:48:37.817Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"token\": \"48f2bd8ff3c345d2af92b69d83993e5f\",\n    \"password\": \"some_random_pw\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "f472574b-fd37-4f7a-a059-1c5c647fc06a",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_signin_get",
+    "url": "http://localhost:8081/auth/sign-in",
+    "method": "GET",
+    "sortNum": 70000,
+    "created": "2023-04-09T07:49:21.127Z",
+    "modified": "2023-04-09T07:49:39.459Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "48d02219-dc10-49e1-8005-3565fa199191",
+    "colId": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "containerId": "",
+    "name": "auth_signin_post",
+    "url": "http://localhost:8081/auth/sign-in",
+    "method": "POST",
+    "sortNum": 80000,
+    "created": "2023-04-09T07:50:21.760Z",
+    "modified": "2023-04-09T07:50:45.042Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"email\": \"tester@mailinator.com\",\n    \"password\": \"tester\"\n}",
+      "form": []
+    },
+    "tests": []
   }
 ]

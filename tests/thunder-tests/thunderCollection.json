@@ -10,5 +10,17 @@
         "baseUrl": "http://localhost:8081"
       }
     }
+  },
+  {
+    "_id": "3902e675-a44a-4ad9-bdb0-0ef0cd25b6fa",
+    "colName": "registration",
+    "created": "2023-04-09T07:40:33.207Z",
+    "sortNum": 20000,
+    "folders": [],
+    "settings": {
+      "options": {
+        "baseUrl": "http://localhost:8081"
+      }
+    }
   }
 ]
