@@ -6,7 +6,7 @@ use log::{
 use serde::{Serialize, Deserialize};
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Tenant {
     id: uuid::Uuid,
     active: bool,

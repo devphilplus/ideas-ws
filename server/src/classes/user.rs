@@ -37,6 +37,7 @@ use serde::{
 use tokenizer::Tokenizer;
 
 use common::user::User;
+use common::tenant::Tenant;
 use users::users::Users;
 
 
@@ -64,7 +65,8 @@ impl ResponseError for UserError {
 pub struct CurrentUser {
     id: uuid::Uuid,
     email: String,
-    tenant_id: uuid::Uuid
+    tenant_id: uuid::Uuid,
+    tenants: Vec<Tenant>
 }
 
 impl CurrentUser {
@@ -72,12 +74,14 @@ impl CurrentUser {
     pub fn new(
         id: &uuid::Uuid,
         email: &str,
-        tenant_id: &uuid::Uuid
+        tenant_id: &uuid::Uuid,
+        tenants: Vec<Tenant>
     ) -> Self {
         return Self {
             id: id.clone(),
             email: String::from(email),
-            tenant_id: tenant_id.clone()
+            tenant_id: tenant_id.clone(),
+            tenants: tenants.clone()
         };
     }
 
@@ -85,7 +89,8 @@ impl CurrentUser {
         return Self {
             id: uuid::Uuid::nil(),
             email: String::from(""),
-            tenant_id: uuid::Uuid::nil()
+            tenant_id: uuid::Uuid::nil(),
+            tenants: Vec::new()
         };
     }
 

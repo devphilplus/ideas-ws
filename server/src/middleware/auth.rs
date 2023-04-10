@@ -7,6 +7,7 @@ use log::{
 use tokenizer::Tokenizer;
 use users::users::Users;
 
+use std::default;
 use std::rc::Rc;
 use std::task::{ Context, Poll };
 use std::future::{ ready, Ready };
@@ -102,18 +103,6 @@ where
         return Box::pin(async move {
             debug!("AuthMiddleware::call() [2]");
 
-            // let mut user = User::new();
-
-            // if request.method() == Method::POST {
-            //     if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
-            //         let token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
-
-
-            //     }
-            // }
-
-            // request.extensions_mut().insert(user);
-
             let mut user = CurrentUser::anonymous();
             if request.method() == Method::POST {
                 let mut token_value = String::from("");
@@ -144,14 +133,22 @@ where
                                 let user_id = user_data.id();
 
                                 let mut tenants: Vec<Tenant> = Vec::new();
-                                if let Ok(result) = users.user_tenants(&user_id).await {
+                                if let Ok(mut result) = users.user_tenants(&user_id).await {
+                                    // debug!("result: {:?}", result);
+                                    tenants.append(&mut result);
+                                }
+
+                                let mut default_tenant_id: uuid::Uuid = uuid::Uuid::nil();
+                                if let Ok(result) = users.user_tenant_default(&user_id).await {
                                     debug!("result: {:?}", result);
+                                    default_tenant_id = result.id();
                                 }
 
                                 user = CurrentUser::new(
                                     &user_data.id(),
                                     &user_data.email(),
-                                    &uuid::Uuid::nil()
+                                    &default_tenant_id,
+                                    tenants
                                 );
                             }
                         }
