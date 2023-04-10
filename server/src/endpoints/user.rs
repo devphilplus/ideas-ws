@@ -131,7 +131,6 @@ async fn current_post(
                 ));
         }
         Ok(result) => {
-            // debug!("result: {:?}", result);
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     true,
