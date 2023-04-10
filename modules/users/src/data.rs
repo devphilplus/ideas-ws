@@ -418,7 +418,7 @@ impl Data {
     pub async fn user_tenants(
         &self,
         user_id: &uuid::Uuid
-    ) -> Result<(), DataError> {
+    ) -> Result<Vec<Tenant>, DataError> {
         info!("user_tenants");
 
         let result = self.pool.get().await;
@@ -429,7 +429,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "call iam.user_tenant_fetch($1)"
+            "select * from iam.user_tenants_fetch($1)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -448,8 +448,19 @@ impl Data {
                 return Err(DataError::DatabaseError);
             }
             Ok(rows) => {
-                debug!("rows: {:?}", rows);
-                return Ok(());
+                // debug!("rows: {:?}", rows);
+                let tenants = rows.iter().map(|r| {
+                    let tenant_id: uuid::Uuid = r.get("id");
+                    let tenant_active: bool = r.get("active");
+                    let tenant_name: String = r.get("name");
+
+                    return Tenant::new(
+                        &tenant_id,
+                        &tenant_active,
+                        &tenant_name
+                    );
+                }).collect();
+                return Ok(tenants);
             }
         }
     }

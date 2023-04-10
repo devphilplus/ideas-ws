@@ -212,8 +212,8 @@ impl Users {
                 return Err(UsersError::ToBeImplemented(String::from("user_tenants")));
             }
             Ok(result) => {
-                debug!("//TODO result: {:?}", result);
-                return Ok(Vec::new());
+                // debug!("//TODO result: {:?}", result);
+                return Ok(result);
             }
         }
     }

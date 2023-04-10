@@ -273,7 +273,7 @@ async fn user_tenant_set_active_post(
                     None
                 ));
         }
-        Ok(result) => {
+        Ok(_) => {
             return HttpResponse::Ok()
                 .json(ApiResponse::new(
                     true,
