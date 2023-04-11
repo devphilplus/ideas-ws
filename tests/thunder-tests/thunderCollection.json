@@ -46,5 +46,12 @@
         "baseUrl": "http://localhost:8081"
       }
     }
+  },
+  {
+    "_id": "1bd35a1c-8a02-48b4-a8ab-6a3406279d46",
+    "colName": "user_tenants",
+    "created": "2023-04-11T12:39:14.254Z",
+    "sortNum": 50000,
+    "folders": []
   }
 ]
