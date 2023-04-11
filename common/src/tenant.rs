@@ -10,7 +10,8 @@ use serde::{Serialize, Deserialize};
 pub struct Tenant {
     id: uuid::Uuid,
     active: bool,
-    name: String
+    name: String,
+    slug: String
 }
 
 
@@ -19,12 +20,14 @@ impl Tenant {
     pub fn new(
         id: &uuid::Uuid,
         active: &bool,
-        name: &str
+        name: &str,
+        slug: &str
     ) -> Self {
         return Self {
             id: id.clone(),
             active: active.clone(),
-            name: String::from(name)
+            name: String::from(name),
+            slug: String::from(slug)
         };
     }
 
@@ -38,5 +41,9 @@ impl Tenant {
 
     pub fn name(&self) -> String {
         return self.name.clone();
+    }
+
+    pub fn slug(&self) -> String {
+        return self.slug.clone();
     }
 }

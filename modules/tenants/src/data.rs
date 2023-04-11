@@ -111,14 +111,16 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
 
-                let id: uuid::Uuid = row.get("id");
-                let active: bool = row.get("active");
-                let name: String = row.get("name");
+                let tenant_id: uuid::Uuid = row.get("id");
+                let tenant_active: bool = row.get("active");
+                let tenant_name: String = row.get("name");
+                let tenant_slug: String = row.get("slug");
 
                 return Ok(Tenant::new(
-                    &id,
-                    &active,
-                    &name
+                    &tenant_id,
+                    &tenant_active,
+                    &tenant_name,
+                    &tenant_slug
                 ));
             }
         }
@@ -159,14 +161,16 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
 
-                let id: uuid::Uuid = row.get("id");
-                let active: bool = row.get("active");
-                let name: String = row.get("name");
+                let tenant_id: uuid::Uuid = row.get("id");
+                let tenant_active: bool = row.get("active");
+                let tenant_name: String = row.get("name");
+                let tenant_slug: String = row.get("slug");
 
                 return Ok(Tenant::new(
-                    &id,
-                    &active,
-                    &name
+                    &tenant_id,
+                    &tenant_active,
+                    &tenant_name,
+                    &tenant_slug
                 ));
             }
         }
@@ -394,11 +398,13 @@ impl Data {
                 let tenant_id: uuid::Uuid = row.get("id");
                 let tenant_active: bool = row.get("active");
                 let tenant_name: String = row.get("name");
+                let tenant_slug: String = row.get("slug");
 
                 let tenant = Tenant::new(
                     &tenant_id,
                     &tenant_active,
-                    &tenant_name
+                    &tenant_name,
+                    &tenant_slug
                 );
                 return Ok(tenant);
             }

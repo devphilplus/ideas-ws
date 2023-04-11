@@ -55,6 +55,12 @@ struct UserTenantSetActiveRequest {
     pub active: bool
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct UserTenantSetDefaultRequest {
+    pub user_id: uuid::Uuid,
+    pub tenant_id: uuid::Uuid
+}
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -101,6 +107,17 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 )
                 .default_service(web::to(default_service))
         )
+        .service(
+            web::resource("/tenant/default")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(user_tenant_set_default_get))
+                .route(web::post()
+                    // .guard(Permission::new("permission.test"))
+                    .guard(Authenticated::new())
+                    .to(user_tenant_set_default_post)
+                )
+                .default_service(web::to(default_service))
+        )
     ;
 }
 
@@ -140,7 +157,9 @@ async fn current_post(
                             "email": user.email(),
                             "given_name": result.given_name(),
                             "middle_name": result.middle_name(),
-                            "family_name": result.family_name()
+                            "family_name": result.family_name(),
+                            "tenant_id": user.tenant_id(),
+                            "tenants": user.tenants()
                         }
                     }))
                 ))
@@ -264,7 +283,7 @@ async fn user_tenant_set_active_post(
         &params.active
     ).await {
         Err(e) => {
-            error!("unable to fetch client by name: {:?}", e);
+            error!("unable to set user-tenant active: {:?}", e);
             return HttpResponse::InternalServerError()
                 .json(ApiResponse::new(
                     false,
@@ -277,6 +296,44 @@ async fn user_tenant_set_active_post(
                 .json(ApiResponse::new(
                     true,
                     &"Successfully set user-tenant active status",
+                    None
+                ));
+        }
+    }
+}
+
+async fn user_tenant_set_default_get() -> impl Responder {
+    info!("user_tenant_set_default_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn user_tenant_set_default_post(
+    users: web::Data<Users>,
+    user: crate::classes::user::CurrentUser,
+    params: web::Json<UserTenantSetDefaultRequest>
+) -> impl Responder {
+    info!("user_tenant_set_default_post()");
+    debug!("user: {:?}", user);
+    debug!("params: {:?}", params);
+    
+    match users.user_tenant_set_default(
+        &params.user_id,
+        &params.tenant_id
+    ).await {
+        Err(e) => {
+            error!("unable to set default tenant: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "an error occured while trying to set default tenant",
+                    None
+                ));
+        }
+        Ok(_) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    &"Successfully set default tenant",
                     None
                 ));
         }

@@ -109,6 +109,10 @@ impl CurrentUser {
     pub fn tenant_id(&self) -> uuid::Uuid {
         return self.tenant_id.clone();
     }
+
+    pub fn tenants(&self) -> Vec<Tenant> {
+        return self.tenants.clone();
+    }
 }
 
 
