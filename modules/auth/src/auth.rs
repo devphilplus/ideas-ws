@@ -184,12 +184,6 @@ impl Auth {
                         error!("unable to fetch user");
                         return Err(AuthError::TokenGenerationError);
                     }
-
-                    // if let Ok(token) = self.tokenizer.generate(&email) {
-                    //     return Ok(token);
-                    // } else {
-                    //     return Err(AuthError::TokenGenerationError);
-                    // }
                 } else {
                     return Err(AuthError::IncorrectUsernameAndPassword);
                 }
@@ -197,11 +191,20 @@ impl Auth {
         }
     }
 
-    pub async fn user_current_tenant(
-        &self
-    ) -> Result<String, AuthError> {
-        return Err(AuthError::ToBeImplemented(String::from("user_current_tenant")));
-    }
+    // pub async fn user_current_tenant(
+    //     &self,
+    //     email: &str,
+    //     tenant_id: &uuid::Uuid
+    // ) -> Result<String, AuthError> {
+    //     info!("user_current_tenant");
+
+    //     if let Ok(token) = self.tokenizer.generate(&email, &tenant_id) {
+    //         return Ok(token);
+    //     } else {
+    //         error!("unable to generate new token");
+    //         return Err(AuthError::TokenGenerationError);
+    //     }
+    // }
 
     pub async fn get_user(
         &self,
