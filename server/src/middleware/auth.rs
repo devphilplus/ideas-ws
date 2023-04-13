@@ -107,6 +107,8 @@ where
             if request.method() == Method::POST {
                 let mut token_value = String::from("");
                 let mut email = String::from("");
+                let mut tenant_id: uuid::Uuid = uuid::Uuid::nil();
+
                 if let Some(header_value) = request.headers().get(header::AUTHORIZATION) {
                     token_value = header_value.to_str().unwrap().replace("Bearer", "").trim().to_owned();
                 }
@@ -116,6 +118,7 @@ where
                         if tokenizer.is_valid(&token_value) {
                             if let Ok(claims) = tokenizer.get_claims(&token_value) {
                                 email = claims.email().clone();
+                                tenant_id = claims.tenant().clone();
                             }
                         }
                     } else {
@@ -139,9 +142,13 @@ where
                                 }
 
                                 let mut default_tenant_id: uuid::Uuid = uuid::Uuid::nil();
-                                if let Ok(result) = users.user_tenant_default(&user_id).await {
-                                    debug!("result: {:?}", result);
-                                    default_tenant_id = result.id();
+                                if tenant_id.is_nil() {
+                                    if let Ok(result) = users.user_tenant_default(&user_id).await {
+                                        debug!("result: {:?}", result);
+                                        default_tenant_id = result.id();
+                                    }
+                                } else {
+                                    default_tenant_id = tenant_id;
                                 }
 
                                 user = CurrentUser::new(
