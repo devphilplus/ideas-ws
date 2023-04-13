@@ -114,12 +114,12 @@
     "method": "POST",
     "sortNum": 60000,
     "created": "2023-04-09T07:47:51.785Z",
-    "modified": "2023-04-12T13:43:44.414Z",
+    "modified": "2023-04-12T21:46:11.398Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"token\": \"0aCRd8yIiR0AQb7FV4vdZXXboPL32H\",\n    \"password\": \"replace_me\"\n}",
+      "raw": "{\n    \"token\": \"vbpTBjOLayGYFbZXNI2lNcjclfc2MU\",\n    \"password\": \"replace_me\"\n}",
       "form": []
     },
     "tests": []
@@ -194,7 +194,7 @@
     "method": "POST",
     "sortNum": 30000,
     "created": "2023-04-09T07:55:58.121Z",
-    "modified": "2023-04-11T12:01:32.480Z",
+    "modified": "2023-04-12T21:47:34.098Z",
     "headers": [
       {
         "name": "Authorization",
@@ -205,7 +205,7 @@
     "params": [],
     "auth": {
       "type": "bearer",
-      "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTExVDEzOjAxOjA5LjcwNDcxOTUwNyswMDowMCIsImlhdCI6IjIwMjMtMDQtMTFUMTI6MDE6MDkuNzA0Njk3OTQxKzAwOjAwIn0.Wr2qkM0g54ov6B_gwOdm6zFCRcyG9bTlyHVhR2LzPDw"
+      "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTEyVDIyOjQ2OjMxLjY5MTE1MDIzNSswMDowMCIsImlhdCI6IjIwMjMtMDQtMTJUMjE6NDY6MzEuNjkxMTMwMTIyKzAwOjAwIn0.eOeai4bj9hKp5eObxr7h1cRLOlU0XsGivyLarhGhcmM"
     },
     "tests": []
   },
@@ -507,6 +507,43 @@
     "auth": {
       "type": "bearer",
       "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTExVDEzOjAxOjA5LjcwNDcxOTUwNyswMDowMCIsImlhdCI6IjIwMjMtMDQtMTFUMTI6MDE6MDkuNzA0Njk3OTQxKzAwOjAwIn0.Wr2qkM0g54ov6B_gwOdm6zFCRcyG9bTlyHVhR2LzPDw"
+    },
+    "tests": []
+  },
+  {
+    "_id": "e1d0b611-b852-4ce4-8f59-c07eec70b709",
+    "colId": "4f267f29-3aef-4548-b219-fba9820c277d",
+    "containerId": "",
+    "name": "select_tenant_get",
+    "url": "http://localhost:8081/user/current/tenant/set",
+    "method": "GET",
+    "sortNum": 110000,
+    "created": "2023-04-13T13:32:33.601Z",
+    "modified": "2023-04-13T13:35:20.813Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "570250d4-58e4-4a72-84b1-0222dc22a8bf",
+    "colId": "4f267f29-3aef-4548-b219-fba9820c277d",
+    "containerId": "",
+    "name": "select_tenant_post",
+    "url": "http://localhost:8081/user/current/tenant/set",
+    "method": "POST",
+    "sortNum": 120000,
+    "created": "2023-04-13T13:33:04.746Z",
+    "modified": "2023-04-13T13:35:30.179Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"tenant_id\": \"769a183a-75a6-4774-9108-39a8d069bb05\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTEzVDE0OjE1OjA4LjgzMjEyODk0MyswMDowMCIsImlhdCI6IjIwMjMtMDQtMTNUMTM6MTU6MDguODMyMTE4MDUxKzAwOjAwIiwidGlkIjoiM2MxNTQ0NWQtNDNmZS00MzFiLWFhYjMtOTE1ZDA0MmVkZWY0In0.PwQDxt1-BIXCXdhW7yuJLOmwX6nA02DpmQrNmUD5_J4"
     },
     "tests": []
   }
