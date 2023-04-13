@@ -62,7 +62,8 @@ async fn main() -> std::io::Result<()> {
         // user module
         let result_users = users::users::Users::new(
             cfg.clone(),
-            mailer.clone()
+            mailer.clone(),
+            tokenizer.clone()
         );
         if let Err(e) = result_users {
             error!("unable to create users object: {:?}", e);

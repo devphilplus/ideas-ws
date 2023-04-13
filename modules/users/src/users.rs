@@ -30,20 +30,23 @@ pub enum UsersError {
 pub struct Users {
     cfg: ApplicationConfiguration,
     data: crate::data::Data,
-    mailer: Mailer
+    mailer: Mailer,
+    tokenizer: tokenizer::Tokenizer
 }
 
 impl Users {
 
     pub fn new(
         cfg: ApplicationConfiguration,
-        mailer: Mailer
+        mailer: Mailer,
+        tokenizer: tokenizer::Tokenizer
     ) -> Result<Self, UsersError> {
         if let Ok(data) = Data::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
                 data: data,
-                mailer: mailer
+                mailer: mailer,
+                tokenizer: tokenizer
             });
         }
 
@@ -233,6 +236,22 @@ impl Users {
                 debug!("//TODO result: {:?}", result);
                 return Ok(result);
             }
+        }
+    }
+
+    /// set current user's selected tenant. generates new auth token
+    pub fn current_user_set_tenant(
+        &self,
+        email: &str,
+        tenant_id: &uuid::Uuid
+    ) -> Result<String, UsersError> {
+        info!("current_user_set_tenant");
+
+        if let Ok(token) = self.tokenizer.generate(&email, &tenant_id) {
+            return Ok(token);
+        } else {
+            error!("unable to generate new token");
+            return Err(UsersError::ToBeImplemented(String::from("current_user_set_tenant")));
         }
     }
 }

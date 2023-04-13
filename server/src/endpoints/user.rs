@@ -4,6 +4,7 @@ use log::{
     error
 };
 
+use http::header::AUTHORIZATION;
 use actix_web::{
     HttpResponse, 
     Responder,
@@ -44,6 +45,11 @@ struct UserPasswordRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+struct CurrentUserTenantSetRequest {
+    pub tenant_id: uuid::Uuid
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct UserTenantJoinRequest {
     pub tenant: String
 }
@@ -71,6 +77,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route(web::post()
                     .guard(Permission::new("permission.test"))
                     .to(current_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
+            web::resource("/current/tenant/set")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(current_tenant_set_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(current_tenant_set_post)
                 )
                 .default_service(web::to(default_service))
         )
@@ -164,6 +180,39 @@ async fn current_post(
                     }))
                 ))
         }
+    }
+}
+
+async fn current_tenant_set_get() -> impl Responder {
+    info!("current_tenant_set_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn current_tenant_set_post(
+    users: web::Data<Users>,
+    user: crate::classes::user::CurrentUser,
+    params: web::Json<CurrentUserTenantSetRequest>
+) -> impl Responder {
+    info!("current_tenant_set_post()");
+
+    if let Ok(token) = users.current_user_set_tenant(
+        &user.email(),
+        &params.tenant_id
+    ) {
+        return HttpResponse::Ok()
+            .append_header((AUTHORIZATION, format!("Bearer {}", token)))
+            .json(ApiResponse::new(
+                true,
+                "current tenant selected",
+                None
+            ));
+    } else {
+        return HttpResponse::InternalServerError()
+            .json(ApiResponse::new(
+                false,
+                "current tenant not selected",
+                None
+            ));
     }
 }
 

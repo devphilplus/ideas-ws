@@ -467,6 +467,7 @@ impl Data {
         }
     }
 
+    /// retrieve user's default tenant
     pub async fn user_tenants_default(
         &self,
         user_id: &uuid::Uuid
