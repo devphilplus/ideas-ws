@@ -284,10 +284,53 @@ impl Data {
         }
     }
 
+
+    /// retrieve user's default tenant
+    pub async fn user_default_tenant_fetch(
+        &self,
+        user_id: &uuid::Uuid
+    ) -> Result<uuid::Uuid, DataError> {
+        info!("user_default_tenant_fetch");
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from iam.user_tenant_fetch_default($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &user_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+                let tenant_id: uuid::Uuid = row.get("tenant_id");
+                return Ok(tenant_id);
+            }
+        }
+    }
+
     pub async fn get_user(
         &self,
         email: &str
     ) -> Result<User, DataError> {
+        info!("get_user");
+
         let result = self.pool.get().await;
         if let Err(e) = result {
             error!("unable to retrieve database client: {:?}", e);
@@ -316,15 +359,18 @@ impl Data {
             }
             Ok(row) => {
                 debug!("row: {:?}", row);
+
+                let user_id: uuid::Uuid = row.get("id");
+
                 return Ok(User::new(
-                    row.get(0),
-                    row.get(1),
-                    row.get(2),
-                    row.get(3)
+                    &user_id,
+                    row.get("email"),
+                    row.get("given_name"),
+                    row.get("middle_name"),
+                    row.get("family_name")
                 ));
                 // return Ok(User::anonymous());
             }
         }
-
     }
 }

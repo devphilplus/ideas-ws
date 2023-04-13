@@ -164,16 +164,43 @@ impl Auth {
             }
             Ok(authentic) => {
                 if authentic {
-                    if let Ok(token) = self.tokenizer.generate(&email) {
-                        return Ok(token);
+
+                    if let Ok(user) = self.data.get_user(&email).await {
+                        let user_id = user.id();
+                        if let Ok(tenant_id) = self.data.user_default_tenant_fetch(&user_id).await {
+                            if let Ok(token) = self.tokenizer.generate(
+                                &email,
+                                &tenant_id
+                            ) {
+                                return Ok(token);
+                            } else {
+                                return Err(AuthError::TokenGenerationError);
+                            }
+                        } else {
+                            error!("unable to fetch user default tenant");
+                            return Err(AuthError::TokenGenerationError);
+                        }
                     } else {
+                        error!("unable to fetch user");
                         return Err(AuthError::TokenGenerationError);
                     }
+
+                    // if let Ok(token) = self.tokenizer.generate(&email) {
+                    //     return Ok(token);
+                    // } else {
+                    //     return Err(AuthError::TokenGenerationError);
+                    // }
                 } else {
                     return Err(AuthError::IncorrectUsernameAndPassword);
                 }
             }
         }
+    }
+
+    pub async fn user_current_tenant(
+        &self
+    ) -> Result<String, AuthError> {
+        return Err(AuthError::ToBeImplemented(String::from("user_current_tenant")));
     }
 
     pub async fn get_user(
