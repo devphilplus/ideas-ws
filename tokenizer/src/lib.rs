@@ -24,6 +24,7 @@ use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct Claims {
     email: String,
+    tenant_id: uuid::Uuid,
     issued: chrono::DateTime<Utc>,
     expiry: chrono::DateTime<Utc>
 }
@@ -32,11 +33,13 @@ impl Claims {
 
     pub fn new(
         email: &str,
+        tenant_id: &uuid::Uuid,
         issued: &chrono::DateTime<Utc>,
         expiry: &chrono::DateTime<Utc>
     ) -> Self {
         return Self {
             email: String::from(email),
+            tenant_id: tenant_id.clone(),
             issued: issued.clone(),
             expiry: expiry.clone()
         };
@@ -44,6 +47,10 @@ impl Claims {
 
     pub fn email(&self) -> String {
         return self.email.clone();
+    }
+
+    pub fn tenant(&self) -> uuid::Uuid {
+        return self.tenant_id.clone();
     }
 
     pub fn issued_at(&self) -> chrono::DateTime<Utc> {
@@ -80,11 +87,15 @@ impl Tokenizer {
      */
     pub fn generate(
         &self,
-        email: &str
+        email: &str,
+        tenant_id: &uuid::Uuid
     ) -> Result<String, TokenError> {
         let mut claims = BTreeMap::new();
 
         claims.insert("email", email);
+
+        let tid = tenant_id.to_string();
+        claims.insert("tid", tid.as_str());
 
         // iss (issuer)
 
@@ -157,6 +168,15 @@ impl Tokenizer {
             if let Ok(claims) = result {
                 debug!("claims: {:?}", claims);
 
+                let mut tenant_id = uuid::Uuid::nil();
+                if let Some(tid) = claims.get("tid") {
+                    if let Ok(tid) = uuid::Uuid::parse_str(tid) {
+                        tenant_id = tid;
+                    } else {
+                        error!("unable to parse tenant_id from claim");
+                    }
+                }
+
                 let mut issued_at = Utc::now();
                 if let Some(iat) = claims.get("iat") {
                     if let Ok(iat) = chrono::DateTime::parse_from_rfc3339(iat) {
@@ -173,6 +193,7 @@ impl Tokenizer {
 
                 return Ok(Claims::new(
                     claims.get("email").unwrap(),
+                    &tenant_id,
                     &issued_at,
                     &expiry
                     
@@ -196,8 +217,9 @@ mod tests {
 
     #[test]
     fn test_generate() {
+        let tenant_id: uuid::Uuid = uuid::Uuid::nil();
         let tokenizer = Tokenizer::new("testing");
-        match tokenizer.generate("testing@mailinator.com") {
+        match tokenizer.generate("testing@mailinator.com", &tenant_id) {
             Err(e) => {
                 assert!(false, "unable to generate token");
             }

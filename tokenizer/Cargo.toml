@@ -12,4 +12,5 @@ hmac = "*"
 sha2 = "*"
 jwt = "*"
 
+uuid = { version = "0.8.2", features = ["v4", "serde"] }
 chrono = { version = "*", features = ["serde"]}
