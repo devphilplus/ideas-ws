@@ -47,6 +47,20 @@ impl Tenants {
         return Err(TenantsError::ConfigurationError);
     }
 
+    pub async fn tenants(&self) -> Result<Vec<Tenant>, TenantsError> {
+        info!("Tenants::tenants()");
+
+        match self.data.tenants_fetch().await {
+            Err(e) => {
+                error!("unable to retrieve tenants: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenants()")));
+            }
+            Ok(tenants) => {
+                return Ok(tenants);
+            }
+        }
+    }
+
     pub fn members(&self) -> crate::members::Members {
         return crate::members::Members::new(&self.data);
     }

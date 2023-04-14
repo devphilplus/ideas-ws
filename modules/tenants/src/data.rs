@@ -176,6 +176,58 @@ impl Data {
         }
     }
 
+    /// retrieve tenants
+    pub async fn tenants_fetch(
+        &self
+    ) -> Result<Vec<Tenant>, DataError> {
+        info!("Data::tenants_fetch");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from tenants.tenants_fetch()"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query(
+            &stmt,
+            &[]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(rows) => {
+                debug!("rows: {:?}", rows);
+
+                let result = rows.iter().map(|r| {
+                    let tenant_id: uuid::Uuid = r.get("id");
+                    let tenant_active: bool = r.get("active");
+                    let tenant_name: String = r.get("name");
+                    let tenant_slug: String = r.get("slug");
+
+                    return Tenant::new(
+                        &tenant_id,
+                        &tenant_active,
+                        &tenant_name,
+                        &tenant_slug
+                    );
+                }).collect();
+
+                return Ok(result);
+            }
+        }
+    }
+
 
     pub async fn tenant_add(
         &self,

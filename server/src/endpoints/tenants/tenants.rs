@@ -72,6 +72,16 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .default_service(web::to(default_service))
         )
         .service(
+            web::resource("/fetch")
+                .route(web::method(http::Method::OPTIONS).to(default_options))
+                .route(web::get().to(tenants_fetch_get))
+                .route(web::post()
+                    .guard(Permission::new("permission.test"))
+                    .to(tenants_fetch_post)
+                )
+                .default_service(web::to(default_service))
+        )
+        .service(
             web::resource("/update")
                 .route(web::method(http::Method::OPTIONS).to(default_options))
                 .route(web::get().to(tenant_update_get))
@@ -158,6 +168,41 @@ async fn tenant_add_post(
                     true,
                     &"successfully added tenant",
                     None
+                ));
+        }
+    }
+}
+
+
+async fn tenants_fetch_get() -> impl Responder {
+    info!("tenants_fetch_get()");
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+async fn tenants_fetch_post(
+    user: CurrentUser,
+    tenants: web::Data<Tenants>
+) -> impl Responder {
+    info!("tenants_fetch_post");
+
+    match tenants.tenants().await {
+        Err(e) => {
+            error!("tenants_fetch_post(): {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    &"an error occured while trying to fetch tenants",
+                    None
+                ));
+        }
+        Ok(tenants) => {
+            return HttpResponse::Created()
+                .json(ApiResponse::new(
+                    true,
+                    &"successfully retrieved tenants",
+                    Some(json!({
+                        "tenants": tenants
+                    }))
                 ));
         }
     }
