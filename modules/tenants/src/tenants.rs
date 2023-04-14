@@ -47,6 +47,7 @@ impl Tenants {
         return Err(TenantsError::ConfigurationError);
     }
 
+    /// retrieve tenants
     pub async fn tenants(&self) -> Result<Vec<Tenant>, TenantsError> {
         info!("Tenants::tenants()");
 
@@ -61,10 +62,12 @@ impl Tenants {
         }
     }
 
+    /// retrieve members
     pub fn members(&self) -> crate::members::Members {
         return crate::members::Members::new(&self.data);
     }
 
+    /// retrieve tenant by id
     pub async fn tenant_by_id(
         &self,
         tenant_id: &uuid::Uuid
@@ -82,6 +85,7 @@ impl Tenants {
         }
     }
 
+    /// retrieve tenant by name
     pub async fn tenant_by_name(
         &self,
         name: &str
@@ -92,6 +96,24 @@ impl Tenants {
             Err(e) => {
                 error!("unable to retrieve tenant: {:?}", e);
                 return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_by_name()")));
+            }
+            Ok(tenant) => {
+                return Ok(tenant);
+            }
+        }
+    }
+
+    /// retrieve tenant by slug
+    pub async fn tenant_by_slug(
+        &self,
+        slug: &str
+    ) -> Result<Tenant, TenantsError> {
+        info!("Tenants::tenant_by_slug()");
+
+        match self.data.tenant_by_slug(slug).await {
+            Err(e) => {
+                error!("unable to retrieve tenant: {:?}", e);
+                return Err(TenantsError::ToBeImplemented(String::from("Tenants::tenant_by_slug()")));
             }
             Ok(tenant) => {
                 return Ok(tenant);

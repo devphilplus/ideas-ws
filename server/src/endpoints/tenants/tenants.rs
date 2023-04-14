@@ -32,7 +32,7 @@ use tenants::tenants::{Tenants, TenantsError};
 
 
 #[derive(Debug, Serialize, Deserialize)]
-struct TenantUserAddRequest {
+struct TenantAddRequest {
     pub tenant_id: uuid::Uuid,
     pub name: String,
     pub slug: String,
@@ -56,6 +56,12 @@ struct TenantGetInfoBySlugRequest {
 struct TenantSetActiveRequest {
     pub tenant_id: uuid::Uuid,
     pub active: bool
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TenantMembersRequest {
+    pub tenant_slug: String
 }
 
 
@@ -143,7 +149,7 @@ async fn tenant_add_get() -> impl Responder {
 async fn tenant_add_post(
     user: CurrentUser,
     tenants: web::Data<Tenants>,
-    params: web::Json<TenantUserAddRequest>
+    params: web::Json<TenantAddRequest>
 ) -> impl Responder {
     info!("tenant_add_post");
 
@@ -217,7 +223,7 @@ async fn tenant_update_get() -> impl Responder {
 async fn tenant_update_post(
     user: CurrentUser,
     tenants: web::Data<Tenants>,
-    params: web::Json<TenantUserAddRequest>
+    params: web::Json<TenantAddRequest>
 ) -> impl Responder {
     info!("tenant_update_post");
 
@@ -354,17 +360,45 @@ async fn tenant_members_fetch_get() -> impl Responder {
 
 async fn tenant_members_fetch_post(
     user: CurrentUser,
-    tenants: web::Data<Tenants>
+    tenants: web::Data<Tenants>,
+    params: web::Json<TenantMembersRequest>
 ) -> impl Responder {
     info!("tenant_members_fetch_post()");
-
+    debug!("params: {:?}", params);
     
+    match tenants.tenant_by_slug(&params.tenant_slug).await {
+        Err(e) => {
+            error!("unable to fetch tenant members");
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "an error occured while trying to retrieve tenant members",
+                    None
+                ));
+        }
+        Ok(tenant) => {
+            match tenants.tenant_users_fetch(&tenant.id()).await {
+                Err(e) => {
+                    error!("unable to fetch tenant members");
+                    return HttpResponse::InternalServerError()
+                        .json(ApiResponse::new(
+                            false,
+                            "an error occured while trying to retrieve tenant members",
+                            None
+                        ));
 
-    return HttpResponse::InternalServerError()
-        .json(ApiResponse::new(
-            false,
-            "Service is up. version: 1.0.0.0.dev",
-            None
-        ));
+                }
+                Ok(members) => {
+                    debug!("members: {:?}", members);
+                    return HttpResponse::Ok()
+                        .json(ApiResponse::new(
+                            true,
+                            "successfully retrieved tenant members",
+                            None
+                        ))
+                }
+            }
+        }
+    }
 }
 

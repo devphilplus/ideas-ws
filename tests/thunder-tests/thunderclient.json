@@ -574,5 +574,71 @@
     "headers": [],
     "params": [],
     "tests": []
+  },
+  {
+    "_id": "88cdcd47-91bc-49a7-b61c-d0b5d1ab19ac",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenant_add_get",
+    "url": "http://localhost:8081/tenants/add",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2023-04-14T12:58:49.732Z",
+    "modified": "2023-04-14T12:59:17.790Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "f85cf0f4-8160-4700-bad0-9243e3dcd60d",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenant_add_post",
+    "url": "http://localhost:8081/tenants/add",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2023-04-14T12:59:29.737Z",
+    "modified": "2023-04-14T13:05:03.691Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"tenant_id\": \"63c6f722-931a-4966-bacc-daa6bd7765a4\",\n  \"name\": \"tenant 1\",\n  \"slug\": \"tenant_1\",\n  \"description\": \"tenant add test\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "15ebade4-8b0e-4feb-8e85-fc5015746ead",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenant_members_fetch_get",
+    "url": "http://localhost:8081/tenants/members/fetch",
+    "method": "GET",
+    "sortNum": 50000,
+    "created": "2023-04-14T13:58:47.297Z",
+    "modified": "2023-04-14T13:59:23.757Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "1d5f89ba-1ef4-4997-b312-84bf91e3e991",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenant_members_fetch_post",
+    "url": "http://localhost:8081/tenants/members/fetch",
+    "method": "POST",
+    "sortNum": 60000,
+    "created": "2023-04-14T14:00:26.084Z",
+    "modified": "2023-04-14T14:00:59.944Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"tenant_slug\": \"default\"\n}",
+      "form": []
+    },
+    "tests": []
   }
 ]

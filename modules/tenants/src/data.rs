@@ -176,6 +176,56 @@ impl Data {
         }
     }
 
+    pub async fn tenant_by_slug(
+        &self,
+        slug: &str
+    ) -> Result<Tenant, DataError> {
+        info!("Data::tenant_by_slug()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * from tenants.tenant_by_slug($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &pg::slug::Slug::new(&slug)
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+
+                let tenant_id: uuid::Uuid = row.get("id");
+                let tenant_active: bool = row.get("active");
+                let tenant_name: String = row.get("name");
+                let tenant_slug: String = row.get("slug");
+
+                return Ok(Tenant::new(
+                    &tenant_id,
+                    &tenant_active,
+                    &tenant_name,
+                    &tenant_slug
+                ));
+            }
+        }
+    }
+
     /// retrieve tenants
     pub async fn tenants_fetch(
         &self
@@ -259,7 +309,7 @@ impl Data {
             &[
                 &id,
                 &name,
-                &slug,
+                &pg::slug::Slug::new(&slug),
                 &description
             ]
         ).await {
