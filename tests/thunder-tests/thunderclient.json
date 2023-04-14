@@ -546,5 +546,33 @@
       "bearer": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RlcjFAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTEzVDE0OjE1OjA4LjgzMjEyODk0MyswMDowMCIsImlhdCI6IjIwMjMtMDQtMTNUMTM6MTU6MDguODMyMTE4MDUxKzAwOjAwIiwidGlkIjoiM2MxNTQ0NWQtNDNmZS00MzFiLWFhYjMtOTE1ZDA0MmVkZWY0In0.PwQDxt1-BIXCXdhW7yuJLOmwX6nA02DpmQrNmUD5_J4"
     },
     "tests": []
+  },
+  {
+    "_id": "475fe90f-7047-42c2-ab57-6dac29256005",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenants_fetch_get",
+    "url": "http://localhost:8081/tenants/fetch",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-14T11:04:22.889Z",
+    "modified": "2023-04-14T11:04:35.081Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "85ccbe7b-7a80-4914-9ef4-bb22303d8053",
+    "colId": "2d5f496a-ea61-4bc2-8050-970931efc46f",
+    "containerId": "",
+    "name": "tenants_fetch_post",
+    "url": "http://localhost:8081/tenants/fetch",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-14T11:04:55.943Z",
+    "modified": "2023-04-14T11:05:01.538Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]
