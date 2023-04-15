@@ -9,7 +9,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Currency {
-    id: u8,
+    id: i32,
     name: String,
     unit: String,
     symbol: String
@@ -19,7 +19,7 @@ pub struct Currency {
 impl Currency {
 
     pub fn new(
-        id: &u8,
+        id: &i32,
         name: &str,
         unit: &str,
         symbol: &str
@@ -32,7 +32,7 @@ impl Currency {
         };
     }
 
-    pub fn id(&self) -> u8 {
+    pub fn id(&self) -> i32 {
         return self.id.clone();
     }
 

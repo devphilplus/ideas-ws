@@ -8,22 +8,22 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Country {
-    id: u32,
+    id: i32,
     name: String,
     alpha_2: String,
     alpha_3: String,
-    currency_id: u32
+    currency_id: Option<i32>
 }
 
 
 impl Country {
 
     pub fn new(
-        id: &u32,
+        id: &i32,
         name: &str,
         alpha_2: &str,
         alpha_3: &str,
-        currency_id: &u32
+        currency_id: Option<i32>
     ) -> Self {
         return Self {
             id: id.clone(),
@@ -34,7 +34,7 @@ impl Country {
         };
     }
 
-    pub fn id(&self) -> u32 {
+    pub fn id(&self) -> i32 {
         return self.id.clone();
     }
 
@@ -50,7 +50,7 @@ impl Country {
         return self.alpha_3.clone();
     }
 
-    pub fn currency_id(&self) -> u32 {
+    pub fn currency_id(&self) -> Option<i32> {
         return self.currency_id.clone();
     }
 }
