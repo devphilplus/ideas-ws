@@ -5,6 +5,8 @@ pub mod common;
 // pub mod clients;
 pub mod tenants;
 pub mod accounting;
+pub mod crms;
+pub mod hr;
 pub mod inventory;
 
 

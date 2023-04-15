@@ -9,5 +9,7 @@ members = [
     "modules/users",
     "modules/roles",
     "modules/tenants",
+    "modules/crms",
+    "modules/hr",
     "server"
 ]

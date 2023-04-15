@@ -30,3 +30,5 @@ mailer = { path = "../mailer" }
 tokenizer = { path = "../tokenizer" }
 #clients = { path = "../modules/clients" }
 tenants = { path = "../modules/tenants" }
+crms = { path = "../modules/crms" }
+hr = { path = "../modules/hr" }
