@@ -29,6 +29,8 @@ common = { path = "../common" }
 mailer = { path = "../mailer" }
 tokenizer = { path = "../tokenizer" }
 #clients = { path = "../modules/clients" }
+util = { path = "../modules/util" }
 tenants = { path = "../modules/tenants" }
+people = { path = "../modules/people" }
 crms = { path = "../modules/crms" }
 hr = { path = "../modules/hr" }
