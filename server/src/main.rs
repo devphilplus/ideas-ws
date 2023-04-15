@@ -71,15 +71,15 @@ async fn main() -> std::io::Result<()> {
         }
         let users = result_users.unwrap();
 
-        // clients module
-        // let result_clients = clients::clients::Clients::new(
-        //     cfg.clone()
-        // );
-        // if let Err(e) = result_clients {
-        //     error!("unable to create clients object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create clients object"));
-        // }
-        // let clients = result_clients.unwrap();
+        // util module
+        let result_countries = util::countries::Countries::new(
+            cfg.clone()
+        );
+        if let Err(e) = result_countries {
+            error!("unable to create countries object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create countries object"));
+        }
+        let countries = result_countries.unwrap();
 
         // tenants module
         let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
@@ -97,14 +97,14 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
-                // .app_data(web::Data::new(clients.clone()))
+                .app_data(web::Data::new(countries.clone()))
                 .app_data(web::Data::new(tenants.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))
 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
-                // .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
+                .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
                 // .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))

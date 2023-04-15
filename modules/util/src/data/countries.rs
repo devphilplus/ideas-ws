@@ -102,18 +102,18 @@ impl Data {
                 debug!("rows: {:?}", rows);
 
                 let result = rows.iter().map(|r| {
-                    let id: u32 = r.get("id");
+                    let id: i32 = r.get("id");
                     let name: String = r.get("name");
                     let alpha_2: String = r.get("iso_3166_1_alpha_2");
                     let alpha_3: String = r.get("iso_3166_1_alpha_3");
-                    let currency_id: u32 = r.get("iso_4217_currency_numeric_code");
+                    let currency_id: Option<i32> = r.get("iso_4217_currency_numeric_code");
 
                     return common::country::Country::new(
                         &id,
                         &name,
                         &alpha_2,
                         &alpha_3,
-                        &currency_id
+                        currency_id
                     );
                 }).collect();
 

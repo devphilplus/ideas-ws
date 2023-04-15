@@ -640,5 +640,61 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "00de76ba-8003-467c-a5fc-7494ee18ff79",
+    "colId": "34381393-f10d-4fc2-bead-735b8508cc8a",
+    "containerId": "",
+    "name": "warehouses_fetch_get",
+    "url": "http://localhost:8081/inventory/warehouses/fetch",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-15T05:37:16.961Z",
+    "modified": "2023-04-15T05:37:33.613Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "8e9bf1c0-614f-416e-8971-1ab7269047a7",
+    "colId": "34381393-f10d-4fc2-bead-735b8508cc8a",
+    "containerId": "",
+    "name": "warehouses_fetch_post",
+    "url": "http://localhost:8081/inventory/warehouses/fetch",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-15T05:37:47.556Z",
+    "modified": "2023-04-15T05:37:53.697Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "0e120133-7101-43f4-8837-3be7cbaa9315",
+    "colId": "c0e57290-6c55-4f1e-9512-49e6e6387ffa",
+    "containerId": "",
+    "name": "countries_fetch_get",
+    "url": "http://localhost:8081/countries",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-15T12:26:40.328Z",
+    "modified": "2023-04-15T12:26:53.622Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "99d46b81-0ed7-40dc-b08c-870db8a502c2",
+    "colId": "c0e57290-6c55-4f1e-9512-49e6e6387ffa",
+    "containerId": "",
+    "name": "countries_fetch_post",
+    "url": "http://localhost:8081/countries",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-15T12:27:50.058Z",
+    "modified": "2023-04-15T12:27:56.277Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]

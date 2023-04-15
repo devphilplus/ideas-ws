@@ -60,5 +60,19 @@
     "created": "2023-04-14T11:04:08.435Z",
     "sortNum": 60000,
     "folders": []
+  },
+  {
+    "_id": "34381393-f10d-4fc2-bead-735b8508cc8a",
+    "colName": "inventory",
+    "created": "2023-04-15T05:36:52.489Z",
+    "sortNum": 70000,
+    "folders": []
+  },
+  {
+    "_id": "c0e57290-6c55-4f1e-9512-49e6e6387ffa",
+    "colName": "common",
+    "created": "2023-04-15T12:26:30.580Z",
+    "sortNum": 80000,
+    "folders": []
   }
 ]

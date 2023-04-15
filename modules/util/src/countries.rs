@@ -6,7 +6,7 @@ use log::{
 
 use configuration::ApplicationConfiguration;
 
-
+#[derive(Debug)]
 pub enum CountriesError {
     ToBeImplemented(String),
     ConfigurationError,
@@ -14,6 +14,7 @@ pub enum CountriesError {
     ValidationError
 }
 
+#[derive(Clone)]
 pub struct Countries {
     data: crate::data::countries::Data
 }
@@ -30,5 +31,20 @@ impl Countries {
         }
 
         return Err(CountriesError::ConfigurationError);
+    }
+
+    /// retrieve list of countries
+    pub async fn countries(&self) -> Result<Vec<common::country::Country>, CountriesError> {
+        info!("Countries::countries()");
+
+        match self.data.fetch_all().await {
+            Err(e) => {
+                error!("unable to fetch countries");
+                return Err(CountriesError::ToBeImplemented(String::from("countries()")));
+            }
+            Ok(countries) => {
+                return Ok(countries);
+            }
+        }
     }
 }
