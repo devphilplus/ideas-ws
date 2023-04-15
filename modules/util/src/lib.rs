@@ -1,4 +1,5 @@
 pub mod data;
+pub mod currencies;
 pub mod countries;
 
 // #[cfg(test)]

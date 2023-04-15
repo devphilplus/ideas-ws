@@ -12,7 +12,7 @@ pub struct Currency {
     id: i32,
     name: String,
     unit: String,
-    symbol: String
+    symbol: Option<String>
 }
 
 
@@ -22,13 +22,13 @@ impl Currency {
         id: &i32,
         name: &str,
         unit: &str,
-        symbol: &str
+        symbol: Option<String>
     ) -> Self {
         return Self {
             id: id.clone(),
             name: String::from(name),
             unit: String::from(unit),
-            symbol: String::from(symbol)
+            symbol: symbol
         };
     }
 
@@ -44,7 +44,7 @@ impl Currency {
         return self.unit.clone();
     }
 
-    pub fn symbol(&self) -> String {
+    pub fn symbol(&self) -> Option<String> {
         return self.symbol.clone();
     }
 }

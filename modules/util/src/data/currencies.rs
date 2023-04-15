@@ -12,8 +12,7 @@ use deadpool_postgres::{
     RecyclingMethod
 };
 use tokio_postgres::{
-    NoTls,
-    // row::Row
+    NoTls
 };
 use tokio_postgres::config::{ Config };
 
@@ -71,7 +70,7 @@ impl Data {
         return Err(DataError::ConfigurationError);
     }
 
-    pub async fn fetch_all(&self) -> Result<Vec<common::country::Country>, DataError> {
+    pub async fn fetch_all(&self) -> Result<Vec<common::currency::Currency>, DataError> {
         info!("Data::fetch_all()");
 
         let result = self.pool.get().await;
@@ -82,7 +81,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * from common.countries_fetch()"
+            "select * from common.currencies_fetch()"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -104,16 +103,14 @@ impl Data {
                 let result = rows.iter().map(|r| {
                     let id: i32 = r.get("id");
                     let name: String = r.get("name");
-                    let alpha_2: String = r.get("iso_3166_1_alpha_2");
-                    let alpha_3: String = r.get("iso_3166_1_alpha_3");
-                    let currency_id: Option<i32> = r.get("iso_4217_currency_numeric_code");
+                    let unit: String = r.get("unit");
+                    let symbol: Option<String> = r.get("symbol");
 
-                    return common::country::Country::new(
+                    return common::currency::Currency::new(
                         &id,
                         &name,
-                        &alpha_2,
-                        &alpha_3,
-                        currency_id
+                        &unit,
+                        symbol
                     );
                 }).collect();
 

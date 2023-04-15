@@ -696,5 +696,33 @@
     "headers": [],
     "params": [],
     "tests": []
+  },
+  {
+    "_id": "aeaac9d4-e31b-48de-be1a-a3ded53e4b6c",
+    "colId": "c0e57290-6c55-4f1e-9512-49e6e6387ffa",
+    "containerId": "",
+    "name": "currencies_fetch_get",
+    "url": "http://localhost:8081/currencies",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2023-04-15T13:05:41.572Z",
+    "modified": "2023-04-15T13:05:59.927Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "fe1ef77c-4dbc-4c3f-b5db-9f3c64d9e5d9",
+    "colId": "c0e57290-6c55-4f1e-9512-49e6e6387ffa",
+    "containerId": "",
+    "name": "currencies_fetch_post",
+    "url": "http://localhost:8081/currencies",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2023-04-15T13:06:08.793Z",
+    "modified": "2023-04-15T13:06:14.830Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]

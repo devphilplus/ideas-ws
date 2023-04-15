@@ -71,7 +71,17 @@ async fn main() -> std::io::Result<()> {
         }
         let users = result_users.unwrap();
 
-        // util module
+        // util - currencies module
+        let result_currencies = util::currencies::Currencies::new(
+            cfg.clone()
+        );
+        if let Err(e) = result_currencies {
+            error!("unable to create currencies object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create currencies object"));
+        }
+        let currencies = result_currencies.unwrap();
+
+        // util - countries module
         let result_countries = util::countries::Countries::new(
             cfg.clone()
         );
@@ -97,6 +107,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(tokenizer.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
+                .app_data(web::Data::new(currencies.clone()))
                 .app_data(web::Data::new(countries.clone()))
                 .app_data(web::Data::new(tenants.clone()))
                 
@@ -105,6 +116,7 @@ async fn main() -> std::io::Result<()> {
 
                 .service(web::scope("/status").configure(crate::endpoints::status::config))
                 .service(web::scope("/countries").configure(crate::endpoints::common::countries::config))
+                .service(web::scope("/currencies").configure(crate::endpoints::common::currencies::config))
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
                 // .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
