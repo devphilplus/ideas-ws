@@ -10,7 +10,6 @@ use configuration::ApplicationConfiguration;
 pub enum CurrenciesError {
     ToBeImplemented(String),
     ConfigurationError,
-    MailerError,
     ValidationError
 }
 

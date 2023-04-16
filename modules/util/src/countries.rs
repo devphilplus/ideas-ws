@@ -10,7 +10,6 @@ use configuration::ApplicationConfiguration;
 pub enum CountriesError {
     ToBeImplemented(String),
     ConfigurationError,
-    MailerError,
     ValidationError
 }
 
