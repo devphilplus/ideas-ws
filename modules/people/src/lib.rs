@@ -1,4 +1,5 @@
 pub mod data;
+pub mod people;
 
 // #[cfg(test)]
 // mod tests {
