@@ -1,16 +1,1 @@
-[
-  {
-    "_id": "37837d95-adfe-4940-8d02-9a5422e9ab47",
-    "colId": "history",
-    "containerId": "",
-    "name": "http://localhost:8081/status",
-    "url": "http://localhost:8081/status",
-    "method": "GET",
-    "sortNum": 0,
-    "created": "2023-04-09T07:33:04.363Z",
-    "modified": "2023-04-09T07:33:04.363Z",
-    "headers": [],
-    "params": [],
-    "tests": []
-  }
-]
+[]
