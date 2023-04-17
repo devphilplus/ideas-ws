@@ -724,5 +724,38 @@
     "headers": [],
     "params": [],
     "tests": []
+  },
+  {
+    "_id": "8d6ef010-2199-4b7f-bfd3-e0f566e55816",
+    "colId": "041cb752-d7ea-4f3b-8f65-58b84319bf33",
+    "containerId": "",
+    "name": "employee_add_get",
+    "url": "http://localhost:8081/hr/employees/add",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2023-04-17T13:50:58.730Z",
+    "modified": "2023-04-17T13:51:15.927Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "838ea505-f7de-439c-b1dd-66917c173d07",
+    "colId": "041cb752-d7ea-4f3b-8f65-58b84319bf33",
+    "containerId": "",
+    "name": "employee_add_post",
+    "url": "http://localhost:8081/hr/employees/add",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2023-04-17T13:51:30.449Z",
+    "modified": "2023-04-17T13:55:36.000Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"tenant_id\": \"55ba4327-25c6-43f7-adb0-aadcbba60e1b\",\n  \"people_id\": \"7a8a7033-12bd-41e0-9496-a8be7dee8b0c\",\n  \"given_name\": \"test_given_name\",\n  \"middle_name\": \"test_middle_name\",\n  \"family_name\": \"test_family_name\",\n  \"prefix\": \"mr\",\n  \"suffix\": \"md\",\n  \"gender_id\": 1,\n  \"ethnicity_id\": 1,\n  \"marital_state_id\": 1\n}",
+      "form": []
+    },
+    "tests": []
   }
 ]
