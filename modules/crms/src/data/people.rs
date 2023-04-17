@@ -75,6 +75,7 @@ impl Data {
 
     pub async fn add(
         &self,
+        tenant_id: &uuid::Uuid,
         people_id: &uuid::Uuid,
         given_name: &str,
         middle_name: &str,
@@ -92,7 +93,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * from people.people_add($1,$2,$3,$4,$5,$6,$7,$8,$9)"
+            "select * from people.people_add($1,$2,$3,$4,$5,$6,$7,$8,$9, $10)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -103,6 +104,7 @@ impl Data {
         match client.execute(
             &stmt,
             &[
+                &tenant_id,
                 &people_id,
                 &given_name,
                 &middle_name,
