@@ -41,9 +41,9 @@ impl People {
         family_name: &str,
         prefix: &str,
         suffix: &str,
-        gender_id: &i32,
-        ethnicity_id: &i32,
-        marital_state_id: &i32
+        gender_id: &i16,
+        ethnicity_id: &i16,
+        marital_state_id: &i16
     ) -> Result<(), PeopleError> {
         info!("People::add()");
 

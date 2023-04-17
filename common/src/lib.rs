@@ -3,6 +3,7 @@ pub mod country;
 pub mod user;
 // pub mod client;
 pub mod tenant;
+pub mod hr;
 
 
 #[cfg(test)]

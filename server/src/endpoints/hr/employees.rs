@@ -32,9 +32,9 @@ struct EmployeeAddRequest {
     pub family_name: String,
     pub prefix: String,
     pub suffix: String,
-    pub gender_id: i32,
-    pub ethnicity_id: i32,
-    pub marital_state_id: i32
+    pub gender_id: i16,
+    pub ethnicity_id: i16,
+    pub marital_state_id: i16
 }
 
 
@@ -79,7 +79,7 @@ async fn employee_add_post(
         &params.marital_state_id
     ).await {
         Err(e) => {
-            error!("unable to ")
+            error!("unable to add employee record")
         }
         Ok(_) => {
             info!("employee_add_post"); 

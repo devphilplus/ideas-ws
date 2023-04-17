@@ -81,9 +81,9 @@ impl Data {
         family_name: &str,
         prefix: &str,
         suffix: &str,
-        gender_id: &i32,
-        ethnicity_id: &i32,
-        marital_state_id: &i32
+        gender_id: &i16,
+        ethnicity_id: &i16,
+        marital_state_id: &i16
     ) -> Result<(), DataError> {
         info!("Data::add()");
 
@@ -95,7 +95,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * from people.people_add($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)"
+            "call people.people_add($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -124,6 +124,47 @@ impl Data {
             }
             Ok(_) => {
                 return Ok(());
+            }
+        }
+    }
+
+    pub async fn by_id(
+        &self,
+        people_id: &uuid::Uuid
+    ) -> Result<common::hr::people::People, DataError> {
+        info!("Data::by_id()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "select * people.people_get_by_id($1)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.query_one(
+            &stmt,
+            &[
+                &people_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to retrieve people record by id: {:?}", e);
+                return Err(DataError::ToBeImplemented(String::from("Data::by_id()")));
+            }
+            Ok(row) => {
+                debug!("row: {:?}", row);
+
+                
+                return Ok(people);
             }
         }
     }

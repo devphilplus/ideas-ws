@@ -91,6 +91,16 @@ async fn main() -> std::io::Result<()> {
         }
         let countries = result_countries.unwrap();
 
+        // people module
+        let result_people = people::people::People::new(
+            cfg.clone()
+        );
+        if let Err(e) = result_people {
+            error!("unable to create people object");
+            return Err(Error::new(ErrorKind::Other, "unable to create people object"));
+        }
+        let people = result_people.unwrap();
+
         // tenants module
         let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
         if let Err(e) = result_tenants {
@@ -98,6 +108,15 @@ async fn main() -> std::io::Result<()> {
             return Err(Error::new(ErrorKind::Other, "unable to create tenants object"));
         }
         let tenants = result_tenants.unwrap();
+
+        // hr module
+        let result_hr = hr::Hr::new(cfg.clone(), people.clone());
+        if let Err(e) = result_hr {
+            error!("unable to create hr object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create hr object"));
+        }
+        let hr = result_hr.unwrap();
+        let employees = hr.employees();
 
 
         let server = HttpServer::new(move || {
@@ -109,7 +128,11 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(users.clone()))
                 .app_data(web::Data::new(currencies.clone()))
                 .app_data(web::Data::new(countries.clone()))
+                .app_data(web::Data::new(people.clone()))
                 .app_data(web::Data::new(tenants.clone()))
+
+                // .app_data(web::Data::new(hr.clone()))
+                .app_data(web::Data::new(employees.clone()))
                 
                 .wrap(crate::middleware::cors::CORS::new())
                 .wrap(crate::middleware::auth::AuthUser::new(&cfg))
