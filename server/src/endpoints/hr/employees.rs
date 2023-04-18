@@ -66,25 +66,31 @@ async fn employee_add_post(
     info!("employee_add_post()");
     debug!("params: {:?}", params);
 
-    match people.add(
-        &user.tenant_id(),
-        &params.people_id,
-        &params.given_name,
-        &params.middle_name,
-        &params.family_name,
-        &params.prefix,
-        &params.suffix,
-        &params.gender_id,
-        &params.ethnicity_id,
-        &params.marital_state_id
-    ).await {
-        Err(e) => {
-            error!("unable to add employee record")
-        }
-        Ok(_) => {
-            info!("employee_add_post"); 
-        }
+    if let Ok(p) = people.by_id(&params.people_id).await {
+        debug!("people record: {:?}", p);
+    } else {
+        error!("unable to find people record");
     }
+
+    // match people.add(
+    //     &user.tenant_id(),
+    //     &params.people_id,
+    //     &params.given_name,
+    //     &params.middle_name,
+    //     &params.family_name,
+    //     &params.prefix,
+    //     &params.suffix,
+    //     &params.gender_id,
+    //     &params.ethnicity_id,
+    //     &params.marital_state_id
+    // ).await {
+    //     Err(e) => {
+    //         error!("unable to add employee record")
+    //     }
+    //     Ok(_) => {
+    //         info!("employee_add_post"); 
+    //     }
+    // }
 
     return HttpResponse::Ok()
         .json(ApiResponse {
