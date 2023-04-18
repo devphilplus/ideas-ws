@@ -145,7 +145,7 @@ async fn main() -> std::io::Result<()> {
                 // .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
                 .service(web::scope("/tenants").configure(crate::endpoints::tenants::tenants::config))
 
-                .service(web::scope("/crms/people").configure(crate::endpoints::crms::people::config))
+                // .service(web::scope("/crms/people").configure(crate::endpoints::crms::people::config))
 
                 .service(web::scope("/hr/employees").configure(crate::endpoints::hr::employees::config))
         })

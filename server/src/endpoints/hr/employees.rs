@@ -67,35 +67,55 @@ async fn employee_add_post(
     debug!("params: {:?}", params);
 
     if let Ok(p) = people.by_id(&params.people_id).await {
-        debug!("people record: {:?}", p);
+        if let Ok(_) = employees.add(
+            &user.tenant_id(), 
+            &params.people_id,
+            &params.people_id
+        ).await {
+            info!("added employee record");
+        } else {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to add employee record",
+                    None
+                ));
+        }
     } else {
-        error!("unable to find people record");
+        // add people record
+        if let Ok(_) =  people.add(
+            &user.tenant_id(),
+            &params.people_id,
+            &params.given_name,
+            &params.middle_name,
+            &params.family_name,
+            &params.prefix,
+            &params.suffix,
+            &params.gender_id,
+            &params.ethnicity_id,
+            &params.marital_state_id
+        ).await {
+            if let Ok(_) = employees.add(
+                &user.tenant_id(), 
+                &params.people_id,
+                &params.people_id
+            ).await {
+                info!("added employee record");
+            } else {
+                return HttpResponse::Ok()
+                    .json(ApiResponse::new(
+                        false,
+                        "unable to add employee record",
+                        None
+                    ));
+            }
+        }
     }
 
-    // match people.add(
-    //     &user.tenant_id(),
-    //     &params.people_id,
-    //     &params.given_name,
-    //     &params.middle_name,
-    //     &params.family_name,
-    //     &params.prefix,
-    //     &params.suffix,
-    //     &params.gender_id,
-    //     &params.ethnicity_id,
-    //     &params.marital_state_id
-    // ).await {
-    //     Err(e) => {
-    //         error!("unable to add employee record")
-    //     }
-    //     Ok(_) => {
-    //         info!("employee_add_post"); 
-    //     }
-    // }
-
     return HttpResponse::Ok()
-        .json(ApiResponse {
-            success: false,
-            message: String::from("Service is up. version: 1.0.0.0.dev"),
-            data: None
-        });
+        .json(ApiResponse::new(
+            true,
+            "added employee record",
+            None
+        ));
 }

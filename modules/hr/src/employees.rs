@@ -38,26 +38,26 @@ impl Employees {
         return Err(HrError::ConfigurationError);
     }
 
-    pub fn add(
+    pub async fn add(
         &self,
         tenant_id: &uuid::Uuid,
-        given_name: &str,
-        middle_name: &str,
-        family_name: &str,
-        prefix: &str,
-        suffix: &str,
-        gender_id: &i16,
-        ethnicity_id: &i16,
-        marital_state_id: &i16
-    ) -> Result<(), HrError> {
-        return Err(HrError::ToBeImplemented(String::from("add")));
-    }
-
-    pub fn add_by_people_id(
-        &self,
-        tenant_id: &uuid::Uuid,
+        employee_id: &uuid::Uuid,
         people_id: &uuid::Uuid
     ) -> Result<(), HrError> {
-        return Err(HrError::ToBeImplemented(String::from("add_by_people_id")));
+        info!("Employees::add()");
+
+        match self.data.add(
+            &tenant_id,
+            &employee_id,
+            &people_id
+        ).await {
+            Err(e) => {
+                error!("unable to add employee record: {:?}", e);
+                return Err(HrError::ToBeImplemented(String::from("Data::add()")));
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
     }
 }

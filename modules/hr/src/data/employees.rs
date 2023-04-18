@@ -1,3 +1,4 @@
+use common::tenant;
 use log::{
     info,
     debug,
@@ -71,11 +72,45 @@ impl Data {
     }
 
     /// add an employee
-    pub fn add(
+    pub async fn add(
         &self,
         tenant_id: &uuid::Uuid,
+        employee_id: &uuid::Uuid,
         people_id: &uuid::Uuid
     ) -> Result<(), DataError> {
-        return Err(DataError::ToBeImplemented(String::from("add")));
+        info!("Data::add()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call hr.employee_add($1,$2,$3)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.execute(
+            &stmt,
+            &[
+                &tenant_id,
+                &employee_id,
+                &people_id
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to employee record: {:?}", e);
+                return Err(DataError::ToBeImplemented(String::from("Data::add()")));
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
     }
 }
