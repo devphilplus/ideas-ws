@@ -131,7 +131,7 @@ impl Data {
     pub async fn by_id(
         &self,
         people_id: &uuid::Uuid
-    ) -> Result<common::hr::people::People, DataError> {
+    ) -> Result<(), DataError> {
         info!("Data::by_id()");
 
         let result = self.pool.get().await;
@@ -142,7 +142,7 @@ impl Data {
         let client = result.unwrap();
 
         let result = client.prepare_cached(
-            "select * people.people_get_by_id($1)"
+            "select * from people.people_get_by_id($1)"
         ).await;
         if let Err(e) = result {
             error!("unable to prepare database statement: {:?}", e);
@@ -163,8 +163,7 @@ impl Data {
             Ok(row) => {
                 debug!("row: {:?}", row);
 
-                
-                return Ok(people);
+                return Ok(());
             }
         }
     }

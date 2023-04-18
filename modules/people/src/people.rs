@@ -68,4 +68,23 @@ impl People {
             }
         }
     }
+
+    /// retrieve people record
+    pub async fn by_id(
+        &self,
+        people_id: &uuid::Uuid
+    ) -> Result<(), PeopleError> {
+        info!("People::by_id()");
+
+        match self.data.by_id(&people_id).await {
+            Err(e) => {
+                error!("unable to retrieve people record");
+                return Err(PeopleError::ToBeImplemented(String::from("People::by_id()")));
+            }
+            Ok(people) => {
+                debug!("result: {:?}", people);
+                return Ok(());
+            }
+        }
+    }
 }
