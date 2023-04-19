@@ -38,6 +38,12 @@ struct EmployeeAddRequest {
 }
 
 
+#[derive(Debug, Serialize, Deserialize)]
+struct TenantEmployeesRequest {
+    pub tenant_id: uuid::Uuid
+}
+
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
@@ -45,6 +51,11 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             web::resource("add")
                 .route(web::get().to(employee_add_get))
                 .route(web::post().to(employee_add_post))
+        )
+        .service(
+            web::resource("fetch")
+                .route(web::get().to(employee_fetch_get))
+                .route(web::post().to(employee_fetch_post))
         )
     ;
 }
@@ -118,4 +129,43 @@ async fn employee_add_post(
             "added employee record",
             None
         ));
+}
+
+
+async fn employee_fetch_get() -> impl Responder {
+    info!("employee_fetch_get()");
+
+    return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
+}
+
+
+async fn employee_fetch_post(
+    user: CurrentUser,
+    employees: web::Data<hr::employees::Employees>,
+    params: web::Json<TenantEmployeesRequest>
+) -> impl Responder {
+    info!("employee_fetch_post()");
+    debug!("params: {:?}", params);
+
+    match employees.fetch(&params.tenant_id).await {
+        Err(e) => {
+            error!("unable to fetch employee records: {:?}", e);
+            return HttpResponse::InternalServerError()
+                .json(ApiResponse::new(
+                    false,
+                    "unable to fetch employee records",
+                    None
+                ));
+        }
+        Ok(employees) => {
+            return HttpResponse::Ok()
+                .json(ApiResponse::new(
+                    true,
+                    "successfully retrieve employee records",
+                    Some(json!({
+                        "employees": employees
+                    }))
+                ))
+        }
+    }
 }

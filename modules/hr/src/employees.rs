@@ -5,6 +5,7 @@ use log::{
 };
 
 use configuration::ApplicationConfiguration;
+use people::people::PeopleError;
 
 use crate::HrError;
 
@@ -57,6 +58,25 @@ impl Employees {
             }
             Ok(_) => {
                 return Ok(());
+            }
+        }
+    }
+
+    pub async fn fetch(
+        &self,
+        tenant_id: &uuid::Uuid
+    ) -> Result<Vec<common::hr::employee::Employee>, HrError> {
+        info!("Employees::fetch()");
+
+        match self.data.fetch(
+            &tenant_id
+        ).await {
+            Err(e) => {
+                error!("unable to fetch employee records: {:?}", e);
+                return Err(HrError::ToBeImplemented(String::from("Data::fetch()")));
+            }
+            Ok(result) => {
+                return Ok(result);
             }
         }
     }

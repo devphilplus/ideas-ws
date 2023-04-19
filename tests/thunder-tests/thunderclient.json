@@ -757,5 +757,38 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "5e1e8f5c-c334-4fe7-89c9-c610c7473e23",
+    "colId": "041cb752-d7ea-4f3b-8f65-58b84319bf33",
+    "containerId": "",
+    "name": "employee_fetch_get",
+    "url": "http://localhost:8081/hr/employees/fetch",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2023-04-19T14:18:53.892Z",
+    "modified": "2023-04-19T14:19:12.168Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "dc725376-054b-4cbc-a47d-671939456f8b",
+    "colId": "041cb752-d7ea-4f3b-8f65-58b84319bf33",
+    "containerId": "",
+    "name": "employee_fetch_post",
+    "url": "http://localhost:8081/hr/employees/fetch",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2023-04-19T14:19:21.620Z",
+    "modified": "2023-04-19T14:19:52.619Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"tenant_id\": \"63c6f722-931a-4966-bacc-daa6bd7765a4\"\n}",
+      "form": []
+    },
+    "tests": []
   }
 ]
