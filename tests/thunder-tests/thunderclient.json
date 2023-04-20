@@ -213,13 +213,15 @@
     "_id": "95577109-0b29-49cf-947c-6f0825edff5e",
     "colId": "6a80468d-db0b-4ddf-bc0f-b96bf31eb375",
     "containerId": "",
-    "name": "sign_in",
-    "url": "",
+    "name": "sign_in_get",
+    "url": "http://localhost:8081/auth/sign-in",
     "method": "GET",
     "sortNum": 10000,
     "created": "2023-04-09T13:56:35.234Z",
-    "modified": "2023-04-09T13:56:35.235Z",
-    "headers": []
+    "modified": "2023-04-20T13:50:08.431Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   },
   {
     "_id": "6494b37f-8f68-4d84-856d-4e323c6cf94d",
@@ -244,12 +246,12 @@
     "method": "POST",
     "sortNum": 15000,
     "created": "2023-04-09T13:57:59.578Z",
-    "modified": "2023-04-09T23:04:54.810Z",
+    "modified": "2023-04-20T13:51:06.172Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"email\": \"tester1@mailinator.com\",\n  \"password\": \"replace_me\"\n}",
+      "raw": "{\n  \"email\": \"test@mailinator.com\",\n  \"password\": \"tester\"\n}",
       "form": []
     },
     "tests": []
@@ -748,13 +750,17 @@
     "method": "POST",
     "sortNum": 20000,
     "created": "2023-04-17T13:51:30.449Z",
-    "modified": "2023-04-17T13:55:36.000Z",
+    "modified": "2023-04-20T13:54:04.907Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"tenant_id\": \"55ba4327-25c6-43f7-adb0-aadcbba60e1b\",\n  \"people_id\": \"7a8a7033-12bd-41e0-9496-a8be7dee8b0c\",\n  \"given_name\": \"test_given_name\",\n  \"middle_name\": \"test_middle_name\",\n  \"family_name\": \"test_family_name\",\n  \"prefix\": \"mr\",\n  \"suffix\": \"md\",\n  \"gender_id\": 1,\n  \"ethnicity_id\": 1,\n  \"marital_state_id\": 1\n}",
+      "raw": "{\n  \"tenant_id\": \"55ba4327-25c6-43f7-adb0-aadcbba60e1b\",\n  \"people_id\": \"322b6f54-f201-4521-9ce4-14e700871918\",\n  \"given_name\": \"test_given_name\",\n  \"middle_name\": \"test_middle_name\",\n  \"family_name\": \"test_family_name\",\n  \"prefix\": \"mr\",\n  \"suffix\": \"md\",\n  \"gender_id\": 1,\n  \"ethnicity_id\": 1,\n  \"marital_state_id\": 1\n}",
       "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAbWFpbGluYXRvci5jb20iLCJleHAiOiIyMDIzLTA0LTIwVDE0OjUxOjA3Ljk3MDUwMDgzNCswMDowMCIsImlhdCI6IjIwMjMtMDQtMjBUMTM6NTE6MDcuOTcwNDg3MDExKzAwOjAwIiwidGlkIjoiNjJiMWE2MDYtMjk4My00YmFmLTg4NGMtM2RlODg0OWIwZmFkIn0.JOZOUvaLnIxvYOP5FK5nxHltSMWLR7SbmTmUmC06SuE"
     },
     "tests": []
   },
@@ -781,12 +787,12 @@
     "method": "POST",
     "sortNum": 40000,
     "created": "2023-04-19T14:19:21.620Z",
-    "modified": "2023-04-19T14:19:52.619Z",
+    "modified": "2023-04-20T13:54:55.672Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"tenant_id\": \"63c6f722-931a-4966-bacc-daa6bd7765a4\"\n}",
+      "raw": "{\n  \"tenant_id\": \"62b1a606-2983-4baf-884c-3de8849b0fad\"\n}",
       "form": []
     },
     "tests": []

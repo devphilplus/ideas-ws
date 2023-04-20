@@ -149,7 +149,7 @@ impl Data {
             ]
         ).await {
             Err(e) => {
-                error!("unable to retrieve employee records: {:?}", e);
+                error!("unable to retrieved employee records: {:?}", e);
                 return Err(DataError::ToBeImplemented(String::from("Data::fetch()")));
             }
             Ok(rows) => {
@@ -164,7 +164,7 @@ impl Data {
                     let suffix: String = r.get("suffix");
                     let gender_id: i16 = r.get("gender_id");
                     let ethnicity_id: i16 = r.get("ethnicity_id");
-                    let marital_state_id: i16 = r.get("marital_state_id");
+                    let marital_status_id: i16 = r.get("marital_status_id");
 
                     return Employee::new(
                         &employee_id,
@@ -178,7 +178,7 @@ impl Data {
                             &suffix,
                             &gender_id, 
                             &ethnicity_id,
-                            &marital_state_id
+                            &marital_status_id
                         )
                     );
                 })
