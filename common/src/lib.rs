@@ -5,6 +5,13 @@ pub mod user;
 pub mod tenant;
 pub mod hr;
 
+#[derive(Debug)]
+pub enum Error {
+    ToBeImplemented(String),
+    ConfigurationError(String),
+    ValidationError(String)
+}
+
 
 #[cfg(test)]
 mod tests {
