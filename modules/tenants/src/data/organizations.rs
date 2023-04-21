@@ -73,6 +73,7 @@ impl OrganizationsData {
         return Err(DataError::ConfigurationError);
     }
 
+    /// add organization record
     pub async fn add_organization(
         &self,
         tenant_id: &uuid::Uuid,
@@ -105,6 +106,47 @@ impl OrganizationsData {
                 &organization_id,
                 &name,
                 &description
+            ]
+        ).await {
+            Err(e) => {
+                error!("unable to execute statement: {:?}", e);
+                return Err(DataError::DatabaseError);
+            }
+            Ok(_) => {
+                return Ok(());
+            }
+        }
+    }
+
+    // set organization active status
+    pub async fn organization_set_active(
+        &self,
+        organization_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), DataError> {
+        info!("OrganizationsData::organization_set_active()");
+
+        let result = self.pool.get().await;
+        if let Err(e) = result {
+            error!("unable to retrieve database client: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let client = result.unwrap();
+
+        let result = client.prepare_cached(
+            "call tenants.organization_set_active($1,$2)"
+        ).await;
+        if let Err(e) = result {
+            error!("unable to prepare database statement: {:?}", e);
+            return Err(DataError::DatabaseError);
+        }
+        let stmt = result.unwrap();
+
+        match client.execute(
+            &stmt,
+            &[
+                &organization_id,
+                &active
             ]
         ).await {
             Err(e) => {

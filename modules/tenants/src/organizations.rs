@@ -65,4 +65,25 @@ impl Organizations {
             }
         }
     }
+
+    pub async fn set_active(
+        &self,
+        organization_id: &uuid::Uuid,
+        active: &bool
+    ) -> Result<(), Error> {
+        info!("Organizations::set_active()");
+
+        match self.data.organization_set_active(
+            &organization_id,
+            &active
+        ).await {
+            Err(e) => {
+                error!("unable to set organization active status: {:?}", e);
+                return Err(Error::ToBeImplemented(String::from("Organizations::set_active()")));
+            }
+            Ok(()) => {
+                return Ok(());
+            }
+        }
+    }
 }

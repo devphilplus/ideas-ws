@@ -137,7 +137,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(countries.clone()))
                 .app_data(web::Data::new(people.clone()))
                 .app_data(web::Data::new(tenants.clone()))
-                .app_data(web::Data::new(organizations.clone()))
+                .app_data(web::Data::new(organizations.clone() ))
 
                 // .app_data(web::Data::new(hr.clone()))
                 .app_data(web::Data::new(employees.clone()))
