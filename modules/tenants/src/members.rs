@@ -1,3 +1,4 @@
+use deadpool_postgres::Pool;
 use log::{
     info,
     debug,
@@ -15,29 +16,7 @@ use common::{
     user::User
 };
 
-use crate::data::Data;
-
 
 pub struct Members {
-    data: Data
-}
-
-
-impl Members {
-
-    pub fn new(
-        data: &crate::data::Data
-    ) -> Self {
-        return Members {
-            data: data.clone()
-        };
-    }
-
-    pub fn tenant_join(
-        &self,
-        tenant_id: &uuid::Uuid,
-        member_id: &uuid::Uuid
-    ) {
-
-    }
+    pool: Pool
 }

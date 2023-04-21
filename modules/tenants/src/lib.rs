@@ -1,5 +1,6 @@
 pub mod data;
 pub mod tenants;
+pub mod organizations;
 pub mod members;
 
 #[cfg(test)]

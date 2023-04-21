@@ -15,7 +15,7 @@ use common::{
     user::User
 };
 
-use crate::data::Data;
+use crate::data::tenants::TenantsData;
 
 
 
@@ -28,7 +28,7 @@ pub enum TenantsError {
 #[derive(Debug, Clone)]
 pub struct Tenants {
     cfg: ApplicationConfiguration,
-    data: Data
+    data: crate::data::tenants::TenantsData
 }
 
 
@@ -37,7 +37,7 @@ impl Tenants {
     pub fn new(
         cfg: ApplicationConfiguration
     ) -> Result<Self, TenantsError> {
-        if let Ok(data) = Data::new(&cfg) {
+        if let Ok(data) = TenantsData::new(&cfg) {
             return Ok(Self {
                 cfg: cfg,
                 data: data
@@ -62,10 +62,10 @@ impl Tenants {
         }
     }
 
-    /// retrieve members
-    pub fn members(&self) -> crate::members::Members {
-        return crate::members::Members::new(&self.data);
-    }
+    // /// retrieve members
+    // pub fn members(&self) -> crate::members::Members {
+    //     return crate::members::Members::new(&self.data);
+    // }
 
     /// retrieve tenant by id
     pub async fn tenant_by_id(

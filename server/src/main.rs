@@ -109,6 +109,13 @@ async fn main() -> std::io::Result<()> {
         }
         let tenants = result_tenants.unwrap();
 
+        let result_organizations = tenants::organizations::Organizations::new(cfg.clone());
+        if let Err(e) = result_organizations {
+            error!("unable to create organizations object: {:?}", e);
+            return Err(Error::new(ErrorKind::Other, "unable to create organizations object"));
+        }
+        let organizations = result_organizations.unwrap();
+
         // hr module
         let result_hr = hr::Hr::new(cfg.clone(), people.clone());
         if let Err(e) = result_hr {
@@ -130,6 +137,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(countries.clone()))
                 .app_data(web::Data::new(people.clone()))
                 .app_data(web::Data::new(tenants.clone()))
+                .app_data(web::Data::new(organizations.clone()))
 
                 // .app_data(web::Data::new(hr.clone()))
                 .app_data(web::Data::new(employees.clone()))
