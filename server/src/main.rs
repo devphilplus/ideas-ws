@@ -151,7 +151,11 @@ async fn main() -> std::io::Result<()> {
                 .service(web::scope("/auth").configure(crate::endpoints::auth::config))
                 .service(web::scope("/user").configure(crate::endpoints::user::config))
                 // .service(web::scope("/clients").configure(crate::endpoints::clients::client::config))
+
                 .service(web::scope("/tenants").configure(crate::endpoints::tenants::tenants::config))
+                .service(web::scope("/organizations").configure(crate::endpoints::tenants::organizations::config))
+
+                .service(web::scope("accounting/accounts").configure(crate::endpoints::accounting::accounts::config))
 
                 // .service(web::scope("/crms/people").configure(crate::endpoints::crms::people::config))
 
