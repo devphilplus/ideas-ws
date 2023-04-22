@@ -31,6 +31,7 @@ tokenizer = { path = "../tokenizer" }
 #clients = { path = "../modules/clients" }
 util = { path = "../modules/util" }
 tenants = { path = "../modules/tenants" }
+accounting = { path = "../modules/accounting" }
 people = { path = "../modules/people" }
 crms = { path = "../modules/crms" }
 hr = { path = "../modules/hr" }
