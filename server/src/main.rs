@@ -22,7 +22,10 @@ use actix_web::{
     web
 };
 
-use configuration::ApplicationConfiguration;
+use configuration::{
+    ProviderType,
+    ApplicationConfiguration
+};
 use tokenizer::Tokenizer;
 
 
@@ -43,6 +46,8 @@ async fn main() -> std::io::Result<()> {
             &cfg.mailer.user,
             &cfg.mailer.password
         );
+
+        let data = data::Data::new(cfg.clone());
 
         // auth module
         let bind_host = cfg.bind_host.clone();
@@ -131,6 +136,7 @@ async fn main() -> std::io::Result<()> {
                 .app_data(web::Data::new(cfg.clone()))
                 .app_data(web::Data::new(mailer.clone()))
                 .app_data(web::Data::new(tokenizer.clone()))
+                .app_data(web::Data::new(data.clone()))
                 .app_data(web::Data::new(auth.clone()))
                 .app_data(web::Data::new(users.clone()))
                 .app_data(web::Data::new(currencies.clone()))

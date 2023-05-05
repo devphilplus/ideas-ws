@@ -26,6 +26,7 @@ configuration = { path = "../configuration" }
 auth = { path = "../modules/auth" }
 users = { path = "../modules/users" }
 common = { path = "../common" }
+data = { path = "../data" }
 mailer = { path = "../mailer" }
 tokenizer = { path = "../tokenizer" }
 #clients = { path = "../modules/clients" }
