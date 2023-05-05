@@ -2,6 +2,7 @@
 members = [
     "configuration",
     "common",
+    "data",
     "mailer",
     "tokenizer",
     "modules/pg",
