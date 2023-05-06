@@ -83,6 +83,12 @@ impl Data {
     ) {
         self.pg_pool = Some(pg_pool);
     }
+
+    pub fn get_pg_pool(
+        &self
+    ) -> Option<deadpool_postgres::Pool> {
+        return self.pg_pool.clone();
+    }
 }
 
 

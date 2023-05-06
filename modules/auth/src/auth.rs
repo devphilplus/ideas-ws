@@ -17,12 +17,14 @@ use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 use tokenizer::Tokenizer;
 
+use pg::DataError;
+
 use crate::user::User;
 use crate::validators::password::Password;
 
-use crate::data::{
-    DataError,
-    Data
+use crate::user_data::{
+    // DataError,
+    UserData
 };
 
 
@@ -55,7 +57,7 @@ impl Display for AuthError {
 #[derive(Debug, Clone)]
 pub struct Auth {
     cfg: ApplicationConfiguration,
-    data: crate::data::Data,
+    user_data: crate::user_data::UserData,
     mailer: Mailer,
     tokenizer: tokenizer::Tokenizer
 }
@@ -65,26 +67,35 @@ impl Auth {
     pub fn new(
         cfg: ApplicationConfiguration,
         mailer: Mailer,
-        tokenizer: Tokenizer
-    ) -> Result<Self, AuthError> {
+        tokenizer: Tokenizer,
+        data: data::Data
+    ) -> Self {
         // let jwt_secret = cfg.jwt.secret.clone();
-        if let Ok(data) = Data::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data,
-                mailer: mailer,
-                // tokenizer: tokenizer::Tokenizer::new(&jwt_secret)
-                tokenizer: tokenizer
-            });
-        }
+        // if let Ok(user_data) = UserData::new(&cfg, data) {
+        //     return Ok(Self {
+        //         cfg: cfg,
+        //         user_data: user_data,
+        //         mailer: mailer,
+        //         // tokenizer: tokenizer::Tokenizer::new(&jwt_secret)
+        //         tokenizer: tokenizer
+        //     });
+        // }
 
-        return Err(AuthError::ConfigurationError);
+        let user_data = UserData::new(&cfg, data);
+        return Self {
+            cfg: cfg,
+            user_data: user_data,
+            mailer: mailer,
+            tokenizer: tokenizer
+        };
+
+        // return Err(AuthError::ConfigurationError);
     }
 
     /// register user and then sends an email containing the link to complete
     /// the registration process
     pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<(), AuthError> {
-        match self.data.register(id, email).await {
+        match self.user_data.register(id, email).await {
             Err(e) => {
                 error!("unable to register: {:?}", e);
                 match e {
@@ -120,7 +131,7 @@ impl Auth {
 
     /// retrieve registration details
     pub async fn get_registration_info(&self, token: &str) -> Result<RegistrationInfo, AuthError> {
-        match self.data.get_registration_info(token).await {
+        match self.user_data.get_registration_info(token).await {
             Err(e) => {
                 debug!("error: {:?}", e);
                 return Err(AuthError::ToBeImplemented(String::from("get_registration_info")));
@@ -138,7 +149,7 @@ impl Auth {
 
     pub async fn complete_registration(&self, token: &str, pw: &str) -> Result<(), AuthError> {
         if Password::validate(&pw) {
-            match self.data.complete_registration(&token, &pw).await {
+            match self.user_data.complete_registration(&token, &pw).await {
                 Err(e) => {
                     error!("unable to complete registration: {:?}", e);
                     return Err(AuthError::ToBeImplemented(String::from("complete_registration")));
@@ -157,7 +168,7 @@ impl Auth {
         email: &str,
         password: &str
     ) -> Result<String, AuthError> {
-        match self.data.user_authenticate(&email, &password).await {
+        match self.user_data.user_authenticate(&email, &password).await {
             Err(e) => {
                 error!("unable to authenticate user: {:?}", e);
                 return Err(AuthError::ToBeImplemented(String::from("user_authenticate")));
@@ -165,9 +176,9 @@ impl Auth {
             Ok(authentic) => {
                 if authentic {
 
-                    if let Ok(user) = self.data.get_user(&email).await {
+                    if let Ok(user) = self.user_data.get_user(&email).await {
                         let user_id = user.id();
-                        if let Ok(tenant_id) = self.data.user_default_tenant_fetch(&user_id).await {
+                        if let Ok(tenant_id) = self.user_data.user_default_tenant_fetch(&user_id).await {
                             if let Ok(token) = self.tokenizer.generate(
                                 &email,
                                 &tenant_id
@@ -210,7 +221,7 @@ impl Auth {
         &self,
         email: &str
     ) -> Result<User, AuthError> {
-        match self.data.get_user(&email).await {
+        match self.user_data.get_user(&email).await {
             Err(e) => {
                 error!("unable to authenticate user: {:?}", e);
                 return Err(AuthError::ToBeImplemented(String::from("get_user")));

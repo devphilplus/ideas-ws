@@ -25,4 +25,5 @@ postgres-types = { version = "*", features = ["derive"] }
 configuration = { path = "../../configuration" }
 mailer = { path = "../../mailer" }
 pg = { path = "../pg" }
+data = { path = "../../data" }
 tokenizer = { path = "../../tokenizer" }
