@@ -1,3 +1,5 @@
+pub mod pg;
+
 use log::{
     info,
     debug,
