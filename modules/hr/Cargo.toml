@@ -21,5 +21,5 @@ postgres-types = { version = "*", features = ["derive"] }
 
 configuration = { path = "../../configuration" }
 common = { path = "../../common" }
-pg = { path = "../pg" }
 people = { path = "../people" }
+data = { path = "../../data" }

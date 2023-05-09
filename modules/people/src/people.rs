@@ -21,15 +21,20 @@ pub struct People {
 impl People {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, PeopleError> {
-        if let Ok(data) = crate::data::people::Data::new(&cfg) {
-            return Ok(Self {
-                data: data
-            });
-        }
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        // if let Ok(data) = crate::data::people::Data::new(&cfg) {
+        //     return Ok(Self {
+        //         data: data
+        //     });
+        // }
 
-        return Err(PeopleError::ConfigurationError);
+        // return Err(PeopleError::ConfigurationError);
+        let people_data = crate::data::people::Data::new(data);
+        return Self {
+            data: people_data
+        };
     }
 
     pub async fn add(

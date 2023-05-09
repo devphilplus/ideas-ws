@@ -35,16 +35,22 @@ pub struct Tenants {
 impl Tenants {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, TenantsError> {
-        if let Ok(data) = TenantsData::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data
-            });
-        }
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        // if let Ok(data) = TenantsData::new(&cfg) {
+        //     return Ok(Self {
+        //         cfg: cfg,
+        //         data: data
+        //     });
+        // }
 
-        return Err(TenantsError::ConfigurationError);
+        // return Err(TenantsError::ConfigurationError);
+        let tenants_data = crate::data::tenants::TenantsData::new(data);
+        return Self {
+            cfg: cfg,
+            data: tenants_data
+        };
     }
 
     /// retrieve tenants

@@ -27,16 +27,14 @@ impl Employees {
 
     pub fn new(
         cfg: ApplicationConfiguration,
-        people: people::people::People
-    ) -> Result<Self, HrError> {
-        if let Ok(data) = crate::data::employees::Data::new(&cfg) {
-            return Ok(Self {
-                data: data,
-                people: people
-            });
-        }
-
-        return Err(HrError::ConfigurationError);
+        people: people::people::People,
+        data: data::Data
+    ) -> Self {
+        let employees_data = crate::data::employees::Data::new(data);
+        return Self {
+            people: people,
+            data: employees_data
+        };
     }
 
     pub async fn add(

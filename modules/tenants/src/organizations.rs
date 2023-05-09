@@ -29,16 +29,22 @@ pub struct Organizations {
 impl Organizations {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, Error> {
-        if let Ok(data) = OrganizationsData::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data
-            });
-        }
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        // if let Ok(data) = OrganizationsData::new(&cfg) {
+        //     return Ok(Self {
+        //         cfg: cfg,
+        //         data: data
+        //     });
+        // }
 
-        return Err(Error::ConfigurationError(String::from("unable to create data object")));
+        // return Err(Error::ConfigurationError(String::from("unable to create data object")));
+        let org_data = OrganizationsData::new(data);
+        return Self {
+            cfg: cfg,
+            data: org_data
+        };
     }
 
     pub async fn add(

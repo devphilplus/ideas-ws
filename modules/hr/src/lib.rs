@@ -7,17 +7,6 @@ use log::{
     error
 };
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn it_works() {
-//         let result = add(2, 2);
-//         assert_eq!(result, 4);
-//     }
-// }
-
 #[derive(Debug)]
 pub enum HrError {
     ToBeImplemented(String),
@@ -34,20 +23,29 @@ impl Hr {
 
     pub fn new(
         cfg: configuration::ApplicationConfiguration,
-        people: people::people::People
-    ) -> Result<Self, HrError> {
-        let mut employees: Option<crate::employees::Employees> = None;
-        if let Ok(emp) = crate::employees::Employees::new(cfg, people) {
-            employees = Some(emp);
-        }
+        people: people::people::People,
+        data: ::data::Data
+    ) -> Self {
+        // let mut employees: Option<crate::employees::Employees> = None;
+        // if let Ok(emp) = crate::employees::Employees::new(cfg, people) {
+        //     employees = Some(emp);
+        // }
 
-        if employees.is_some() {
-            return Ok(Self {
-                employees: employees.unwrap()
-            });
-        } else {
-            return Err(HrError::ConfigurationError);
-        }
+        // if employees.is_some() {
+        //     return Ok(Self {
+        //         employees: employees.unwrap()
+        //     });
+        // } else {
+        //     return Err(HrError::ConfigurationError);
+        // }
+
+        return Self {
+            employees: crate::employees::Employees::new(
+                cfg,
+                people,
+                data
+            )
+        };
     }
 
     pub fn employees(&self) -> crate::employees::Employees {

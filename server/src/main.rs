@@ -117,37 +117,55 @@ async fn main() -> std::io::Result<()> {
         );
 
         // people module
-        let result_people = people::people::People::new(
-            cfg.clone()
+        // let result_people = people::people::People::new(
+        //     cfg.clone()
+        // );
+        // if let Err(e) = result_people {
+        //     error!("unable to create people object");
+        //     return Err(Error::new(ErrorKind::Other, "unable to create people object"));
+        // }
+        // let people = result_people.unwrap();
+        let people = people::people::People::new(
+            cfg.clone(),
+            data.clone()
         );
-        if let Err(e) = result_people {
-            error!("unable to create people object");
-            return Err(Error::new(ErrorKind::Other, "unable to create people object"));
-        }
-        let people = result_people.unwrap();
 
         // tenants module
-        let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
-        if let Err(e) = result_tenants {
-            error!("unable to create tenants object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create tenants object"));
-        }
-        let tenants = result_tenants.unwrap();
+        // let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
+        // if let Err(e) = result_tenants {
+        //     error!("unable to create tenants object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create tenants object"));
+        // }
+        // let tenants = result_tenants.unwrap();
+        let tenants = tenants::tenants::Tenants::new(
+            cfg.clone(),
+            data.clone()
+        );
 
-        let result_organizations = tenants::organizations::Organizations::new(cfg.clone());
-        if let Err(e) = result_organizations {
-            error!("unable to create organizations object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create organizations object"));
-        }
-        let organizations = result_organizations.unwrap();
+        // let result_organizations = tenants::organizations::Organizations::new(cfg.clone());
+        // if let Err(e) = result_organizations {
+        //     error!("unable to create organizations object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create organizations object"));
+        // }
+        // let organizations = result_organizations.unwrap();
+        let organizations = tenants::organizations::Organizations::new(
+            cfg.clone(),
+            data.clone()
+        );
 
         // hr module
-        let result_hr = hr::Hr::new(cfg.clone(), people.clone());
-        if let Err(e) = result_hr {
-            error!("unable to create hr object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create hr object"));
-        }
-        let hr = result_hr.unwrap();
+        // let result_hr = hr::Hr::new(cfg.clone(), people.clone());
+        // if let Err(e) = result_hr {
+        //     error!("unable to create hr object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create hr object"));
+        // }
+        // let hr = result_hr.unwrap();
+        // let employees = hr.employees();
+        let hr = hr::Hr::new(
+            cfg.clone(),
+            people.clone(),
+            data.clone()
+        );
         let employees = hr.employees();
 
 
