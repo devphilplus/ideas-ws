@@ -39,49 +39,58 @@ pub enum DataError {
 
 
 #[derive(Debug, Clone)]
-pub struct Data {
+pub struct UsersData {
     pool: Pool
 }
 
-impl Data {
+impl UsersData {
 
-    pub fn new(cfg: &ApplicationConfiguration) -> Result<Self, DataError> {
-        for p in &cfg.providers {
-            if matches!(p.provider_type, ProviderType::Postgres) {
-                for url in &p.url {
-                    match Config::from_str(&url) {
-                        Err(e) => {
-                            debug!("error: {:?}", e);
-                            return Err(DataError::ConfigurationError);
-                        }
-                        Ok(c) => {
-                            let mgr = Manager::from_config(
-                                c, 
-                                NoTls, 
-                                ManagerConfig { recycling_method: RecyclingMethod::Fast }
-                            );
-                            match Pool::builder(mgr)
-                                .max_size(4)
-                                .build() {
-                                    Err(e) => {
-                                        debug!("error: {:?}", e);
-                                        return Err(DataError::ToBeImplemented(String::from("new")));
-                                    }
-                                    Ok(pool) => {
-                                        return Ok(Self {
-                                            pool: pool
-                                        });
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
-        }
+    // pub fn new(cfg: &ApplicationConfiguration) -> Result<Self, DataError> {
+    //     for p in &cfg.providers {
+    //         if matches!(p.provider_type, ProviderType::Postgres) {
+    //             for url in &p.url {
+    //                 match Config::from_str(&url) {
+    //                     Err(e) => {
+    //                         debug!("error: {:?}", e);
+    //                         return Err(DataError::ConfigurationError);
+    //                     }
+    //                     Ok(c) => {
+    //                         let mgr = Manager::from_config(
+    //                             c, 
+    //                             NoTls, 
+    //                             ManagerConfig { recycling_method: RecyclingMethod::Fast }
+    //                         );
+    //                         match Pool::builder(mgr)
+    //                             .max_size(4)
+    //                             .build() {
+    //                                 Err(e) => {
+    //                                     debug!("error: {:?}", e);
+    //                                     return Err(DataError::ToBeImplemented(String::from("new")));
+    //                                 }
+    //                                 Ok(pool) => {
+    //                                     return Ok(Self {
+    //                                         pool: pool
+    //                                     });
+    //                                 }
+    //                             }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        return Err(DataError::ConfigurationError);
+    //     return Err(DataError::ConfigurationError);
+    // }
+
+    pub fn new(
+        data: data::Data
+    ) -> Self {
+        return Self {
+            pool: data.get_pg_pool().unwrap()
+        };
     }
 
+    /// retrieve user using id
     pub async fn by_id(
         &self,
         id: &uuid::Uuid
@@ -137,6 +146,7 @@ impl Data {
         }
     }
 
+    /// retrieve user using email address
     pub async fn by_email(
         &self,
         email: &str
@@ -162,7 +172,7 @@ impl Data {
         match client.query_one(
             &stmt,
             &[
-                &pg::email::Email::new(&email)
+                &data::pg::email::Email::new(&email)
             ]
         ).await {
             Err(e) => {
@@ -192,7 +202,7 @@ impl Data {
         }
     }
 
-
+    /// set user active status
     pub async fn user_set_active(
         &self,
         user_id: &uuid::Uuid,
@@ -230,6 +240,7 @@ impl Data {
         }
     }
 
+    /// set user password
     pub async fn user_set_password(
         &self,
         user_id: &uuid::Uuid,
@@ -267,6 +278,7 @@ impl Data {
         }
     }
 
+    /// associate user with tenant
     pub async fn user_tenant_add(
         &self,
         user_id: &uuid::Uuid,
@@ -304,6 +316,7 @@ impl Data {
         }
     }
 
+    /// enable user-tenant association
     pub async fn user_tenant_set_active(
         &self,
         user_id: &uuid::Uuid,
@@ -378,6 +391,7 @@ impl Data {
     //     }
     // }
 
+    /// set user default tenant
     pub async fn user_tenant_set_default(
         &self,
         user_id: &uuid::Uuid,
@@ -415,6 +429,7 @@ impl Data {
         }
     }
 
+    /// retrieve tenants associated with a user
     pub async fn user_tenants(
         &self,
         user_id: &uuid::Uuid
@@ -517,5 +532,16 @@ impl Data {
                 return Ok(tenant);
             }
         }
+    }
+
+    /// retrieve permissions assigned to a user
+    pub async fn user_permissions(
+        &self,
+        user_id: &uuid::Uuid,
+        tenant_id: &uuid::Uuid
+    ) -> Result<(), DataError> {
+        info!("Data::user_permissions");
+
+        return Ok(());
     }
 }

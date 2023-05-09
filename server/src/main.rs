@@ -53,28 +53,40 @@ async fn main() -> std::io::Result<()> {
         let bind_host = cfg.bind_host.clone();
         let bind_port = cfg.bind_port.clone();
 
-        let result_auth = auth::auth::Auth::new(
-            cfg.clone(), 
-            mailer.clone(),
-            tokenizer.clone()
-        );
-        if let Err(e) = result_auth {
-            error!("unable to create auth object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
-        }
-        let auth = result_auth.unwrap();
-
-        // user module
-        let result_users = users::users::Users::new(
+        // let result_auth = auth::auth::Auth::new(
+        //     cfg.clone(), 
+        //     mailer.clone(),
+        //     tokenizer.clone()
+        // );
+        // if let Err(e) = result_auth {
+        //     error!("unable to create auth object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
+        // }
+        // let auth = result_auth.unwrap();
+        let auth = auth::auth::Auth::new(
             cfg.clone(),
             mailer.clone(),
-            tokenizer.clone()
+            tokenizer.clone(),
+            data.clone()
         );
-        if let Err(e) = result_users {
-            error!("unable to create users object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create users object"));
-        }
-        let users = result_users.unwrap();
+
+        // user module
+        // let result_users = users::users::Users::new(
+        //     cfg.clone(),
+        //     mailer.clone(),
+        //     tokenizer.clone()
+        // );
+        // if let Err(e) = result_users {
+        //     error!("unable to create users object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create users object"));
+        // }
+        // let users = result_users.unwrap();
+        let users = users::users::Users::new(
+            cfg.clone(),
+            mailer.clone(),
+            tokenizer.clone(),
+            data.clone()
+        );
 
         // util - currencies module
         let result_currencies = util::currencies::Currencies::new(

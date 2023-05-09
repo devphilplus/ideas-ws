@@ -14,7 +14,7 @@ use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 use common::{user::User, tenant::Tenant};
 
-use crate::data::Data;
+use data::Data;
 
 
 #[derive(Debug)]
@@ -29,7 +29,7 @@ pub enum UsersError {
 #[derive(Debug, Clone)]
 pub struct Users {
     cfg: ApplicationConfiguration,
-    data: crate::data::Data,
+    data: crate::data::users::UsersData,
     mailer: Mailer,
     tokenizer: tokenizer::Tokenizer
 }
@@ -39,18 +39,26 @@ impl Users {
     pub fn new(
         cfg: ApplicationConfiguration,
         mailer: Mailer,
-        tokenizer: tokenizer::Tokenizer
-    ) -> Result<Self, UsersError> {
-        if let Ok(data) = Data::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data,
-                mailer: mailer,
-                tokenizer: tokenizer
-            });
-        }
+        tokenizer: tokenizer::Tokenizer,
+        data: Data
+    ) -> Self {
+        // if let Ok(data) = Data::new(&cfg) {
+        //     return Ok(Self {
+        //         cfg: cfg,
+        //         data: data,
+        //         mailer: mailer,
+        //         tokenizer: tokenizer
+        //     });
+        // }
 
-        return Err(UsersError::ConfigurationError);
+        // return Err(UsersError::ConfigurationError);
+        let user_data = crate::data::users::UsersData::new(data);
+        return Self {
+            cfg: cfg,
+            mailer: mailer,
+            tokenizer: tokenizer,
+            data: user_data
+        };
     }
 
     pub async fn user_by_id(

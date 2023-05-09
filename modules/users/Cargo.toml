@@ -26,4 +26,4 @@ configuration = { path = "../../configuration" }
 common = { path = "../../common" }
 mailer = { path = "../../mailer" }
 tokenizer = { path = "../../tokenizer" }
-pg = { path = "../pg" }
+data = { path = "../../data" }
