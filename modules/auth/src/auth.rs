@@ -17,7 +17,7 @@ use configuration::ApplicationConfiguration;
 use mailer::Mailer;
 use tokenizer::Tokenizer;
 
-use pg::DataError;
+use data::pg::DataError;
 
 use crate::user::User;
 use crate::validators::password::Password;

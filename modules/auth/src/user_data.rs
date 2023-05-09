@@ -38,7 +38,7 @@ use configuration::{
     ProviderType
 };
 
-use pg::DataError;
+use data::pg::DataError;
 use crate::user::User;
 
 
@@ -65,43 +65,6 @@ pub struct UserData {
 
 impl UserData {
 
-    // pub fn new(cfg: &ApplicationConfiguration) -> Result<Self, DataError> {
-    //     for p in &cfg.providers {
-    //         if matches!(p.provider_type, ProviderType::Postgres) {
-    //             for url in &p.url {
-    //                 match Config::from_str(&url) {
-    //                     Err(e) => {
-    //                         debug!("error: {:?}", e);
-    //                         return Err(DataError::ConfigurationError);
-    //                     }
-    //                     Ok(c) => {
-    //                         let mgr = Manager::from_config(
-    //                             c, 
-    //                             NoTls, 
-    //                             ManagerConfig { recycling_method: RecyclingMethod::Fast }
-    //                         );
-    //                         match Pool::builder(mgr)
-    //                             .max_size(4)
-    //                             .build() {
-    //                                 Err(e) => {
-    //                                     debug!("error: {:?}", e);
-    //                                     return Err(DataError::ToBeImplemented(String::from("new")));
-    //                                 }
-    //                                 Ok(pool) => {
-    //                                     return Ok(Self {
-    //                                         pool: pool
-    //                                     });
-    //                                 }
-    //                             }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return Err(DataError::ConfigurationError);
-    // }
-
     pub fn new(
         cfg: &ApplicationConfiguration,
         data: data::Data
@@ -110,18 +73,6 @@ impl UserData {
             pool: data.get_pg_pool().unwrap()
         };
     }
-
-    // async fn get_client(&self) -> Result<Client, DataError> {
-    //     match self.pool.get().await {
-    //         Err(e) => {
-    //             error!("unable to retrieve database client: {:?}", e);
-    //             return Err(DataError::DatabaseError);
-    //         }
-    //         Ok(client) => {
-    //             return Ok(client);
-    //         }
-    //     }
-    // }
 
     /// add record to registrations table in db and return token string
     pub async fn register(&self, id: &uuid::Uuid, email: &str) -> Result<String, DataError> {
@@ -154,7 +105,7 @@ impl UserData {
             &stmt, 
             &[
                 &id,
-                &pg::email::Email::new(&email),
+                &data::pg::email::Email::new(&email),
                 &token
             ]
         ).await {
@@ -277,7 +228,7 @@ impl UserData {
         match client.query_one(
             &stmt,
             &[
-                &pg::email::Email::new(&email),
+                &data::pg::email::Email::new(&email),
                 &pw
             ]
         ).await {
@@ -360,7 +311,7 @@ impl UserData {
         match client.query_one(
             &stmt,
             &[
-                &pg::email::Email::new(&email)
+                &data::pg::email::Email::new(&email)
             ]
         ).await {
             Err(e) => {
