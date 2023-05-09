@@ -21,15 +21,20 @@ pub struct Countries {
 impl Countries {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, CountriesError> {
-        if let Ok(data) = crate::data::countries::Data::new(&cfg) {
-            return Ok(Self {
-                data: data
-            });
-        }
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        // if let Ok(data) = crate::data::countries::Data::new(&cfg) {
+        //     return Ok(Self {
+        //         data: data
+        //     });
+        // }
 
-        return Err(CountriesError::ConfigurationError);
+        // return Err(CountriesError::ConfigurationError);
+        let countries_data = crate::data::countries::Data::new(data);
+        return Self {
+            data: countries_data
+        };
     }
 
     /// retrieve list of countries

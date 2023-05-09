@@ -11,8 +11,8 @@ use serde::{
 
 use configuration::ApplicationConfiguration;
 use common::{client::Client, user::User};
-
-use crate::data::Data;
+use data::Data;
+// use crate::data::client::ClientData;
 
 
 #[derive(Debug)]
@@ -24,23 +24,29 @@ pub enum ClientsError {
 #[derive(Debug, Clone)]
 pub struct Clients {
     cfg: ApplicationConfiguration,
-    data: Data
+    data: crate::data::client::ClientData
 }
 
 
 impl Clients {
 
     pub fn new(
-        cfg: ApplicationConfiguration
+        cfg: ApplicationConfiguration,
+        data: Data
     ) -> Result<Self, ClientsError> {
-        if let Ok(data) = Data::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data
-            });
-        }
+        // if let Ok(data) = Data::new(&cfg) {
+        //     return Ok(Self {
+        //         cfg: cfg,
+        //         data: data
+        //     });
+        // }
 
-        return Err(ClientsError::ConfigurationError);
+        // return Err(ClientsError::ConfigurationError);
+        let client_data = crate::data::client::ClientData::new(data);
+        return Self {
+            cfg: cfg,
+            data: client_data
+        };
     }
 
     pub async fn client_by_name(

@@ -21,15 +21,20 @@ pub struct Currencies {
 impl Currencies {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, CurrenciesError> {
-        if let Ok(data) = crate::data::currencies::Data::new(&cfg) {
-            return Ok(Self {
-                data: data
-            });
-        }
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        // if let Ok(data) = crate::data::currencies::Data::new(&cfg) {
+        //     return Ok(Self {
+        //         data: data
+        //     });
+        // }
 
-        return Err(CurrenciesError::ConfigurationError);
+        // return Err(CurrenciesError::ConfigurationError);
+        let currencies_data = crate::data::currencies::Data::new(data);
+        return Self {
+            data: currencies_data
+        };
     }
 
     /// retrieve list of currencies

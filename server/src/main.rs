@@ -89,24 +89,32 @@ async fn main() -> std::io::Result<()> {
         );
 
         // util - currencies module
-        let result_currencies = util::currencies::Currencies::new(
-            cfg.clone()
+        // let result_currencies = util::currencies::Currencies::new(
+        //     cfg.clone()
+        // );
+        // if let Err(e) = result_currencies {
+        //     error!("unable to create currencies object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create currencies object"));
+        // }
+        // let currencies = result_currencies.unwrap();
+        let currencies = util::currencies::Currencies::new(
+            cfg.clone(),
+            data.clone()
         );
-        if let Err(e) = result_currencies {
-            error!("unable to create currencies object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create currencies object"));
-        }
-        let currencies = result_currencies.unwrap();
 
         // util - countries module
-        let result_countries = util::countries::Countries::new(
-            cfg.clone()
+        // let result_countries = util::countries::Countries::new(
+        //     cfg.clone()
+        // );
+        // if let Err(e) = result_countries {
+        //     error!("unable to create countries object: {:?}", e);
+        //     return Err(Error::new(ErrorKind::Other, "unable to create countries object"));
+        // }
+        // let countries = result_countries.unwrap();
+        let countries = util::countries::Countries::new(
+            cfg.clone(),
+            data.clone()
         );
-        if let Err(e) = result_countries {
-            error!("unable to create countries object: {:?}", e);
-            return Err(Error::new(ErrorKind::Other, "unable to create countries object"));
-        }
-        let countries = result_countries.unwrap();
 
         // people module
         let result_people = people::people::People::new(
