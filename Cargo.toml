@@ -5,7 +5,6 @@ members = [
     "data",
     "mailer",
     "tokenizer",
-    "modules/pg",
     "modules/auth",
     "modules/users",
     "modules/roles",

@@ -53,16 +53,6 @@ async fn main() -> std::io::Result<()> {
         let bind_host = cfg.bind_host.clone();
         let bind_port = cfg.bind_port.clone();
 
-        // let result_auth = auth::auth::Auth::new(
-        //     cfg.clone(), 
-        //     mailer.clone(),
-        //     tokenizer.clone()
-        // );
-        // if let Err(e) = result_auth {
-        //     error!("unable to create auth object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create auth object"));
-        // }
-        // let auth = result_auth.unwrap();
         let auth = auth::auth::Auth::new(
             cfg.clone(),
             mailer.clone(),
@@ -70,17 +60,6 @@ async fn main() -> std::io::Result<()> {
             data.clone()
         );
 
-        // user module
-        // let result_users = users::users::Users::new(
-        //     cfg.clone(),
-        //     mailer.clone(),
-        //     tokenizer.clone()
-        // );
-        // if let Err(e) = result_users {
-        //     error!("unable to create users object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create users object"));
-        // }
-        // let users = result_users.unwrap();
         let users = users::users::Users::new(
             cfg.clone(),
             mailer.clone(),
@@ -88,79 +67,31 @@ async fn main() -> std::io::Result<()> {
             data.clone()
         );
 
-        // util - currencies module
-        // let result_currencies = util::currencies::Currencies::new(
-        //     cfg.clone()
-        // );
-        // if let Err(e) = result_currencies {
-        //     error!("unable to create currencies object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create currencies object"));
-        // }
-        // let currencies = result_currencies.unwrap();
         let currencies = util::currencies::Currencies::new(
             cfg.clone(),
             data.clone()
         );
 
-        // util - countries module
-        // let result_countries = util::countries::Countries::new(
-        //     cfg.clone()
-        // );
-        // if let Err(e) = result_countries {
-        //     error!("unable to create countries object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create countries object"));
-        // }
-        // let countries = result_countries.unwrap();
         let countries = util::countries::Countries::new(
             cfg.clone(),
             data.clone()
         );
 
-        // people module
-        // let result_people = people::people::People::new(
-        //     cfg.clone()
-        // );
-        // if let Err(e) = result_people {
-        //     error!("unable to create people object");
-        //     return Err(Error::new(ErrorKind::Other, "unable to create people object"));
-        // }
-        // let people = result_people.unwrap();
         let people = people::people::People::new(
             cfg.clone(),
             data.clone()
         );
 
-        // tenants module
-        // let result_tenants = tenants::tenants::Tenants::new(cfg.clone());
-        // if let Err(e) = result_tenants {
-        //     error!("unable to create tenants object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create tenants object"));
-        // }
-        // let tenants = result_tenants.unwrap();
         let tenants = tenants::tenants::Tenants::new(
             cfg.clone(),
             data.clone()
         );
 
-        // let result_organizations = tenants::organizations::Organizations::new(cfg.clone());
-        // if let Err(e) = result_organizations {
-        //     error!("unable to create organizations object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create organizations object"));
-        // }
-        // let organizations = result_organizations.unwrap();
         let organizations = tenants::organizations::Organizations::new(
             cfg.clone(),
             data.clone()
         );
 
-        // hr module
-        // let result_hr = hr::Hr::new(cfg.clone(), people.clone());
-        // if let Err(e) = result_hr {
-        //     error!("unable to create hr object: {:?}", e);
-        //     return Err(Error::new(ErrorKind::Other, "unable to create hr object"));
-        // }
-        // let hr = result_hr.unwrap();
-        // let employees = hr.employees();
         let hr = hr::Hr::new(
             cfg.clone(),
             people.clone(),

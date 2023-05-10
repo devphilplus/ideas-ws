@@ -34,15 +34,13 @@ pub struct Roles {
 impl Roles {
 
     pub fn new(
-        cfg: ApplicationConfiguration
-    ) -> Result<Self, RolesError> {
-        if let Ok(data) = Data::new(&cfg) {
-            return Ok(Self {
-                cfg: cfg,
-                data: data
-            });
-        }
-
-        return Err(RolesError::ConfigurationError);
+        cfg: ApplicationConfiguration,
+        data: data::Data
+    ) -> Self {
+        let roles_data = crate::data::Data::new(data);
+        return Self {
+            cfg: cfg,
+            data: roles_data
+        };
     }
 }
