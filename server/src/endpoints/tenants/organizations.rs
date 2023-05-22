@@ -22,6 +22,14 @@ use crate::endpoints::{
 use crate::classes::user::CurrentUser;
 
 
+#[derive(Serialize, Deserialize, Debug)]
+struct OrganizationRequest {
+    pub id: uuid::Uuid,
+    pub name: String,
+    pub description: String
+}
+
+
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
         .service(
@@ -41,9 +49,11 @@ async fn organization_add_get() -> impl Responder {
 }
 
 async fn organization_add_post(
-
+    user: CurrentUser,
+    params: web::Json<OrganizationRequest>
 ) -> impl Responder {
     info!("organization_add_post()");
+    debug!("params: {:?}", params);
 
     return HttpResponse::Ok().body("Service is up. version: 1.0.0.0.dev");
 }
